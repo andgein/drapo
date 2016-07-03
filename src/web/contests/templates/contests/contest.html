@@ -1,0 +1,58 @@
+{% extends '_layout.html' %}
+
+{% block title %}{{ contest.name }}{% endblock %}
+
+{% block content %}
+    <div class="contest-page">
+        {% include 'contests/_contest_header.html' with contest=contest %}
+
+        <div>
+            {% if is_current_user_participating %}
+                {% if current_user_participant.is_approved %}
+                    You are registered to the contest
+                {% else %}
+                    You are waiting for approving by organizers
+                {% endif %}
+                {% if is_team_contest %}
+                    as a <a href="{{ current_user_team.get_absolute_url }}">{{ current_user_team.name }}</a>'s member
+                {% endif %}
+            {% else %}
+                {% if contest.can_register_now %}
+                    {% if is_team_contest %}
+                        You can <a href="{% url 'contests:join' contest.id %}" class="btn btn-success">register your team</a>
+                        or <a href="{% url 'contests:join' contest.id %}" class="btn btn-success">join some one</a>
+                    {% else %}
+                        <a href=""
+                           class="post-link  btn btn-success btn-lg"
+                           data-url="{% url 'contests:join' contest.id %}">
+                            Join the contest
+                        </a>
+                    {% endif %}
+                {% endif %}
+                {% if contest.can_register_in_future %}
+                    Registration will be open {{ contest.registration_start_time }}
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <div>
+            {% if is_team_contest %}
+                <h3>Registered teams</h3>
+                {% for participant in participants %}
+                    {{ forloop.counter }}. <a href="{{ participant.team.get_absolute_url }}">{{ participant.team.name }}</a>
+                {% empty %}
+                    No teams a while, <a href="{% url 'contests:join' contest.id %}">be the first</a>!
+                {% endfor %}
+            {% else %}
+                <h3>Participants</h3>
+                {% for participant in participants %}
+                    <div>
+                        {{ forloop.counter }}. <a href="{{ participant.user.get_absolute_url }}">{{ participant.user.get_full_name }}</a>
+                    </div>
+                {% empty %}
+                    No participants a while, <a href="{% url 'contests:join' contest.id %}">be the first</a>!
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends '_layout.html' %}
+
+{% load bootstrap %}
+
+{% block content %}
+    <div class="contest-page">
+        {% include 'contests/_contest_header.html' with contest=contest %}
+
+        <form method="POST" action="" class="form form-horizontal">
+            {% csrf_token %}
+            {{ form|bootstrap_horizontal }}
+            <button class="btn btn-success btn-lg col-sm-offset-2">Create category</button>
+        </form>
+    </div>
+{% endblock %}

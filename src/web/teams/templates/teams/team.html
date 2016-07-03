@@ -1,0 +1,42 @@
+{% extends '_layout.html' %}
+
+{% block title %}{{ team.name }}{% endblock %}
+
+{% block content %}
+    <div class="team-page">
+        <h1>
+            {{ team.name }}
+            {% if user in members %}
+                <span class="label label-success label-sm va-middle">Your team</span>
+            {% endif %}
+        </h1>
+        {% if user in members %}
+            <div class="">
+                <span class="glyphicon glyphicon-bell" style="color: #d5c5c5"></span>
+                Invite users to your team, send them the link
+                <a href="http{% if request.is_secure %}s{% endif %}://{{ request.get_host }}{{ team.get_invite_url }}">http{% if request.is_secure %}s{% endif %}://{{ request.get_host }}{{ team.get_invite_url }}</a>
+            </div>
+        {% endif %}
+        <h3>Members</h3>
+        {% for member in members %}
+            <div>
+                {{ forloop.counter }}.
+                {% if team.captain == member %}
+                    <span class="glyphicon glyphicon-star" title="Captain" style="color: darkred"></span>
+                {% endif %}
+                <a href="{{ member.get_absolute_url }}">{{ member.get_full_name }}</a>
+                aka <strong>{{ member.username }}</strong>
+            </div>
+        {% endfor %}
+        {% if contests %}
+            <h3>Participated in</h3>
+            {% for contest in contests %}
+                <div>
+                    {{ forloop.counter }}. <a href="{{ contest.get_absolute_url }}">{{ contest.name }}</a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="text-warning mt20">Team has not been participated in contests</div>
+        {% endif %}
+    </div>
+{% endblock %}

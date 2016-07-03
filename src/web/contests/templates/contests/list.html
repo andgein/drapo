@@ -1,0 +1,54 @@
+{% extends '_layout.html' %}
+
+{% load markdown_deux_tags %}
+
+{% block content %}
+    <div class="contests-list">
+        <div class="row">
+            {% for contest in contests %}
+                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                    <div class="contests-list__contest">
+                        <h3>{{ forloop.revcounter }}. <a href="{{ contest.get_absolute_url }}">{{ contest.name }}</a></h3>
+                        <p class="text-xs-small">{{ contest.start_time }}–{{ contest.finish_time }}</p>
+                        {% if contest.description %}
+                            <p>{{ contest.short_description }}</p>
+                        {% endif %}
+
+                        <button type="button" class="btn btn-default mt10" data-toggle="modal" data-target="#contests-list__contest{{ contest.id }}__info">Info</button>
+                        <a href="{{ contest.get_absolute_url }}" class="btn btn-primary mt10">Enter</a>
+                        {% if user.authenticated %}
+                            <div>
+                                {% if contest.is_current_user_participating %}
+                                    You are participating
+                                {% else %}
+                                    <a href="{% url 'contest:register' contest.id %}" class="btn btn-success mt10">Register for participation</a>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        <div id="contests-list__contest{{ contest.id }}__info" class="modal fade" tabindex="-1" role="dialog">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="ion-ios-close-empty"></span>
+                                        </button>
+                                        <h4 class="contest-info__name">{{ contest.name }}</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        {{ contest.description|markdown }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if forloop.counter|divisibleby:3 %}
+                    </div><div class="row">
+                {% endif %}
+            {% empty %}
+                No contests now, come later
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

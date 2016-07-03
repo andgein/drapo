@@ -1,0 +1,14 @@
+{% extends '_layout.html' %}
+
+{% block title %}{{ contest.name }}{% endblock %}
+
+{% block content %}
+    <div class="contest-page">
+        {% include 'contests/_contest_header.html' with contest=contest %}
+
+        {% if contest.is_finished %}
+            <div class="alert alert-info">Contest is finished</div>
+        {% endif %}
+
+    </div>
+{% endblock %}

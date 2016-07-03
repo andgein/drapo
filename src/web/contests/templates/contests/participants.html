@@ -1,0 +1,106 @@
+{% extends '_layout.html' %}
+
+{% load bootstrap %}
+
+{% block title %}Participants of {{ contest.name }}{% endblock %}
+
+{% block content %}
+    <div class="contest-page">
+        {% include 'contests/_contest_header.html' with contest=contest %}
+
+        <div class="participants">
+            {% if participants %}
+                <form method="POST" action="{% url 'contests:add_participant' contest.id %}" class="form form-inline mt10">
+                    {% csrf_token %}
+                    {{ manual_register_participant_form|bootstrap_inline }}
+                    <button class="btn btn-success">Add participant</button>
+                </form>
+
+                <div class="row mb10 mt15">
+                    <div class="col-xs-2"><strong>Participant</strong></div>
+                    <div class="col-xs-2"><strong>Approved?</strong></div>
+                    <div class="col-xs-2"><strong>Disqualified?</strong></div>
+                    <div class="col-xs-2"><strong>Visible?</strong></div>
+                </div>
+            {% else %}
+                <hr />
+                <div>
+                    No participants a while... You can register someone manually.
+
+                    <form method="POST" action="{% url 'contests:add_participant' contest.id %}" class="form form-inline mt10">
+                        {% csrf_token %}
+                        {{ manual_register_participant_form|bootstrap_inline }}
+                        <button class="btn btn-success">Add participant</button>
+                    </form>
+                </div>
+            {% endif %}
+            {% for participant in participants %}
+                <div class="participant row">
+                    <div class="col-xs-2">
+                        {{ forloop.counter }}.
+                        <a href="{{ participant.get_absolute_url }}">{{ participant.name }}</a>
+                    </div>
+                    <div class="col-xs-2">
+                        {% if participant.is_approved %}
+                            <span class="text-success text-small">Approved</span>
+                            <a href=""
+                               class="post-link"
+                               data-url="{% url 'contests:change_participant_status' contest.id participant.id %}"
+                               data-post-parameter="is_approved"
+                               data-post-value="false">
+                                <span class="glyphicon glyphicon-remove text-xs-small text-danger"></span>
+                            </a>
+                        {% else %}
+                            <a href=""
+                               class="post-link  btn btn-xs btn-success"
+                               data-url="{% url 'contests:change_participant_status' contest.id participant.id %}"
+                               data-post-parameter="is_approved"
+                               data-post-value="true">
+                                Approve
+                            </a>
+                        {% endif %}
+                    </div>
+                    <div class="col-xs-2">
+                        {% if participant.is_disqualified %}
+                            <span class="text-danger text-small">Disqualified</span>
+                            <a href=""
+                               class="post-link  btn btn-xs btn-success"
+                               data-url="{% url 'contests:change_participant_status' contest.id participant.id %}"
+                               data-post-parameter="is_disqualified"
+                               data-post-value="false">
+                                Return
+                            </a>
+                        {% else %}
+                            <a href=""
+                               class="post-link  btn btn-xs btn-danger"
+                               data-url="{% url 'contests:change_participant_status' contest.id participant.id %}"
+                               data-post-parameter="is_disqualified"
+                               data-post-value="true">
+                                Disqualify
+                            </a>
+                        {% endif %}
+                    </div>
+                    <div class="col-xs-2">
+                        {% if participant.is_visible_in_scoreboard %}
+                            <span class="text-success text-small">Visible</span>
+                            <a href="" class="post-link"
+                               data-url="{% url 'contests:change_participant_status' contest.id participant.id %}"
+                               data-post-parameter="is_visible_in_scoreboard"
+                               data-post-value="false">
+                                <span class="glyphicon glyphicon-remove text-xs-small text-danger"></span>
+                            </a>
+                        {% else %}
+                            <span class="text-danger text-small">Hidden</span>
+                            <a href="" class="post-link  btn btn-xs btn-success"
+                               data-url="{% url 'contests:change_participant_status' contest.id participant.id %}"
+                               data-post-parameter="is_visible_in_scoreboard"
+                               data-post-value="true">
+                                Make visible
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

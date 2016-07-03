@@ -1,0 +1,10 @@
+{% extends '_layout.html' %}
+
+{% block content %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+    <div>
+        <a href="{% url 'home' %}" class="btn btn-primary btn-lg">← Home</a>
+    </div>
+{% endblock %}

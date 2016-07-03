@@ -1,0 +1,10 @@
+KNOWN ISSUES
+
+1. If you have error
+
+File "bootstrap3_datetime/widgets.py", line 2, in <module>
+    from django.forms.util import flatatt
+ImportError: No module named 'django.forms.util'
+
+just open bootstrap3_datetime/widgets.py and fix django.forms.util → django.forms.utils
+(See https://github.com/nkunihiko/django-bootstrap3-datetimepicker/issues/41 for details)

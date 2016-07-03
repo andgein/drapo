@@ -1,0 +1,13 @@
+{% extends '_layout.html' %}
+
+{% load bootstrap %}
+
+{% block title %}Create team{% endblock %}
+
+{% block content %}
+    <form method="POST" action="" class="form form-horizontal">
+        {% csrf_token %}
+        {{ form|bootstrap_horizontal }}
+        <button class="btn btn-success btn-lg col-sm-offset-2">Create</button>
+    </form>
+{% endblock %}

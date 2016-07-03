@@ -1,0 +1,27 @@
+{% extends '_layout.html' %}
+
+{% load markdown_deux_tags %}
+{% load bootstrap %}
+
+{% block title %}{{ statement.title }} &bull; {{ contest.name }}{% endblock %}
+
+{% block content %}
+    <div class="task-page">
+        <h3 class="mb30">
+            <span class="label label-success">{{ task.max_score }}</span>
+            <strong>{{ statement.title }}</strong>
+        </h3>
+
+        {{ statement.statement|markdown }}
+
+        {% if user.is_authenticated and contest.is_running %}
+            <form method="POST" action="" class="attempt-form  mt20  form form-inline">
+                {% csrf_token %}
+                {{ attempt_form|bootstrap_inline }}
+                <div class="form-group">
+                    <button class="ml15 btn btn-success btn-lg">Send</button>
+                </div>
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}

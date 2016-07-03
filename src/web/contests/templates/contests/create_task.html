@@ -1,0 +1,38 @@
+{% extends '_layout.html' %}
+
+{% load bootstrap %}
+
+{% block content %}
+    <div class="contest-page">
+        <h1 class="mb30">Add task</h1>
+
+        <form method="POST" action="" class="form form-horizontal">
+            {% csrf_token %}
+            {{ form|bootstrap_horizontal }}
+
+            <div class="col-sm-offset-2">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#text_checker" aria-controls="text_checker" role="tab" data-toggle="tab" onclick="$('#id_checker_type').val('text');">Text checker</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#regexp_checker" aria-controls="regexp_checker" role="tab" data-toggle="tab" onclick="$('#id_checker_type').val('regexp');">RegExp checker</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content tab-default">
+                    <div role="tabpanel" class="tab-pane active" id="text_checker">
+                        {{ create_text_checker_form|bootstrap_horizontal }}
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="regexp_checker">
+                        {{ create_regexp_checker_form|bootstrap_horizontal }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt30">
+                <button class="btn btn-success btn-lg col-sm-offset-2">Create task</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

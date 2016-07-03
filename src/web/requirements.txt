@@ -1,0 +1,22 @@
+### This file contains requiremenets for Drapo web project. Install them with `pip install -r requirements.txt`
+
+### Django stuff
+Django >= 1.8.4
+django-choices
+django-markdown-deux
+python-postmark
+django-hijack
+django-hijack-admin
+django-ipware
+django-polymorphic
+django-relativefilepathfield
+django-sortedm2m
+django-bootstrap3-datetimepicker-2
+django-bootstrap-form
+
+# Other python stuff
+requests >= 2.7.0
+bs4
+python-social-auth
+cached-property
+markdown

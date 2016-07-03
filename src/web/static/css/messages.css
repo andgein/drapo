@@ -1,0 +1,44 @@
+.alert-message {
+    border-radius: 3px;
+    color: white;
+    padding: 5px 15px 10px;
+}
+.alert-message-success {
+    background-color: #5CB85C;
+    border-color: #5CB85C;
+}
+.alert-message-danger {
+    background-color: #d9534f;
+    border-color: #d43f3a;
+}
+.alert-message-warning {
+    background-color: #f0ad4e;
+    border-color: #eea236;
+}
+.alert-message-info {
+    background-color: #5bc0de;
+    border-color: #46b8da;
+}
+
+.alert-message > [data-notify="icon"] {
+	height: 50px;
+	margin-right: 12px;
+}
+
+.alert-message > [data-notify="title"] {
+	color: rgb(51, 51, 51);
+	display: block;
+	font-weight: bold;
+	margin-bottom: 5px;
+}
+
+.alert-message > [data-notify="message"] {
+	font-size: 90%;
+}
+
+.alert-message > .close {
+    position: relative;
+    top: 4px;
+    left: 4px;
+    font-size: 16px;
+}

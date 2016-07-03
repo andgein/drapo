@@ -1,0 +1,10 @@
+{% extends '_layout.html' %}
+
+{% block content %}
+    <h1>Invitation</h1>
+    <p>You have been invited to team <strong>{{ team.name }}</strong>.</p>
+    <form method="POST">
+        {% csrf_token %}
+        <button class="btn btn-success btn-lg">Join team</button>
+    </form>
+{% endblock %}

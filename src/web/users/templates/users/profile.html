@@ -1,0 +1,50 @@
+{% extends '_layout.html' %}
+
+{% block title %}{{ profile_user.get_full_name }}{% endblock %}
+
+{% block content %}
+    <div class="user-page">
+        <div class="user-username">
+            {{ profile_user.username }}
+            {% if is_current_user %}
+                <span class="label label-info label-sm">It's you!</span>
+            {% endif %}
+        </div>
+        <div class="user-name">{{ profile_user.get_full_name }}</div>
+
+        <hr />
+
+        <h2>Teams</h2>
+        {% if user_teams %}
+            {% spaceless %}
+                {% if is_current_user %}
+                    You are
+                {% else %}
+                    <strong>{{ profile_user.username }}</strong> is
+                {% endif %}
+                member of
+                {% if user_teams|length == 1 %}
+                    {% with team=user_teams|first %}
+                        <a href="{{ team.get_absolute_url }}">{{ team.name }}</a> team
+                    {% endwith %}
+                {% else %}
+                    teams
+                    {% for team in user_teams %}
+                        {% if not forloop.first and not forloop.last %},{% endif %}
+                        {% if forloop.last %}and{% endif %}
+                        <a href="{{ team.get_absolute_url }}">{{ team.name }}</a>
+                    {% endfor %}
+                    <span>.</span>
+                {% endif %}
+            {% endspaceless %}
+        {% else %}
+            {% if is_current_user %}
+                You are not any team's member
+            {% else %}
+                <strong>{{ profile_user.username }}</strong> is not any team's member
+            {% endif %}
+        {% endif %}
+
+
+    </div>
+{% endblock %}

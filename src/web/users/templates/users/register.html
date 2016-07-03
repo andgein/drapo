@@ -1,0 +1,9 @@
+{% extends '_layout.html' %}
+
+{% block content %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-success btn-lg">Join</button>
+    </form>
+{% endblock %}
