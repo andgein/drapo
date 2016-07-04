@@ -134,7 +134,7 @@ def tasks(request, contest_id):
     if not contest.is_visible_in_list and not request.user.is_staff:
         return HttpResponseNotFound()
 
-    if not contest.is_running() and not request.user.is_staff:
+    if not contest.is_started() and not request.user.is_staff:
         messages.error(request, '%s is not started yet' % contest.name)
         return redirect(contest)
 
