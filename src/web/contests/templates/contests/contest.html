@@ -1,5 +1,7 @@
 {% extends '_layout.html' %}
 
+{% load markdown_deux_tags %}
+
 {% block title %}{{ contest.name }}{% endblock %}
 
 {% block content %}
@@ -34,6 +36,10 @@
                 {% endif %}
             {% endif %}
         </div>
+
+        {{ contest.description|markdown|urlize }}
+
+        <hr />
 
         <div>
             {% if is_team_contest %}

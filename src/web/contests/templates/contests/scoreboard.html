@@ -35,10 +35,9 @@
                                 {% for task in category.tasks.all %}
                                     <td>
                                         {% if max_scored_attempt_by_participant_and_task|has_item:participant.id and max_scored_attempt_by_participant_and_task|item:participant.id|has_item:task.id %}
-                                            {{ max_scored_attempt_by_participant_and_task|item:participant.id|item:task.id|attr:'score' }}
-                                            <div class="text-xs-small">
-                                                {{ max_scored_attempt_by_participant_and_task|item:participant.id|item:task.id|attr:'created_at' }}
-                                            </div>
+                                            <span title="{{ max_scored_attempt_by_participant_and_task|item:participant.id|item:task.id|attr:'created_at' }}">
+                                                {{ max_scored_attempt_by_participant_and_task|item:participant.id|item:task.id|attr:'score' }}
+                                            </span>
                                         {% endif %}
                                     </td>
                                 {% endfor %}

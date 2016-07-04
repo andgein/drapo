@@ -14,11 +14,10 @@
                             <p>{{ contest.short_description }}</p>
                         {% endif %}
 
-                        <button type="button" class="btn btn-default mt10" data-toggle="modal" data-target="#contests-list__contest{{ contest.id }}__info">Info</button>
                         <a href="{{ contest.get_absolute_url }}" class="btn btn-primary mt10">Enter</a>
 
                         {% if contest.is_started %}
-                            <a href="{% url 'contests:scoreboard' contest.id %}" class="btn btn-success mt10">Scoreboard</a>
+                            <a href="{% url 'contests:scoreboard' contest.id %}" class="btn btn-link mt10">Scoreboard</a>
                         {% endif %}
 
                         {% if user.authenticated %}
@@ -31,20 +30,6 @@
                             </div>
                         {% endif %}
 
-                        <div id="contests-list__contest{{ contest.id }}__info" class="modal fade" tabindex="-1" role="dialog">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="ion-ios-close-empty"></span>
-                                        </button>
-                                        <h4 class="contest-info__name">{{ contest.name }}</h4>
-                                    </div>
-                                    <div class="modal-body">
-                                        {{ contest.description|markdown }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
