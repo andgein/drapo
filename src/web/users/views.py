@@ -1,4 +1,5 @@
-from django.contrib import auth
+from django.contrib import auth, messages
+from django.core import urlresolvers
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
@@ -71,7 +72,8 @@ def register(request):
 
                     confirmation = models.EmailConfirmation(user=user)
                     confirmation.save()
-                    confirmation.send()
+
+                    confirmation.send(request)
 
                     return render(request, 'message.html', {
                         'message': 'We have sent you an email with confirmation link. Please follow it.'
@@ -91,3 +93,16 @@ def logout(request):
         auth.logout(request)
     return redirect('home')
 
+
+def confirm(request, token):
+    confirmation = get_object_or_404(models.EmailConfirmation, token=token, is_confirmed=False)
+    confirmation.is_confirmed = True
+    confirmation.save()
+
+    user = confirmation.user
+    user.backend = 'django.contrib.auth.backends.ModelBackend'
+    auth.login(request, user)
+
+    messages.success(request, 'Your account has been confirmed')
+
+    return redirect(urlresolvers.reverse('home'))

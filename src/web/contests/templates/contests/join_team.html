@@ -9,20 +9,20 @@
         {% include 'contests/_contest_header.html' with contest=contest %}
 
         {% if user_teams %}
-            <form method="POST">
+            <form method="POST" class="form form-horizontal">
                 {% csrf_token %}
-                {{ form.as_p }}
-                <button class="btn btn-success btn-lg">Join</button>
+                {{ form|bootstrap_horizontal }}
+                <button class="btn btn-success btn-lg  col-sm-offset-2">Join</button>
             </form>
         {% else %}
-            <p class="lead text-success">
+            <p class="text-success">
                 This contest is team-based. <br />
                 For registration you can create <a href="{% url 'teams:create' %}?next={{ request.path }}">your own team</a> or join other team if you have invite hash:
             </p>
-            <form method="POST" action="" class="form form-horizontal">
+            <form method="POST" action="{% url 'teams:join' %}" class="form form-horizontal">
                 {% csrf_token %}
                 {{ invite_hash_form|bootstrap_horizontal }}
-                <button class="btn btn-success btn-lg">Join</button>
+                <button class="btn btn-success btn-lg  col-sm-offset-2">Join</button>
             </form>
         {% endif %}
     </div>

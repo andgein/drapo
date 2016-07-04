@@ -1,4 +1,5 @@
 from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.sites.shortcuts import get_current_site
 from django.core import validators, urlresolvers
 from django.core.mail import send_mail
 from django.db import models
@@ -80,7 +81,7 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
     @property
     def is_email_confirmed(self):
         try:
-            return self.email_confirmation.confirmed
+            return self.email_confirmation.is_confirmed
         except EmailConfirmation.DoesNotExist:
             return True
 
@@ -93,8 +94,16 @@ class EmailConfirmation(models.Model):
 
     token = models.CharField(max_length=32, default=generate_random_secret_string)
 
-    confirmed = models.BooleanField(default=False)
+    is_confirmed = models.BooleanField(default=False)
 
-    def send(self):
-        self.user.email_user('Email confirmation', 'You confirmation token is ' + self.token, settings.DRAPO_EMAIL_SENDER)
+    def _build_confirmation_link(self, request):
+        return request.build_absolute_uri(urlresolvers.reverse('users:confirm', args=[self.token]))
+
+    def send(self, request):
+        self.user.email_user(
+            'Email confirmation',
+            'Hello!\n\nWelcome to Drapo — CTF checksystem.\n\nConfirm you account by clicking on link: ' +
+            self._build_confirmation_link(request) +
+            '\n\nDrapo CTF checksystem',
+            settings.DRAPO_EMAIL_SENDER)
 

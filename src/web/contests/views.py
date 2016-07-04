@@ -86,6 +86,8 @@ def join(request, contest_id):
         invite_hash_form = forms.JoinViaInviteHashForm()
 
         return render(request, 'contests/join_team.html', {
+            'current_contest': contest,
+
             'contest': contest,
             'form': form,
             'user_teams': user_teams,

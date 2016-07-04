@@ -31,3 +31,13 @@ class UserAdmin(HijackUserAdminMixin, auth_admin.UserAdmin):
 
 admin.site.register(models.User, UserAdmin)
 
+
+class EmailConfirmationAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'token', 'is_confirmed')
+
+    list_filter = ('is_confirmed', )
+
+    search_fields = ('user', 'token')
+
+admin.site.register(models.EmailConfirmation, EmailConfirmationAdmin)
+
