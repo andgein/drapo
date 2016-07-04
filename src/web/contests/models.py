@@ -174,6 +174,13 @@ class AbstractParticipant(polymorphic.models.PolymorphicModel, drapo.models.Mode
 
     is_visible_in_scoreboard = models.BooleanField(default=True)
 
+    @property
+    def name(self):
+        return self.get_real_instance().name
+
+    def get_absolute_url(self):
+        return self.get_real_instance().get_absolute_url()
+
 
 class IndividualParticipant(AbstractParticipant):
     user = models.ForeignKey(users.models.User, related_name='individual_participant_in')

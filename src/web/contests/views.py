@@ -337,13 +337,17 @@ def add_category(request, contest_id):
 @staff_required
 def attempts(request, contest_id):
     contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
+    is_team_contest = contest.participation_mode == models.ContestParticipationMode.Team
 
-    attempts = contest.attempts.order_by('-created_at').select_related('task', 'participant', 'author')
+    attempts = contest.attempts.order_by('-created_at').select_related(
+        'task', 'participant', 'participant__teamparticipant', 'participant__individualparticipant', 'author'
+    )
 
     return render(request, 'contests/attempts.html', {
         'current_contest': contest,
 
         'contest': contest,
+        'is_team_contest': is_team_contest,
         'attempts': attempts,
     })
 

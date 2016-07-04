@@ -91,6 +91,10 @@ hr {
     margin-top: 0;
 }
 
+.pl40 {
+    padding-left: 40px;
+}
+
 .messages {
     position: absolute;
     right: 10px;
