@@ -29,8 +29,8 @@
                     {% endwith %}
                 {% else %}
                     teams
-                    {% for team in user_teams %}
-                        {% if not forloop.first and not forloop.last %},{% endif %}
+                    {% for team in user_teams %}<!--
+                        -->{% if not forloop.first and not forloop.last %},{% endif %}
                         {% if forloop.last %}and{% endif %}
                         <a href="{{ team.get_absolute_url }}">{{ team.name }}</a>
                     {% endfor %}

@@ -3,7 +3,7 @@
 {% block title %}{{ contest.name }}{% endblock %}
 
 {% block content %}
-    <div class="contest-page">
+    <div class="page contest-page">
         {% include 'contests/_contest_header.html' with contest=contest %}
 
         {% if contest.is_finished %}

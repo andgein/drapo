@@ -7,7 +7,7 @@ class LoginForm(forms.Form):
         label='Username',
         widget=forms.TextInput(attrs={
             'placeholder': 'Enter username',
-            'class': 'form-control'
+            'autofocus': 'autofocus'
         })
     )
 
@@ -16,7 +16,6 @@ class LoginForm(forms.Form):
         label='Password',
         widget=forms.PasswordInput(attrs={
             'placeholder': 'Enter password',
-            'class': 'form-control'
         })
     )
 
@@ -28,7 +27,7 @@ class RegisterForm(forms.Form):
         max_length=100,
         widget=forms.TextInput(attrs={
             'placeholder': 'Enter username',
-            'class': 'form-control'
+            'autofocus': 'autofocus'
         })
     )
 
@@ -38,7 +37,6 @@ class RegisterForm(forms.Form):
         max_length=100,
         widget=forms.TextInput(attrs={
             'placeholder': 'Enter email',
-            'class': 'form-control'
         })
     )
 
@@ -47,7 +45,6 @@ class RegisterForm(forms.Form):
         max_length=100,
         widget=forms.TextInput(attrs={
             'placeholder': 'Your first name',
-            'class': 'form-control'
         })
     )
 
@@ -56,7 +53,6 @@ class RegisterForm(forms.Form):
         max_length=100,
         widget=forms.TextInput(attrs={
             'placeholder': 'Your last name',
-            'class': 'form-control'
         })
     )
 
@@ -66,7 +62,6 @@ class RegisterForm(forms.Form):
         max_length=128,
         widget=forms.PasswordInput(attrs={
             'placeholder': 'Enter password',
-            'class': 'form-control'
         })
     )
 
@@ -76,7 +71,6 @@ class RegisterForm(forms.Form):
         max_length=128,
         widget=forms.PasswordInput(attrs={
             'placeholder': 'Enter password',
-            'class': 'form-control'
         })
     )
 

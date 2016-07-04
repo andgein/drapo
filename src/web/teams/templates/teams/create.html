@@ -5,9 +5,12 @@
 {% block title %}Create team{% endblock %}
 
 {% block content %}
-    <form method="POST" action="" class="form form-horizontal">
-        {% csrf_token %}
-        {{ form|bootstrap_horizontal }}
-        <button class="btn btn-success btn-lg col-sm-offset-2">Create</button>
-    </form>
+    <div class="page">
+        <h1 class="page__header">Create team</h1>
+        <form method="POST" action="" class="form form-horizontal">
+            {% csrf_token %}
+            {{ form|bootstrap_horizontal }}
+            <button class="btn btn-success btn-lg col-sm-offset-2">Create</button>
+        </form>
+    </div>
 {% endblock %}

@@ -109,6 +109,17 @@ hr {
     font-weight: 700;
 }
 
+.page {
+    background-color: white;
+    padding: 30px;
+    border-left: 2px solid #e6e6e6;
+}
+
+h1.page__header {
+    margin-top: 0;
+    margin-bottom: 30px;
+}
+
 /* Contests page */
 .contests-list__contest {
     background-color: #fefefe;
@@ -123,7 +134,11 @@ hr {
 }
 
 /* Contest page */
-.contest-page .contest-status {
+.contest-page .contest__title {
+    margin-top: 0;
+}
+
+.contest-page .contest__status {
     vertical-align: middle;
     font-weight: normal;
 }
@@ -143,12 +158,6 @@ hr {
 }
 
 /* Tasks page */
-.categories-list {
-    background-color: white;
-    padding: 30px;
-    border-left: 2px solid #e6e6e6;
-}
-
 .categories-list .category {
     margin: 0 0 30px;
 }
@@ -197,12 +206,6 @@ hr {
 }
 
 /* Task page */
-.task-page {
-    background-color: white;
-    padding: 15px 30px 30px;
-    border-left: 2px solid #e6e6e6;
-}
-
 .attempt-form #id_answer {
     width: 300px;
 }

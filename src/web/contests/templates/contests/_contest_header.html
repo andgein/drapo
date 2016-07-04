@@ -1,10 +1,10 @@
-<h1 class="contest-title">
+<h1 class="contest__title">
     {{ contest.name }}
     {% if contest.is_finished %}
-        <span class="label label-info label-sm contest-status">Finished</span>
+        <span class="label label-info label-sm contest__status">Finished</span>
     {% endif %}
     {% if contest.is_running %}
-        <span class="label label-primary label-sm contest-status">Running</span>
+        <span class="label label-primary label-sm contest__status">Running</span>
     {% endif %}
 </h1>
 
@@ -13,3 +13,5 @@
         {{ contest.start_time }}–{{ contest.finish_time }}
     </p>
 </div>
+
+<hr />

@@ -42,7 +42,7 @@ def create(request):
 
             messages.success(request, 'Team ' + team.name + ' created')
 
-            if request.GET['next'] is not None and '//' not in request.GET['next']:
+            if 'next' in request.GET and '//' not in request.GET['next']:
                 return redirect(request.GET['next'])
 
             return redirect(team.get_absolute_url())

@@ -1,9 +1,14 @@
 {% extends '_layout.html' %}
 
+{% load bootstrap %}
+
 {% block content %}
-    <form action="" method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="btn btn-success btn-lg">Login</button>
-    </form>
+    <div class="page">
+        <h1 class="page__header">Login</h1>
+        <form action="" method="POST" class="form form-horizontal">
+            {% csrf_token %}
+            {{ form|bootstrap_horizontal }}
+            <button class="btn btn-success btn-lg  col-sm-offset-2">Login</button>
+        </form>
+    </div>
 {% endblock %}

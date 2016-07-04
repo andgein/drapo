@@ -39,6 +39,7 @@ class CreateCategoryForm(forms.Form):
 
     description = forms.CharField(
         label='Description',
+        help_text='Supports markdown',
         max_length=500,
         widget=forms.Textarea()
     )

@@ -3,11 +3,17 @@
 {% block title %}Teams{% endblock %}
 
 {% block content %}
-    <h1>Teams</h1>
+    <div class="page">
+        <h1 class="page__header">Teams</h1>
 
-    {% for team in teams %}
-        <div>
-            {{ forloop.counter }}. <a href="{{ team.get_absolute_url }}">{{ team.name }}</a>
-        </div>
-    {% endfor %}
+        {% for team in teams %}
+            <div>
+                {{ forloop.counter }}. <a href="{{ team.get_absolute_url }}">{{ team.name }}</a>
+            </div>
+        {% empty %}
+            <div>
+                No teams, <a href="{% url 'teams:create' %}">be the first</a>!
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}

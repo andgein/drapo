@@ -28,7 +28,7 @@ def login(request):
                 if user.is_email_confirmed:
                     auth.login(request, user)
 
-                    if request.GET['next'] is not None and '//' not in request.GET['next']:
+                    if 'next' in request.GET and '//' not in request.GET['next']:
                         return redirect(request.GET['next'])
                     return redirect('home')
 
