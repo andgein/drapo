@@ -10,5 +10,24 @@
             <div class="alert alert-info">Contest is finished</div>
         {% endif %}
 
+        {% for task in tasks %}
+            {# TODO: copy-paste? #}
+            <div class="task {% if task.id in solved_tasks_ids %}solved{% endif %}">
+                {% if task.id in solved_tasks_ids %}
+                    <h3>
+                        <a href="{% url 'contests:task' contest.id task.id %}" class="text-success task__name">{{ task.name }}</a>
+                        <span class="task__max_score label label-sm label-success" title="Score">{{ task.max_score }}</span>
+                    </h3>
+                    <a href="{% url 'contests:task' contest.id task.id %}" class="btn btn-success">View</a>
+                {% else %}
+                    <h3>
+                        <a href="{% url 'contests:task' contest.id task.id %}" class="task__name">{{ task.name }}</a>
+                        <span class="task__max_score label label-sm label-primary" title="Score">{{ task.max_score }}</span>
+                    </h3>
+                    <a href="{% url 'contests:task' contest.id task.id %}" class="btn btn-primary">Open</a>
+                {% endif %}
+            </div>
+        {% endfor %}
+
     </div>
 {% endblock %}
