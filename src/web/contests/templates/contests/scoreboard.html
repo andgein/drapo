@@ -11,25 +11,23 @@
         <table class="table table-stripped table-responsive">
             <thead>
                 <tr>
-                    <td></td>
-                    <td>Participant</td>
-                        {% if with_categories %}
-                            {% for category in categories %}
-                                <td>{{ category.name }}</td>
-                                {% for task in category.tasks.all %}
-                                    <td>{{ task.max_score }}</td>
-                                {% endfor %}
+                    <td><strong>Participant</strong></td>
+                    {% if with_categories %}
+                        {% for category in categories %}
+                            <td>{{ category.name }}</td>
+                            {% for task in category.tasks.all %}
+                                <td>{{ task.max_score }}</td>
                             {% endfor %}
-                        {% else %}
-                        {% endif %}
-                    <td>Score</td>
+                        {% endfor %}
+                    {% else %}
+                    {% endif %}
+                    <td><strong>Score</strong></td>
                 </tr>
             </thead>
             <tbody>
                 {% for participant in participants %}
                     <tr>
-                        <td>{{ forloop.counter }}</td>
-                        <td><a href="{{ participant.get_absolute_url }}">{{ participant.name }}</a></td>
+                        <td>{{ forloop.counter }}. <a href="{{ participant.get_absolute_url }}">{{ participant.name }}</a></td>
 
                         {% if with_categories %}
                             {% for category in categories %}

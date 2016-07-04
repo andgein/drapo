@@ -16,6 +16,11 @@
 
                         <button type="button" class="btn btn-default mt10" data-toggle="modal" data-target="#contests-list__contest{{ contest.id }}__info">Info</button>
                         <a href="{{ contest.get_absolute_url }}" class="btn btn-primary mt10">Enter</a>
+
+                        {% if contest.is_started %}
+                            <a href="{% url 'contests:scoreboard' contest.id %}" class="btn btn-success mt10">Scoreboard</a>
+                        {% endif %}
+
                         {% if user.authenticated %}
                             <div>
                                 {% if contest.is_current_user_participating %}

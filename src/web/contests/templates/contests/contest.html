@@ -41,7 +41,7 @@
                 {% for participant in participants %}
                     {{ forloop.counter }}. <a href="{{ participant.team.get_absolute_url }}">{{ participant.team.name }}</a>
                 {% empty %}
-                    No teams a while, <a href="{% url 'contests:join' contest.id %}">be the first</a>!
+                    No teams{% if contest.can_register_now %} a while, <a href="{% url 'contests:join' contest.id %}">be the first</a>!{% endif %}
                 {% endfor %}
             {% else %}
                 <h3>Participants</h3>
@@ -51,7 +51,7 @@
                         aka <strong>{{ participant.user.username }}</strong>
                     </div>
                 {% empty %}
-                    No participants a while, <a href="{% url 'contests:join' contest.id %}">be the first</a>!
+                    No participants{% if contest.can_register_now %} a while, <a href="{% url 'contests:join' contest.id %}">be the first</a>! {% endif %}
                 {% endfor %}
             {% endif %}
         </div>
