@@ -70,8 +70,8 @@ def register(request):
                     user.save()
 
                     confirmation = models.EmailConfirmation(user=user)
-                    confirmation.send()
                     confirmation.save()
+                    confirmation.send()
 
                     return render(request, 'message.html', {
                         'message': 'We have sent you an email with confirmation link. Please follow it.'

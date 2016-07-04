@@ -4,6 +4,7 @@ from django.core.mail import send_mail
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 import django.contrib.auth.models as auth_models
+from django.conf import settings
 
 from drapo.common import generate_random_secret_string
 
@@ -95,5 +96,5 @@ class EmailConfirmation(models.Model):
     confirmed = models.BooleanField(default=False)
 
     def send(self):
-        self.user.email_user('Email confirmation', 'You confirmation token is ' + self.token)
+        self.user.email_user('Email confirmation', 'You confirmation token is ' + self.token, settings.DRAPO_EMAIL_SENDER)
 
