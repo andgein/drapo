@@ -3,8 +3,8 @@
 {% block title %}{{ team.name }}{% endblock %}
 
 {% block content %}
-    <div class="team-page">
-        <h1>
+    <div class="page team-page">
+        <h1 class="page__header">
             {{ team.name }}
             {% if user in members %}
                 <span class="label label-success label-sm va-middle">Your team</span>
