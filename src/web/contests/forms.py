@@ -151,6 +151,7 @@ class CreateTaskForm(forms.Form):
     max_score = forms.IntegerField(
         label='Max score',
         min_value=0,
+        max_value=10000,
     )
 
     statement_title = forms.CharField(
