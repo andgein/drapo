@@ -14,9 +14,12 @@
                     <td><strong>Participant</strong></td>
                     {% if with_categories %}
                         {% for category in categories %}
-                            <td>{{ category.name }}</td>
                             {% for task in category.tasks.all %}
-                                <td>{{ task.max_score }}</td>
+                                <td>
+                                    <small title="{{ category.name }} {{ task.max_score }}: {{ task.name }}">
+                                        {{ task.max_score }}
+                                    </small>
+                                </td>
                             {% endfor %}
                         {% endfor %}
                     {% else %}
@@ -27,17 +30,23 @@
             <tbody>
                 {% for participant in participants %}
                     <tr>
-                        <td>{{ forloop.counter }}. <a href="{{ participant.get_absolute_url }}">{{ participant.name }}</a></td>
+                        <td>
+                            {{ forloop.counter }}. <a href="{{ participant.get_absolute_url }}">{{ participant.name }}</a>
+                            {% if participant.is_disqualified %}
+                                <div class="mt0">
+                                    <small class="text-danger">Disqualified</small>
+                                </div>
+                            {% endif %}
+                        </td>
 
                         {% if with_categories %}
                             {% for category in categories %}
-                                <td></td>
                                 {% for task in category.tasks.all %}
                                     <td>
                                         {% if max_scored_attempt_by_participant_and_task|has_item:participant.id and max_scored_attempt_by_participant_and_task|item:participant.id|has_item:task.id %}
-                                            <span title="{{ max_scored_attempt_by_participant_and_task|item:participant.id|item:task.id|attr:'created_at' }}">
+                                            <small title="{{ max_scored_attempt_by_participant_and_task|item:participant.id|item:task.id|attr:'created_at' }}">
                                                 {{ max_scored_attempt_by_participant_and_task|item:participant.id|item:task.id|attr:'score' }}
-                                            </span>
+                                            </small>
                                         {% endif %}
                                     </td>
                                 {% endfor %}

@@ -226,8 +226,11 @@ def scoreboard(request, contest_id):
         }
 
     ordered_participants = sorted(participants,
-                                  key=lambda p: (-scores_by_participant[p.id], last_success_time_by_participant[p.id])
-                                  )
+                                  key=lambda p: (
+                                      p.is_disqualified,  # First, show not-disqualified participants
+                                      -scores_by_participant[p.id],  # ordered by scores
+                                      last_success_time_by_participant[p.id]  # and by last success time
+                                  ))
 
     tasks = categories = None
     if contest.tasks_grouping == models.TasksGroping.OneByOne:
