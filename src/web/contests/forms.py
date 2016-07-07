@@ -45,7 +45,7 @@ class CreateCategoryForm(forms.Form):
     )
 
 
-class CreateTaskBasedContestForm(forms.Form):
+class TaskBasedContestForm(forms.Form):
     name = forms.CharField(
         label='Name',
         max_length=100,

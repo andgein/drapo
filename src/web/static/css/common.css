@@ -48,6 +48,14 @@ hr {
     height: 1px;
 }
 
+.one-line {
+    white-space: nowrap;
+}
+
+.ellipsis {
+    text-overflow: ellipsis;
+}
+
 .hline-white {
     border-bottom: 2px solid #ffffff;
     margin-bottom: 25px;
@@ -129,6 +137,10 @@ h1.page__header {
     background-color: #fefefe;
     border-left: 2px solid #eaeaea;
     padding: 30px;
+}
+
+.contests-list__contest h1 {
+    height: 40px;
 }
 
 .contest-info__name {

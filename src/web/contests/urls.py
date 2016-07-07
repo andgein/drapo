@@ -9,6 +9,7 @@ urlpatterns = [
 
     url(r'^(?P<contest_id>\d+)/$', views.contest, name='contest'),
     url(r'^(?P<contest_id>\d+)/join/$', views.join, name='join'),
+    url(r'^(?P<contest_id>\d+)/edit/$', views.edit, name='edit'),
 
     url(r'^(?P<contest_id>\d+)/tasks/$', views.tasks, name='tasks'),
     url(r'^(?P<contest_id>\d+)/tasks/(?P<task_id>\d+)$', views.task, name='task'),

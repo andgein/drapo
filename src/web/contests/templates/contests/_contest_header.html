@@ -1,5 +1,11 @@
 <h1 class="contest__title">
     {{ contest.name }}
+    {% if user.is_staff %}
+        <small>
+            <a href="{% url 'contests:edit' contest.id %}" title="Edit contest"><span class="glyphicon glyphicon-edit"></span></a>
+        </small>
+    {% endif %}
+
     {% if contest.is_finished %}
         <span class="label label-info label-sm contest__status">Finished</span>
     {% endif %}

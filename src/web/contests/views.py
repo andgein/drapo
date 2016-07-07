@@ -6,6 +6,7 @@ import collections
 from django.contrib import messages
 from django.core import urlresolvers
 from django.db import transaction
+from django.db.utils import IntegrityError
 from django.http.response import Http404, HttpResponseNotFound, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
@@ -355,7 +356,7 @@ def attempts(request, contest_id):
 @staff_required
 def create(request):
     if request.method == 'POST':
-        form = forms.CreateTaskBasedContestForm(data=request.POST)
+        form = forms.TaskBasedContestForm(data=request.POST)
         if form.is_valid():
             with transaction.atomic():
                 contest = models.TaskBasedContest(
@@ -369,7 +370,7 @@ def create(request):
             messages.success(request, 'Contest «%s» created' % contest.name)
             return redirect(contest)
     else:
-        form = forms.CreateTaskBasedContestForm()
+        form = forms.TaskBasedContestForm()
 
     return render(request, 'contests/create.html', {
         'form': form
@@ -529,4 +530,38 @@ def add_task_to_category(request, contest_id, category_id):
         'form': form,
         'create_text_checker_form': create_text_checker_form,
         'create_regexp_checker_form': create_regexp_checker_form,
+    })
+
+
+@staff_required
+def edit(request, contest_id):
+    contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
+
+    if request.method == 'POST':
+        form = forms.TaskBasedContestForm(data=request.POST)
+        if form.is_valid():
+            with transaction.atomic():
+                contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
+                new_contest = models.TaskBasedContest(
+                    **form.cleaned_data
+                )
+                new_contest.id = contest.id
+                new_contest.save()
+
+                if new_contest.tasks_grouping == models.TasksGroping.ByCategories:
+                    if not hasattr(contest, 'categories_list'):
+                        categories_models.ContestCategories(contest=new_contest).save()
+                elif contest.tasks_grouping == models.TasksGroping.OneByOne:
+                    if not hasattr(contest, 'tasks_list'):
+                        tasks_models.ContestTasks(contest=new_contest).save()
+
+            messages.success(request, 'Contest «%s» updated' % new_contest.name)
+            return redirect(contest)
+    else:
+        form = forms.TaskBasedContestForm(initial=contest.__dict__)
+
+    return render(request, 'contests/edit.html', {
+        'current_contest': contest,
+
+        'form': form
     })

@@ -1,15 +1,5 @@
-{% extends '_layout.html' %}
+{% extends 'contests/_contest_form.html' %}
 
-{% load bootstrap %}
+{% block page_header %}Create contest{% endblock %}
 
-{% block content %}
-    <div class="page contest-page">
-        <h1 class="page__header">Create contest</h1>
-
-        <form method="POST" action="" class="form form-horizontal">
-            {% csrf_token %}
-            {{ form|bootstrap_horizontal }}
-            <button class="btn btn-success btn-lg col-sm-offset-2">Create contest</button>
-        </form>
-    </div>
-{% endblock %}
+{% block button_text %}Create contest{% endblock %}
