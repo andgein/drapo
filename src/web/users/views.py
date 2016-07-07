@@ -1,4 +1,5 @@
 from django.contrib import auth, messages
+from django.contrib.auth.decorators import login_required
 from django.core import urlresolvers
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
@@ -106,3 +107,40 @@ def confirm(request, token):
     messages.success(request, 'Your account has been confirmed')
 
     return redirect(urlresolvers.reverse('home'))
+
+
+@login_required
+def edit(request):
+    user = request.user
+
+    if request.method == 'POST':
+        form = forms.EditUserForm(user, data=request.POST)
+        if form.is_valid():
+            messages.success(request, 'Your settings has been changed')
+            return redirect(urlresolvers.reverse('users:edit'))
+    else:
+        form = forms.EditUserForm(user)
+
+    password_form = forms.ChangePasswordForm()
+
+    return render(request, 'users/edit.html', {
+        'form': form,
+        'password_form': password_form
+    })
+
+
+@login_required
+@require_POST
+def change_password(request):
+    form = forms.ChangePasswordForm(data=request.POST)
+    if form.is_valid():
+        request.user.set_password(form.cleaned_data['password'])
+        messages.success(request, 'Your password has been changed')
+        return redirect(urlresolvers.reverse('users:edit'))
+
+    user_form = forms.EditUserForm(request.user)
+
+    return render(request, 'users/edit.html', {
+        'form': user_form,
+        'password_form': form
+    })

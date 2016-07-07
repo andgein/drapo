@@ -1,0 +1,30 @@
+{% extends '_layout.html' %}
+
+{% load bootstrap %}
+
+{% block title %}Edit profile{% endblock %}
+
+{% block content %}
+    <div class="page">
+        <h1 class="page__header">
+            Edit profile
+        </h1>
+
+        <form method="POST" action="" class="form-horizontal">
+            {% csrf_token %}
+            {{ form|bootstrap_horizontal }}
+            <button class="btn btn-success btn-lg col-sm-offset-2">Save</button>
+        </form>
+
+        <br />
+        <h1 class="page__header">
+            Change your password
+        </h1>
+
+        <form method="POST" action="{% url 'users:change_password' %}" class="form-horizontal">
+            {% csrf_token %}
+            {{ password_form|bootstrap_horizontal }}
+            <button class="btn btn-success btn-lg col-sm-offset-2">Change password</button>
+        </form>
+    </div>
+{% endblock %}
