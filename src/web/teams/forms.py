@@ -6,6 +6,6 @@ class CreateTeamForm(forms.Form):
         max_length=100,
         label='Team name',
         widget=forms.TextInput(attrs={
-            'class': 'form-control'
+            'class': 'form-control-short',
         })
     )

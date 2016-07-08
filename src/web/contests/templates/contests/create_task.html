@@ -4,7 +4,7 @@
 
 {% block content %}
     <div class="page contest-page">
-        <h1 class="page__header">Add task</h1>
+        <h1 class="page__header"><strong class="mr15">{{ category.name }}</strong> Add task</h1>
 
         <form method="POST" action="" class="form form-horizontal">
             {% csrf_token %}

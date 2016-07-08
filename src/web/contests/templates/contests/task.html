@@ -25,7 +25,7 @@
         {% elif not contest.is_running %}
             {% if contest.is_finished %}
                 <div class="text-danger pt15 fw400">
-                    Sorry, you can't try to solve task after contest finished.
+                    Sorry, you can't send answer after the contest finished.
                 </div>
             {% endif %}
         {% elif not user.is_authenticated %}

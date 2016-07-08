@@ -33,7 +33,8 @@ class CreateCategoryForm(forms.Form):
         label='Category name',
         max_length=100,
         widget=forms.TextInput(attrs={
-            'autofocus': 'autofocus'
+            'autofocus': 'autofocus',
+            'class': 'form-control-short',
         })
     )
 
@@ -79,7 +80,10 @@ class TaskBasedContestForm(forms.Form):
         label='Registration type',
         max_length=20,
         widget=forms.Select(
-            choices=models.ContestRegistrationType.choices
+            choices=models.ContestRegistrationType.choices,
+            attrs={
+                'class': 'form-control-short'
+            }
         )
     )
 
@@ -87,7 +91,10 @@ class TaskBasedContestForm(forms.Form):
         label='Participation mode',
         max_length=20,
         widget=forms.Select(
-            choices=models.ContestParticipationMode.choices
+            choices=models.ContestParticipationMode.choices,
+            attrs={
+                'class': 'form-control-short'
+            }
         )
     )
 
@@ -95,28 +102,48 @@ class TaskBasedContestForm(forms.Form):
         label='Start',
         required=True,
         help_text='Contest start time',
-        widget=DateTimePicker(options={'format': 'YYYY-MM-DD HH:mm'})
+        widget=DateTimePicker(
+            options={'format': 'YYYY-MM-DD HH:mm'},
+            attrs={
+                'class': 'form-control-short'
+            }
+        )
     )
 
     finish_time = forms.DateTimeField(
         label='Finish',
         required=True,
         help_text='Contest finish time',
-        widget=DateTimePicker(options={'format': 'YYYY-MM-DD HH:mm'})
+        widget=DateTimePicker(
+            options={'format': 'YYYY-MM-DD HH:mm'},
+            attrs={
+                'class': 'form-control-short'
+            }
+        )
     )
 
     registration_start_time = forms.DateTimeField(
         label='Registration start',
         help_text='Contest registration start time, only for open and moderated registrations',
         required=False,
-        widget=DateTimePicker(options={'format': 'YYYY-MM-DD HH:mm'})
+        widget=DateTimePicker(
+            options={'format': 'YYYY-MM-DD HH:mm'},
+            attrs={
+                'class': 'form-control-short'
+            }
+        )
     )
 
     registration_finish_time = forms.DateTimeField(
         label='Registration finish',
         help_text='Contest registration finish time, only for open and moderated registrations',
         required=False,
-        widget=DateTimePicker(options={'format': 'YYYY-MM-DD HH:mm'})
+        widget=DateTimePicker(
+            options={'format': 'YYYY-MM-DD HH:mm'},
+            attrs={
+                'class': 'form-control-short'
+            }
+        )
     )
 
     tasks_grouping = forms.CharField(
@@ -124,7 +151,10 @@ class TaskBasedContestForm(forms.Form):
         help_text='Enable categories or list all tasks one by one',
         max_length=20,
         widget=forms.Select(
-            choices=models.TasksGroping.choices
+            choices=models.TasksGroping.choices,
+            attrs={
+                'class': 'form-control-short'
+            }
         )
     )
 
@@ -146,12 +176,18 @@ class CreateTaskForm(forms.Form):
         label='Name',
         help_text='Shows on tasks page',
         max_length=100,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control-short'
+        }),
     )
 
     max_score = forms.IntegerField(
         label='Max score',
         min_value=0,
         max_value=10000,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control-short'
+        }),
     )
 
     statement_title = forms.CharField(
@@ -179,6 +215,9 @@ class AbstractCheckerForm(forms.Form):
 class CreateTextCheckerForm(AbstractCheckerForm):
     answer = forms.CharField(
         label='Answer',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control-short'
+        }),
     )
 
     case_sensitive = forms.BooleanField(
@@ -196,7 +235,10 @@ class CreateTextCheckerForm(AbstractCheckerForm):
 class CreateRegExpCheckerForm(AbstractCheckerForm):
     pattern = forms.CharField(
         label='Pattern',
-        help_text='Regular expression for matching, don\'t need ^ and $'
+        help_text='Regular expression for matching, don\'t need ^ and $',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control-short'
+        }),
     )
 
     flag_ignore_case = forms.BooleanField(

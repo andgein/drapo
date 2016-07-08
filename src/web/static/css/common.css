@@ -111,6 +111,12 @@ hr {
     font-weight: 400;
 }
 
+.form-control-short,
+.input-group .form-control-short,
+.input-group /* Dangerous! Be careful, it's redefining width for all input-groups, use only in pair with .form-control-short */ {
+    width: 350px;
+}
+
 .messages {
     position: absolute;
     right: 10px;
