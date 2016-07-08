@@ -52,7 +52,8 @@ class TaskBasedContestForm(forms.Form):
         max_length=100,
         required=True,
         widget=forms.TextInput(attrs={
-            'autofocus': 'autofocus'
+            'autofocus': 'autofocus',
+            'class': 'form-control-short',
         })
     )
 

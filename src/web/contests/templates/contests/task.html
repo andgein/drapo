@@ -15,7 +15,7 @@
         {{ statement.statement|markdown }}
 
         {% if user.is_authenticated and contest.is_running and participant %}
-            <form method="POST" action="" class="attempt-form  mt20  form form-inline">
+            <form method="POST" action="" class="attempt-form  mt30  form-inline">
                 {% csrf_token %}
                 {{ attempt_form|bootstrap_inline }}
                 <div class="form-group">
@@ -34,7 +34,7 @@
             </div>
         {% elif not participant %}
             <div class="text-danger pt15 fw400">
-                <a href="{% url 'contests:join' contest.id %}">Join</a> to the contest to solve tasks.
+                <a href="" class="post-link" data-url="{% url 'contests:join' contest.id %}">Join</a> to the contest to solve tasks.
             </div>
         {% endif %}
 
