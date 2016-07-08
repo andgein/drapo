@@ -103,6 +103,14 @@ hr {
     padding-left: 40px;
 }
 
+.fw300 {
+    font-weight: 300;
+}
+
+.fw400 {
+    font-weight: 400;
+}
+
 .messages {
     position: absolute;
     right: 10px;
@@ -201,24 +209,22 @@ h1.page__header {
 .category .category__task .task__max_score {
     position: relative;
     top: -5px;
-    left: 5px;
+    margin-right: 5px;
 }
 
 .category .category__task .category__task__name {
     font-weight: 300;
 }
 
+.category .category__task .category__task__link {
+    font-size: 16pt;
+}
+
 .category .add-task {
     text-align: left;
     cursor: pointer;
-    padding: 10px 20px 20px;
-}
-
-.category .add-task h3 {
     color: #999;
-    font-weight: 400;
-    display: inline-block;
-    border-bottom: 1px solid #999;
+    font-weight: 300;
 }
 
 /* Task page */

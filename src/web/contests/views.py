@@ -265,9 +265,16 @@ def task(request, contest_id, task_id):
     if not contest.has_task(task):
         return HttpResponseNotFound()
 
+    participant = contest.get_participant_for_user(request.user)
+
     if request.method == 'POST' and request.user.is_authenticated():
         form = tasks_forms.AttemptForm(data=request.POST)
-        if form.is_valid():
+
+        if participant is None:
+            messages.warning(request, 'You are not registered to the contest')
+        elif participant.is_disqualified:
+            messages.error(request, 'You are disqualified from the contest')
+        elif form.is_valid():
             answer = form.cleaned_data['answer']
             attempt = tasks_models.Attempt(
                 contest=contest,
@@ -298,7 +305,7 @@ def task(request, contest_id, task_id):
 
     statement = statement_generator.generate({
         'user': request.user,
-        'participant': contest.get_participant_for_user(request.user)
+        'participant': participant
     })
 
     return render(request, 'contests/task.html', {
@@ -307,7 +314,8 @@ def task(request, contest_id, task_id):
         'contest': contest,
         'task': task,
         'statement': statement,
-        'attempt_form': form
+        'attempt_form': form,
+        'participant': participant,
     })
 
 

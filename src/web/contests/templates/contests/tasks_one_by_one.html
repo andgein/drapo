@@ -6,10 +6,6 @@
     <div class="page contest-page">
         {% include 'contests/_contest_header.html' with contest=contest %}
 
-        {% if contest.is_finished %}
-            <div class="alert alert-info">Contest is finished</div>
-        {% endif %}
-
         {% for task in tasks %}
             {# TODO: copy-paste? #}
             <div class="task {% if task.id in solved_tasks_ids %}solved{% endif %}">

@@ -6,15 +6,15 @@
 {% block title %}{{ statement.title }} &bull; {{ contest.name }}{% endblock %}
 
 {% block content %}
-    <div class="task-page">
-        <h3 class="mb30">
-            <span class="label label-success">{{ task.max_score }}</span>
-            <strong>{{ statement.title }}</strong>
-        </h3>
+    <div class="page task-page">
+        <h1 class="page__header">
+            {{ task.max_score }}.
+            {{ statement.title }}
+        </h1>
 
         {{ statement.statement|markdown }}
 
-        {% if user.is_authenticated and contest.is_running %}
+        {% if user.is_authenticated and contest.is_running and participant %}
             <form method="POST" action="" class="attempt-form  mt20  form form-inline">
                 {% csrf_token %}
                 {{ attempt_form|bootstrap_inline }}
@@ -22,6 +22,21 @@
                     <button class="ml15 btn btn-success btn-lg">Send</button>
                 </div>
             </form>
+        {% elif not contest.is_running %}
+            {% if contest.is_finished %}
+                <div class="text-danger pt15 fw400">
+                    Sorry, you can't try to solve task after contest finished.
+                </div>
+            {% endif %}
+        {% elif not user.is_authenticated %}
+            <div class="pt15 fw400">
+                <a href="{% url 'users:login' %}">Authorize</a> to send an answer.
+            </div>
+        {% elif not participant %}
+            <div class="text-danger pt15 fw400">
+                <a href="{% url 'contests:join' contest.id %}">Join</a> to the contest to solve tasks.
+            </div>
         {% endif %}
+
     </div>
 {% endblock %}
