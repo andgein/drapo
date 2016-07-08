@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.core import urlresolvers
 from django.db import transaction
 from django.shortcuts import render, get_object_or_404, redirect
 
@@ -61,13 +62,13 @@ def join(request, invite_hash):
     if request.method == 'POST':
         if request.user in team.members.all():
             messages.warning(request, 'You are already in team ' + team.name)
-            return redirect('home')
+            return redirect(urlresolvers.reverse('teams:team', args=[team.id]))
 
         team.members.add(request.user)
         team.save()
 
         messages.success(request, 'You joined team ' + team.name + '. Congratulations!')
-        return redirect('home')
+        return redirect(urlresolvers.reverse('teams:team', args=[team.id]))
 
     return render(request, 'teams/join.html', {
         'team': team
