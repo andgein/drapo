@@ -427,10 +427,14 @@ def add_participant(request, contest_id):
             if contest.participation_mode == models.ContestParticipationMode.Individual:
                 match = user_re.match(link)
 
-                print(link)
-
                 if match is None:
                     raise CannotAddParticipant('It\'s not like the link to the user (should be /users/123/)')
+
+                user_id = int(match.group(1))
+                # Limit for database query: i.e. sqlite can't operate with large integers
+                if user_id > 1000000:
+                    raise CannotAddParticipant('It\'s not like the link to the user (should be /users/123/)')
+
                 try:
                     user = users_models.User.objects.get(pk=match.group(1))
                 except users_models.User.DoesNotExist:
@@ -448,6 +452,12 @@ def add_participant(request, contest_id):
 
                 if match is None:
                     raise CannotAddParticipant('It\'s not like the link to the team (should be /teams/123/)')
+
+                team_id = int(match.group(1))
+                # Limit for database query: i.e. sqlite can't operate with large integers
+                if team_id > 1000000:
+                    raise CannotAddParticipant('It\'s not like the link to the team (should be /teams/123/)')
+
                 try:
                     team = teams_models.Team.objects.get(pk=match.group(1))
                 except teams_models.Team.DoesNotExist:
@@ -566,7 +576,7 @@ def edit(request, contest_id):
                     if not hasattr(contest, 'tasks_list'):
                         tasks_models.ContestTasks(contest=new_contest).save()
 
-            messages.success(request, 'Contest «%s» updated' % new_contest.name)
+            messages.success(request, 'Contest «%s» has been updated' % new_contest.name)
             return redirect(contest)
     else:
         form = forms.TaskBasedContestForm(initial=contest.__dict__)

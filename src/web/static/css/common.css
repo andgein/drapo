@@ -117,6 +117,10 @@ hr {
     width: 350px;
 }
 
+form label {
+    font-weight: 500;
+}
+
 .messages {
     position: absolute;
     right: 10px;
@@ -144,6 +148,11 @@ hr {
 h1.page__header {
     margin-top: 0;
     margin-bottom: 30px;
+}
+
+/* Navbar */
+.dropdown-menu > li > a.text-danger {
+    color: #a94442;
 }
 
 /* Contests page */
