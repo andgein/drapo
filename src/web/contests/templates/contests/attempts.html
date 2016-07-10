@@ -36,7 +36,7 @@
                         <div class="label label-info">{{ attempt.task.max_score }}</div>
                         <a href="{% url 'contests:task' contest.id attempt.task_id %}"> {{ attempt.task.name }}</a>
                     </div>
-                    <div class="col-sm-4 col-xs-5">
+                    <div class="col-sm-4 col-xs-5" title="{{ attempt.created_at }}">
                         {{ attempt.answer|truncatechars:100 }}
                     </div>
                     <div class="col-xs-2 text-small">
