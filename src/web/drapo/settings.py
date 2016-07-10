@@ -140,7 +140,8 @@ USE_TZ = True
 STATIC_ROOT = '../static/'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
+    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'third-party')
 ]
 
 
@@ -154,3 +155,5 @@ HIJACK_ALLOW_GET_REQUESTS = True
 
 
 DRAPO_EMAIL_SENDER = 'admin@summer-ctf.com'
+DRAPO_UPLOAD_DIR = os.path.join(BASE_DIR, '..', '..', 'upload')
+DRAPO_TASKS_FILES_DIR = os.path.join(DRAPO_UPLOAD_DIR, 'tasks_files')

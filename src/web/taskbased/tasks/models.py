@@ -1,11 +1,15 @@
 import abc
 import unicodedata
 import re
+import os.path
+
+from django.db import models
+import django.db.migrations.writer
+from django.conf import settings
 
 import sortedm2m.fields
-from django.db import models
-
 import polymorphic.models
+from relativefilepathfield.fields import RelativeFilePathField
 
 import drapo.models
 import contests.models
@@ -37,6 +41,7 @@ class Checked(CheckResult):
         self.private_comment = private_comment
         self.score = score
 
+
 class PostponeForManualCheck(CheckResult):
     pass
 
@@ -62,8 +67,6 @@ class TextStatementGenerator(AbstractStatementGenerator):
     title = models.TextField(help_text='Markdown with substitutes')
 
     template = models.TextField(help_text='Markdown with substitutes')
-
-    # TODO (andgein): add files
 
     def is_available_for_anonymous(self):
         # TODO (andgein): check for substitution patterns
@@ -172,6 +175,42 @@ class Task(models.Model):
             return check_result
 
         return PostponeForManualCheck()
+
+
+class TaskFile(models.Model):
+    task = models.ForeignKey(Task, related_name='files')
+
+    participant = models.ForeignKey(
+        contests.models.AbstractParticipant,
+        help_text='None if this file is for all participants',
+        related_name='+',
+        null=True,
+        default=None
+    )
+
+    name = models.CharField(
+        max_length=1000,
+        help_text='File name. Visible to participants',
+    )
+
+    path = RelativeFilePathField(
+        path=django.db.migrations.writer.SettingsReference(
+            settings.DRAPO_TASKS_FILES_DIR,
+            'DRAPO_TASKS_FILES_DIR'
+        ),
+        recursive=True,
+        max_length=1000
+    )
+
+    content_type = models.CharField(max_length=1000, default='application/octet-stream')
+
+    @staticmethod
+    def generate_directory_name(task, participant):
+        return os.path.join(
+            settings.DRAPO_TASKS_FILES_DIR,
+            str(task.id),
+            str(participant.id) if participant is not None else '_'
+        )
 
 
 # For contests without categories

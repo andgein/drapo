@@ -95,6 +95,10 @@ hr {
     vertical-align: top;
 }
 
+.ib {
+    display: inline-block;
+}
+
 .mt0 {
     margin-top: 0;
 }
@@ -137,6 +141,18 @@ form label {
 .has-error.radio-inline label {
     font-size: inherit;
     font-weight: 700;
+}
+
+.form-control.file-caption.kv-fileinput-caption {
+    height: 28px;
+}
+
+.visible-on-parent-hover {
+    display: none;
+}
+
+*:hover > .visible-on-parent-hover {
+    display: inline-block;
 }
 
 .page {

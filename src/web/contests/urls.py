@@ -13,6 +13,8 @@ urlpatterns = [
 
     url(r'^(?P<contest_id>\d+)/tasks/$', views.tasks, name='tasks'),
     url(r'^(?P<contest_id>\d+)/tasks/(?P<task_id>\d+)$', views.task, name='task'),
+    url(r'^(?P<contest_id>\d+)/tasks/(?P<task_id>\d+)/delete$', views.delete_task, name='delete_task'),
+    url(r'^(?P<contest_id>\d+)/files/(?P<file_id>\d+)$', views.task_file, name='task_file'),
 
     url(r'^(?P<contest_id>\d+)/categories/add/$', views.add_category, name='add_category'),
     url(r'^(?P<contest_id>\d+)/categories/(?P<category_id>\d+)/add/$', views.add_task_to_category, name='add_task_to_category'),

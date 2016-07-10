@@ -6,7 +6,7 @@
     <div class="page contest-page">
         <h1 class="page__header"><strong class="mr15">{{ category.name }}</strong> Add task</h1>
 
-        <form method="POST" action="" class="form form-horizontal">
+        <form method="POST" action="" class="form form-horizontal" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form|bootstrap_horizontal }}
 

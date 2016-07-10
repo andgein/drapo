@@ -11,6 +11,7 @@
     <link href="{% static 'css/ionicons.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/animate.css' %}" rel="stylesheet">
     <link href="{% static 'css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet">
+    <link href="{% static 'bootstrap-fileinput/css/fileinput.min.css' %}" rel="stylesheet">
 
     <link href="{% static 'css/messages.css' %}" rel="stylesheet">
     <link href="{% static 'css/common.css' %}" rel="stylesheet">
@@ -63,6 +64,10 @@
     <script src="{% static 'js/messages.js' %}"></script>
 
     <script src="{% static 'js/post-links.js' %}"></script>
+
+    <script src="{% static 'bootstrap-fileinput/js/fileinput.min.js' %}"></script>
+{#    <script src="{% static 'bootstrap-fileinput/themes/fa/theme.js' %}"></script>#}
+    <script src="{% static 'js/file-inputs.js' %}"></script>
     {% block scripts %}{% endblock %}
     <script>
         $.ajaxSetup({

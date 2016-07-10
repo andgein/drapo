@@ -4,7 +4,7 @@
 
 {% block content %}
     <div class="page team-page">
-        <h1 class="page__header">
+        <h1 class="page__header text-nowrap ellipsis">
             {{ team.name }}
             {% if user in members %}
                 <span class="label label-success label-sm va-middle">Your team</span>
@@ -36,7 +36,7 @@
                 </div>
             {% endfor %}
         {% else %}
-            <div class="text-warning mt20">Team has not been participated in contests</div>
+            <div class="text-warning mt30">Team has not been participated in contests yet</div>
         {% endif %}
     </div>
 {% endblock %}

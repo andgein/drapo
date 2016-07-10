@@ -202,6 +202,18 @@ class CreateTaskForm(forms.Form):
         widget=forms.Textarea(),
     )
 
+    statement_files = forms.FileField(
+        label='Files',
+        help_text='Files will be attached to the statement. Up to 10 files',
+        required=False,
+        widget=forms.FileInput(attrs={
+            'class': 'bootstrap-file-input',
+            'multiple': 'multiple',
+            'data-show-upload': 'false',
+            'data-max-file-count': 10,
+        })
+    )
+
     checker_type = forms.CharField(
         widget=forms.HiddenInput(),
         initial='text',

@@ -1,0 +1,3 @@
+[submodule "src/web/third-party/bootstrap-fileinput"]
+	path = src/web/third-party/bootstrap-fileinput
+	url = git@github.com:kartik-v/bootstrap-fileinput.git

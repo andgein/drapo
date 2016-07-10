@@ -14,6 +14,19 @@
 
         {{ statement.statement|markdown }}
 
+        {% if files %}
+            <div class="task__files mt30 mb20">
+                {% for file in files %}
+                    <div class="task__file ib">
+                        <a href="{% url 'contests:task_file' contest.id file.id %}" class="btn btn-primary btn-lg">
+                            <span class="glyphicon glyphicon-download"></span>
+                            {{ file.name|default:'File' }}
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
         {% if user.is_authenticated and contest.is_running and participant %}
             <form method="POST" action="" class="attempt-form  mt30  form-inline">
                 {% csrf_token %}

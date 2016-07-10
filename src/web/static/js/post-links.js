@@ -17,15 +17,22 @@ $(document).ready(function() {
             var $link = $(this);
             var url = $link.data('url');
             var parameters = get_data_starts_with($link, 'post');
+            var locked = false;
 
             $link.click(function() {
+                if (locked)
+                    return;
+
+                locked = true;
                 $.post(
                     url,
                     parameters
                 ).done(function() {
+                    locked = false;
                     /* Refresh on success */
                     window.location.reload(true);
                 }).fail(function(xhr, text_status, error_thrown) {
+                    locked = false;
                     show_message(xhr.responseText)
                 });
 

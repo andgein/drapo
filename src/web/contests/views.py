@@ -1,16 +1,19 @@
 import itertools
 import operator
 import re
-
 import collections
+
+from django.conf import settings
 from django.contrib import messages
 from django.core import urlresolvers
 from django.db import transaction
-from django.db.utils import IntegrityError
-from django.http.response import Http404, HttpResponseNotFound, HttpResponseForbidden
+from django.db.models.query_utils import Q
+from django.http.response import Http404, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 
+from drapo.common import respond_as_attachment
+from drapo.uploads import save_uploaded_file
 from users.decorators import login_required, staff_required
 import users.models as users_models
 from . import models
@@ -308,12 +311,16 @@ def task(request, contest_id, task_id):
         'participant': participant
     })
 
+    # Files can be in statement or in task for this participant
+    files = statement.files + list(task.files.filter(Q(participant__isnull=True) | Q(participant=participant)))
+
     return render(request, 'contests/task.html', {
         'current_contest': contest,
 
         'contest': contest,
         'task': task,
         'statement': statement,
+        'files': files,
         'attempt_form': form,
         'participant': participant,
     })
@@ -502,7 +509,7 @@ def add_task_to_category(request, contest_id, category_id):
     category = get_object_or_404(categories_models.Category, pk=category_id, contestcategories__contest_id=contest_id)
 
     if request.method == 'POST':
-        form = forms.CreateTaskForm(data=request.POST)
+        form = forms.CreateTaskForm(data=request.POST, files=request.FILES)
         create_text_checker_form = forms.CreateTextCheckerForm(data=request.POST)
         create_regexp_checker_form = forms.CreateRegExpCheckerForm(data=request.POST)
         if form.is_valid():
@@ -535,7 +542,19 @@ def add_task_to_category(request, contest_id, category_id):
                     category.tasks.add(task)
                     category.save()
 
-                    messages.success(request, 'Task %s successfully created' % task.name)
+                    for uploaded_file in request.FILES.getlist('statement_files'):
+                        task_file_dir = tasks_models.TaskFile.generate_directory_name(task, None)
+                        task_file_name = save_uploaded_file(uploaded_file, task_file_dir)
+
+                        task_file = tasks_models.TaskFile(
+                            task=task,
+                            name=uploaded_file.name[:1000],
+                            path=task_file_name,
+                            content_type=uploaded_file.content_type[:100]
+                        )
+                        task_file.save()
+
+                messages.success(request, 'Task %s successfully created' % task.name)
 
                 return redirect(urlresolvers.reverse('contests:tasks', args=[contest.id]))
     else:
@@ -586,3 +605,32 @@ def edit(request, contest_id):
 
         'form': form
     })
+
+
+def task_file(request, contest_id, file_id):
+    contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
+    if not contest.is_visible_in_list and not request.user.is_staff:
+        return HttpResponseNotFound()
+
+    file = get_object_or_404(tasks_models.TaskFile, pk=file_id)
+    if not contest.has_task(file.task):
+        return HttpResponseNotFound()
+
+    file_path = file.get_path_abspath()
+    return respond_as_attachment(request, file_path, file.name, file.content_type)
+
+
+@staff_required
+@require_POST
+def delete_task(request, contest_id, task_id):
+    contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
+
+    task = get_object_or_404(tasks_models.Task, pk=task_id)
+    if not contest.has_task(task):
+        return HttpResponseNotFound()
+
+    task.delete()
+
+    return redirect(urlresolvers.reverse('contests:tasks', args=[contest.id]))
+
+
