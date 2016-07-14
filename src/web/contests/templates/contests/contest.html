@@ -30,9 +30,10 @@
                             Join the contest
                         </a>
                     {% endif %}
-                {% endif %}
-                {% if contest.can_register_in_future %}
-                    Registration will be open {{ contest.registration_start_time }}
+                {% elif contest.can_register_in_future %}
+                    Registration will open {{ contest.registration_start_time }}
+                {% else %}
+                    Sorry, registration is closed already.
                 {% endif %}
             {% endif %}
         </div>
