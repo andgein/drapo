@@ -15,7 +15,13 @@
                 <span class="glyphicon glyphicon-bell" style="color: #d5c5c5"></span>
                 Invite users to your team, send them the link
                 <a href="http{% if request.is_secure %}s{% endif %}://{{ request.get_host }}{{ team.get_invite_url }}">http{% if request.is_secure %}s{% endif %}://{{ request.get_host }}{{ team.get_invite_url }}</a>
-                or give them invite hash: {{ team.invite_hash }}
+                or give them invite hash: {{ team.invite_hash }}.
+
+                {% if team.captain == user %}
+                    Captain can't leave the team.
+                {% else %}
+                    You can also <a href="" class="post-link text-danger" data-url="{% url 'teams:leave' team.id %}">leave the team</a>.
+                {% endif %}
             </div>
         {% endif %}
         <h3>Members</h3>
@@ -27,6 +33,13 @@
                 {% endif %}
                 <a href="{{ member.get_absolute_url }}">{{ member.get_full_name }}</a>
                 aka <strong>{{ member.username }}</strong>
+
+                {% if member == user and team.captain != user %}
+                    <form action="{% url 'teams:leave' team.id %}" method="POST" class="ib visible-on-parent-hover">
+                        {% csrf_token %}
+                        <button class="btn btn-danger btn-xs">Leave team</button>
+                    </form>
+                {% endif %}
             </div>
         {% endfor %}
         {% if contests %}

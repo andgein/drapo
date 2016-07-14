@@ -3,6 +3,7 @@ from django.core import urlresolvers
 from django.db import transaction
 from django.http.response import HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views.decorators.http import require_POST
 
 from users.decorators import login_required
 from . import models
@@ -91,3 +92,23 @@ def join(request, invite_hash=None):
         'team': team
     })
 
+
+@login_required
+@require_POST
+def leave(request, team_id):
+    team = get_object_or_404(models.Team, pk=team_id)
+
+    if team.captain == request.user:
+        messages.error(request, 'Captain can\'t leave the team.')
+    else:
+        with transaction.atomic():
+            if request.user not in team.members.all():
+                return HttpResponseNotFound()
+
+            team.members.remove(request.user)
+
+        messages.success(request, 'You have been left the team %s' % team.name)
+
+        if 'next' in request.POST and '//' not in request.POST['next']:
+            return redirect(request.POST['next'])
+    return redirect(urlresolvers.reverse('teams:team', args=[team.id]))
