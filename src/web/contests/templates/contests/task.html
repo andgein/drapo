@@ -46,13 +46,19 @@
                 <a href="{% url 'users:login' %}?next={{ request.path }}">Authorize</a> to send an answer.
             </div>
         {% elif not participant %}
-            <div class="text-danger pt15 fw400">
-                {% if contest.is_team %}
-                    <a href="{% url 'contests:join' contest.id %}">Join</a> to the contest to solve tasks.
-                {% else %}
-                    <a href="" class="post-link" data-url="{% url 'contests:join' contest.id %}">Join</a> to the contest to solve tasks.
-                {% endif %}
-            </div>
+            {% if contest.can_register_now %}
+                <div class="text-danger pt15 fw400">
+                    {% if contest.is_team %}
+                        <a href="{% url 'contests:join' contest.id %}">Join</a> to the contest to solve tasks.
+                    {% else %}
+                        <a href="" class="post-link" data-url="{% url 'contests:join' contest.id %}">Join</a> to the contest to solve tasks.
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="text-danger pt15 fw400">
+                    Sorry, registration to the contest is closed already. If you are registered, login as a participant.
+                </div>
+            {% endif %}
         {% endif %}
 
     </div>
