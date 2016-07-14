@@ -32,7 +32,7 @@ def team(request, team_id):
 @login_required
 def create(request):
     if request.method == 'POST':
-        form = forms.CreateTeamForm(data=request.POST)
+        form = forms.TeamForm(data=request.POST)
         if form.is_valid():
             team = models.Team(
                 name=form.cleaned_data['name'],
@@ -50,7 +50,7 @@ def create(request):
 
             return redirect(team.get_absolute_url())
     else:
-        form = forms.CreateTeamForm()
+        form = forms.TeamForm()
 
     return render(request, 'teams/create.html', {
         'form': form
@@ -112,3 +112,28 @@ def leave(request, team_id):
         if 'next' in request.POST and '//' not in request.POST['next']:
             return redirect(request.POST['next'])
     return redirect(urlresolvers.reverse('teams:team', args=[team.id]))
+
+
+@login_required
+def edit(request, team_id):
+    team = get_object_or_404(models.Team, pk=team_id)
+
+    # Only staff and team's captain can edit team
+    if not request.user.is_staff and team.captain != request.user:
+        return HttpResponseNotFound()
+
+    if request.method == 'POST':
+        form = forms.TeamForm(data=request.POST)
+        if form.is_valid():
+            team.name = form.cleaned_data['name']
+            team.save()
+
+            messages.success(request, 'Team %s saved' % team.name)
+            return redirect(team)
+    else:
+        form = forms.TeamForm(initial={'name': team.name})
+
+    return render(request, 'teams/edit.html', {
+        'team': team,
+        'form': form,
+    })

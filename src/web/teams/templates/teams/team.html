@@ -9,7 +9,14 @@
             {% if user in members %}
                 <span class="label label-success label-sm va-middle">Your team</span>
             {% endif %}
+
+            {% if user.is_staff or team.captain == user %}
+                <div>
+                    <a href="{% url 'teams:edit' team.id %}" class="btn btn-primary">Edit team</a>
+                </div>
+            {% endif %}
         </h1>
+
         {% if user in members %}
             <div class="">
                 <span class="glyphicon glyphicon-bell" style="color: #d5c5c5"></span>

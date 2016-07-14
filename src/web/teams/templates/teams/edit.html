@@ -1,0 +1,16 @@
+{% extends '_layout.html' %}
+
+{% load bootstrap %}
+
+{% block title %}Edit team {{ team.name }}{% endblock %}
+
+{% block content %}
+    <div class="page">
+        <h1 class="page__header">Edit team <strong>{{ team.name }}</strong></h1>
+        <form action="" method="POST" class="form-horizontal">
+            {% csrf_token %}
+            {{ form|bootstrap_horizontal }}
+            <button class="btn btn-success btn-lg  col-sm-offset-2">Save</button>
+        </form>
+    </div>
+{% endblock %}
