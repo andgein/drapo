@@ -8,7 +8,20 @@
 
         {% for team in teams %}
             <div>
-                {{ forloop.counter }}. <a href="{{ team.get_absolute_url }}">{{ team.name }}</a>
+                {{ forloop.counter }}.
+                <a href="{{ team.get_absolute_url }}">{{ team.name }}</a>:
+
+                 <span class="glyphicon glyphicon-star" title="Captain" style="color: darkred; font-size: 10pt"></span>
+                 <a href="{% url 'users:profile' team.captain.id %}"><strong>{{ team.captain.username }}</strong></a>
+                {% for member in team.members.all|slice:':10' %}
+                    {% if member != team.captain %}
+                        , <a href="{% url 'users:profile' member.id %}">{{ member.username }}</a>
+                    {% endif %}
+                {% endfor %}
+                {% if team.members.count > 10 %}
+                    and others
+                {% endif %}
+
             </div>
         {% empty %}
             <div>
