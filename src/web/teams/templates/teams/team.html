@@ -15,6 +15,7 @@
                 <span class="glyphicon glyphicon-bell" style="color: #d5c5c5"></span>
                 Invite users to your team, send them the link
                 <a href="http{% if request.is_secure %}s{% endif %}://{{ request.get_host }}{{ team.get_invite_url }}">http{% if request.is_secure %}s{% endif %}://{{ request.get_host }}{{ team.get_invite_url }}</a>
+                or give them invite hash: {{ team.invite_hash }}
             </div>
         {% endif %}
         <h3>Members</h3>

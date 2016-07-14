@@ -5,6 +5,7 @@ class LoginForm(forms.Form):
     username = forms.CharField(
         required=True,
         label='Username',
+        max_length=100,
         widget=forms.TextInput(attrs={
             'placeholder': 'Enter username',
             'autofocus': 'autofocus',
@@ -15,6 +16,7 @@ class LoginForm(forms.Form):
     password = forms.CharField(
         required=True,
         label='Password',
+        max_length=128,
         widget=forms.PasswordInput(attrs={
             'placeholder': 'Enter password',
             'class': 'form-control-short',
@@ -90,6 +92,14 @@ class RegisterForm(FormWithRepeatedPassword):
         })
     )
 
+    def __init__(self, *args, **kwargs):
+        if 'field_order' in kwargs:
+            del kwargs['field_order']
+        super().__init__(*args,
+                         **kwargs,
+                         field_order=['username', 'email', 'first_name', 'last_name', 'password', 'password_validation']
+                         )
+
 
 class EditUserForm(forms.Form):
     username = forms.CharField(
@@ -131,4 +141,19 @@ class EditUserForm(forms.Form):
 
 
 class ChangePasswordForm(FormWithRepeatedPassword):
-    pass
+    old_password = forms.CharField(
+        required=True,
+        label='Old password',
+        max_length=128,
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control-short'
+        })
+    )
+
+    def __init__(self, *args, **kwargs):
+        if 'field_order' in kwargs:
+            del kwargs['field_order']
+        super().__init__(*args,
+                         **kwargs,
+                         field_order=['old_password', 'password', 'password_repeat']
+                         )

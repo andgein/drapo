@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.core import urlresolvers
 from django.db import transaction
+from django.http.response import HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
 
 from users.decorators import login_required
@@ -56,21 +57,37 @@ def create(request):
 
 
 @login_required
-def join(request, invite_hash):
-    team = get_object_or_404(models.Team, invite_hash=invite_hash)
+def join(request, invite_hash=None):
+    if request.method == 'POST' and 'invite_hash' in request.POST:
+        invite_hash = request.POST['invite_hash']
 
-    if request.method == 'POST':
-        if request.user in team.members.all():
-            messages.warning(request, 'You are already in team ' + team.name)
-            return redirect(urlresolvers.reverse('teams:team', args=[team.id]))
+    team = models.Team.objects.filter(invite_hash=invite_hash).first()
+    error_message = None
 
-        team.members.add(request.user)
-        team.save()
+    if team is None:
+        error_message = 'Team not found. Return back and try one more time'
 
-        messages.success(request, 'You joined team ' + team.name + '. Congratulations!')
+    if request.method == 'POST' and team is not None:
+        with transaction.atomic():
+            if request.user in team.members.all():
+                messages.warning(request, 'You are already in team ' + team.name)
+                if 'next' in request.POST and '//' not in request.POST['next']:
+                    return redirect(request.POST['next'])
+                return redirect(urlresolvers.reverse('teams:team', args=[team.id]))
+
+            team.members.add(request.user)
+            team.save()
+
+        messages.success(request, 'You joined team ' + team.name + '!')
+        if 'next' in request.POST and '//' not in request.POST['next']:
+            return redirect(request.POST['next'])
         return redirect(urlresolvers.reverse('teams:team', args=[team.id]))
+    elif request.method == 'GET':
+        if team is None:
+            return HttpResponseNotFound()
 
     return render(request, 'teams/join.html', {
+        'error_message': error_message,
         'team': team
     })
 

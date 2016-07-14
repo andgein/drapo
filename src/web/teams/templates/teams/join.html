@@ -3,10 +3,18 @@
 {% block content %}
     <div class="page">
         <h1 class="page__header">Invitation</h1>
-        <p>You have been invited to team <strong>{{ team.name }}</strong>.</p>
-        <form method="POST">
-            {% csrf_token %}
-            <button class="btn btn-success btn-lg">Join team</button>
-        </form>
+
+        {% if error_message %}
+            <p class="mb30">{{ error_message }}</p>
+            <p>
+                <a href="javascript:history.back()" class="btn btn-primary btn-lg">&larr; Back</a>
+            </p>
+        {% elif team %}
+            <p>You have been invited to the team <strong>{{ team.name }}</strong>.</p>
+            <form method="POST">
+                {% csrf_token %}
+                <button class="btn btn-success btn-lg">Join team</button>
+            </form>
+        {% endif %}
     </div>
 {% endblock %}

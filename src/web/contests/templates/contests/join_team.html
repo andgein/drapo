@@ -9,10 +9,11 @@
         {% include 'contests/_contest_header.html' with contest=contest %}
 
         {% if user_teams %}
+            <h1 class="page__header">Register team for the contest</h1>
             <form method="POST" class="form form-horizontal">
                 {% csrf_token %}
                 {{ form|bootstrap_horizontal }}
-                <button class="btn btn-success btn-lg  col-sm-offset-2">Join</button>
+                <button class="btn btn-success btn-lg  col-sm-offset-2">Register team</button>
             </form>
         {% else %}
             <p class="text-success">
@@ -21,6 +22,7 @@
             </p>
             <form method="POST" action="{% url 'teams:join' %}" class="form form-horizontal">
                 {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.path }}">
                 {{ invite_hash_form|bootstrap_horizontal }}
                 <button class="btn btn-success btn-lg  col-sm-offset-2">Join</button>
             </form>

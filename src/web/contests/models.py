@@ -129,6 +129,12 @@ class Contest(polymorphic.models.PolymorphicModel):
     def show_menu_on_top(self):
         return self.is_started()
 
+    def is_team(self):
+        return self.participation_mode == ContestParticipationMode.Team
+
+    def is_individual(self):
+        return self.participation_mode == ContestParticipationMode.Individual
+
 
 class TaskBasedContest(Contest):
     tasks_grouping = models.CharField(

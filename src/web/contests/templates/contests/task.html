@@ -43,11 +43,15 @@
             {% endif %}
         {% elif not user.is_authenticated %}
             <div class="pt15 fw400">
-                <a href="{% url 'users:login' %}">Authorize</a> to send an answer.
+                <a href="{% url 'users:login' %}?next={{ request.path }}">Authorize</a> to send an answer.
             </div>
         {% elif not participant %}
             <div class="text-danger pt15 fw400">
-                <a href="" class="post-link" data-url="{% url 'contests:join' contest.id %}">Join</a> to the contest to solve tasks.
+                {% if contest.is_team %}
+                    <a href="{% url 'contests:join' contest.id %}">Join</a> to the contest to solve tasks.
+                {% else %}
+                    <a href="" class="post-link" data-url="{% url 'contests:join' contest.id %}">Join</a> to the contest to solve tasks.
+                {% endif %}
             </div>
         {% endif %}
 

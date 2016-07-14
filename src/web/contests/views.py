@@ -113,7 +113,6 @@ def contest(request, contest_id):
             return Http404()
 
     is_current_user_participating = request.user.is_authenticated() and contest.is_user_participating(request.user)
-    is_team_contest = contest.participation_mode == models.ContestParticipationMode.Team
 
     # Contest.get_user_team() returns None if contest isn't team-based or user is not participating
     current_user_team = contest.get_user_team(request.user)
@@ -127,7 +126,6 @@ def contest(request, contest_id):
         'contest': contest,
         'is_current_user_participating': is_current_user_participating,
         'current_user_participant': current_user_participant,
-        'is_team_contest': is_team_contest,
         'current_user_team': current_user_team,
         'participants': participants,
     })
@@ -356,7 +354,6 @@ def add_category(request, contest_id):
 @staff_required
 def attempts(request, contest_id):
     contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
-    is_team_contest = contest.participation_mode == models.ContestParticipationMode.Team
 
     attempts = contest.attempts.order_by('-created_at').select_related(
         'task', 'participant', 'participant__teamparticipant', 'participant__individualparticipant', 'author'
@@ -366,7 +363,6 @@ def attempts(request, contest_id):
         'current_contest': contest,
 
         'contest': contest,
-        'is_team_contest': is_team_contest,
         'attempts': attempts,
     })
 

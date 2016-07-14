@@ -7,7 +7,7 @@
         <div class="user-username">
             {{ profile_user.username }}
             {% if is_current_user %}
-                <span class="label label-info label-sm">It's you!</span>
+                <a href="{% url 'users:edit' %}" class="text-xs-small">Edit your profile</a>
             {% endif %}
         </div>
         <div class="user-name">{{ profile_user.get_full_name }}</div>

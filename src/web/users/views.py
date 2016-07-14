@@ -49,19 +49,20 @@ def register(request):
     if request.method == 'POST':
         form = forms.RegisterForm(request.POST)
         if form.is_valid():
-            with transaction.atomic():
-                username = form.cleaned_data['username']
-                email = form.cleaned_data['email']
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
 
+            confirmation = None
+
+            with transaction.atomic():
                 if models.User.objects.filter(username=username).exists():
                     form.add_error('username', 'This username is already taken')
                 elif models.User.objects.filter(email=email).exists():
                     form.add_error('email', 'User with this email already exists')
                 else:
-                    password = form.cleaned_data['password']
-                    first_name = form.cleaned_data['first_name']
-                    last_name = form.cleaned_data['last_name']
-
                     user = models.User.objects.create_user(
                         username=username,
                         email=email,
@@ -69,16 +70,16 @@ def register(request):
                         last_name=last_name,
                         password=password
                     )
-                    user.save()
 
                     confirmation = models.EmailConfirmation(user=user)
                     confirmation.save()
 
-                    confirmation.send(request)
+            if confirmation is not None:
+                confirmation.send(request)
 
-                    return render(request, 'message.html', {
-                        'message': 'We have sent you an email with confirmation link. Please follow it.'
-                    })
+            return render(request, 'message.html', {
+                'message': 'We have sent you an email with confirmation link. Please follow it.'
+            })
 
     else:
         form = forms.RegisterForm()
@@ -134,9 +135,14 @@ def edit(request):
 def change_password(request):
     form = forms.ChangePasswordForm(data=request.POST)
     if form.is_valid():
-        request.user.set_password(form.cleaned_data['password'])
-        messages.success(request, 'Your password has been changed')
-        return redirect(urlresolvers.reverse('users:edit'))
+        if not request.user.check_password(form.cleaned_data['old_password']):
+            form.add_error('old_password', 'Password isn\'t correct')
+        else:
+            request.user.set_password(form.cleaned_data['password'])
+            request.user.save()
+
+            messages.success(request, 'Your password has been changed')
+            return redirect(urlresolvers.reverse('users:edit'))
 
     user_form = forms.EditUserForm(request.user)
 

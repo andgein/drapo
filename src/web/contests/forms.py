@@ -10,7 +10,9 @@ class ChooseTeamForm(forms.Form):
     team = forms.TypedChoiceField(
         label='Select team',
         coerce=int,
-        widget=forms.Select()
+        widget=forms.Select(attrs={
+            'class': 'form-control-short'
+        })
     )
 
     def __init__(self, user, *args, **kwargs):

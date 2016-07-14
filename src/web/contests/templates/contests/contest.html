@@ -15,12 +15,12 @@
                 {% else %}
                     You are waiting for approving by organizers
                 {% endif %}
-                {% if is_team_contest %}
+                {% if contest.is_team %}
                     as a <a href="{{ current_user_team.get_absolute_url }}">{{ current_user_team.name }}</a>'s member
                 {% endif %}
             {% else %}
                 {% if contest.can_register_now %}
-                    {% if is_team_contest %}
+                    {% if contest.is_team %}
                         You can <a href="{% url 'contests:join' contest.id %}" class="btn btn-success">register your team</a>
                         or <a href="{% url 'contests:join' contest.id %}" class="btn btn-success">join some one</a>
                     {% else %}
@@ -42,7 +42,7 @@
         <hr />
 
         <div>
-            {% if is_team_contest %}
+            {% if contest.is_team %}
                 <h3>Registered teams</h3>
                 {% for participant in participants %}
                     {{ forloop.counter }}. <a href="{{ participant.team.get_absolute_url }}">{{ participant.team.name }}</a>
