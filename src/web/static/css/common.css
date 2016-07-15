@@ -167,7 +167,8 @@ h1.page__header {
 }
 
 /* Navbar */
-.dropdown-menu > li > a.text-danger {
+.dropdown-menu > li > a.text-danger,
+.navbar-default .navbar-nav .open .dropdown-menu>li>.text-danger {
     color: #a94442;
 }
 
