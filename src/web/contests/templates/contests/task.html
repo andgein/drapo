@@ -10,6 +10,20 @@
         <h1 class="page__header">
             {{ task.max_score }}.
             {{ statement.title }}
+
+            {% if participant_score %}
+                <div class="fs14 fw300 mt10">
+                    {% if participant_score == task.max_score %}
+                        <div class="label label-success">
+                            You already solved this task and got {{ task.max_score }} point{{ task.max_score|pluralize }}
+                        </div>
+                    {% else %}
+                        <div class="label label-primary">
+                            You have {{ participant_score }} of {{ task.max_score }} point{{ task.max_score|pluralize }} for this task
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
         </h1>
 
         {{ statement.statement|markdown }}

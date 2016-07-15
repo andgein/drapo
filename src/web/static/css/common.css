@@ -115,6 +115,14 @@ hr {
     font-weight: 400;
 }
 
+.fs12 {
+    font-size: 12pt;
+}
+
+.fs14 {
+    font-size: 14pt;
+}
+
 .form-control-short,
 .input-group .form-control-short,
 .input-group /* Dangerous! Be careful, it's redefining width for all input-groups, use only in pair with .form-control-short */ {

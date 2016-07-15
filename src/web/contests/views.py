@@ -312,6 +312,11 @@ def task(request, contest_id, task_id):
     # Files can be in statement or in task for this participant
     files = statement.files + list(task.files.filter(Q(participant__isnull=True) | Q(participant=participant)))
 
+    participant_score = max(task.attempts
+                            .filter(contest=contest_id, participant=participant, is_checked=True)
+                            .values_list('score', flat=True),
+                            default=None
+                            )
     return render(request, 'contests/task.html', {
         'current_contest': contest,
 
@@ -321,6 +326,7 @@ def task(request, contest_id, task_id):
         'files': files,
         'attempt_form': form,
         'participant': participant,
+        'participant_score': participant_score,
     })
 
 
