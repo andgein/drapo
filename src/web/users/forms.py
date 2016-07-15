@@ -95,10 +95,8 @@ class RegisterForm(FormWithRepeatedPassword):
     def __init__(self, *args, **kwargs):
         if 'field_order' in kwargs:
             del kwargs['field_order']
-        super().__init__(*args,
-                         **kwargs,
-                         field_order=['username', 'email', 'first_name', 'last_name', 'password', 'password_validation']
-                         )
+        super().__init__(*args, **kwargs, field_order=['username', 'email', 'first_name', 'last_name',
+                                                       'password', 'password_validation'])
 
 
 class EditUserForm(forms.Form):
@@ -153,7 +151,4 @@ class ChangePasswordForm(FormWithRepeatedPassword):
     def __init__(self, *args, **kwargs):
         if 'field_order' in kwargs:
             del kwargs['field_order']
-        super().__init__(*args,
-                         **kwargs,
-                         field_order=['old_password', 'password', 'password_repeat']
-                         )
+        super().__init__(*args, **kwargs, field_order=['old_password', 'password', 'password_repeat'])
