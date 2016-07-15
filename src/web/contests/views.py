@@ -120,10 +120,15 @@ def contest(request, contest_id):
 
     participants = contest.participants.filter(is_approved=True)
 
+    news = contest.news.order_by('-publish_time')
+    if not request.user.is_staff:
+        news = news.filter(is_published=True)
+
     return render(request, 'contests/contest.html', {
         'current_contest': contest,
 
         'contest': contest,
+        'news': news,
         'is_current_user_participating': is_current_user_participating,
         'current_user_participant': current_user_participant,
         'current_user_team': current_user_team,

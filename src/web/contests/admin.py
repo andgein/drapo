@@ -43,3 +43,11 @@ class ByCategoriesTasksOpeningPolicyAdmin(admin.ModelAdmin):
     list_filter = ('contest', )
 
 admin.site.register(models.ByCategoriesTasksOpeningPolicy, ByCategoriesTasksOpeningPolicyAdmin)
+
+
+class NewsAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'is_published', 'publish_time')
+    list_editable = ('title', 'is_published')
+    list_filter = ('is_published', )
+
+admin.site.register(models.News, NewsAdmin)

@@ -8,6 +8,7 @@ from django.utils import timezone
 import drapo.models
 import teams.models
 import users.models
+from drapo.models import ModelWithTimestamps
 
 
 class ContestRegistrationType(djchoices.DjangoChoices):
@@ -252,3 +253,20 @@ class ByCategoriesTasksOpeningPolicy(AbstractTasksOpeningPolicy):
     class Meta:
         verbose_name = 'Task opening policy: by categories'
         verbose_name_plural = 'Task opening policies: by categories'
+
+
+class News(ModelWithTimestamps):
+    contest = models.ForeignKey(Contest, related_name='news')
+
+    author = models.ForeignKey(users.models.User, related_name='+')
+
+    title = models.CharField(max_length=1000, help_text='Title')
+
+    text = models.TextField(help_text='Supports markdown')
+
+    is_published = models.BooleanField(default=False)
+
+    publish_time = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = 'News'

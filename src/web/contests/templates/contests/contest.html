@@ -43,29 +43,56 @@
             {% endif %}
         </div>
 
-        {{ contest.description|markdown|urlize }}
+        <div class="row">
+            <div class="col-sm-6">
+                {{ contest.description|markdown|urlize }}
 
-        <hr />
+                <div class="contest__news">
+                    {% for one_news in news %}
+                        <hr />
 
-        <div>
-            {% if contest.is_team %}
-                <h3>Registered teams</h3>
-                {% for participant in participants %}
-                    {{ forloop.counter }}. <a href="{{ participant.team.get_absolute_url }}">{{ participant.team.name }}</a>
-                {% empty %}
-                    No teams{% if contest.can_register_now %} a while, <a href="{% url 'contests:join' contest.id %}">be the first</a>!{% endif %}
-                {% endfor %}
-            {% else %}
-                <h3>Participants</h3>
-                {% for participant in participants %}
-                    <div>
-                        {{ forloop.counter }}. <a href="{{ participant.user.get_absolute_url }}">{{ participant.user.get_full_name }}</a>
-                        aka <strong>{{ participant.user.username }}</strong>
-                    </div>
-                {% empty %}
-                    No participants{% if contest.can_register_now %} a while, <a href="{% url 'contests:join' contest.id %}">be the first</a>! {% endif %}
-                {% endfor %}
-            {% endif %}
+                        <h3 class="fw300">
+                            <a href="">{{ one_news.title }}</a>
+                            <a href="" class="post-link btn btn-primary btn-xs btn-inline" data-url="">
+                                {{ one_news.is_published|yesno:'Hide,Publish' }}
+                            </a>
+                            <div class="text-xs-small fw300">{{ one_news.publish_time }}</div>
+                        </h3>
+
+                        <div class="contest__news__text ellipsis" style="max-height: 150px">
+                            {{ one_news.text|markdown|urlize|truncatechars_html:1000 }}
+                        </div>
+
+                    {% endfor %}
+                </div>
+
+            </div>
+
+            <div class="col-sm-6">
+                <div>
+                    {% if contest.is_team %}
+                        <h3>Registered teams</h3>
+                        {% for participant in participants %}
+                            <div>
+                                {{ forloop.counter }}. <a href="{{ participant.team.get_absolute_url }}">{{ participant.team.name }}</a>
+                            </div>
+                        {% empty %}
+                            No teams{% if contest.can_register_now %} a while, <a href="{% url 'contests:join' contest.id %}">be the first</a>!{% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <h3>Participants</h3>
+                        {% for participant in participants %}
+                            <div>
+                                {{ forloop.counter }}. <a href="{{ participant.user.get_absolute_url }}">{{ participant.user.get_full_name }}</a>
+                                aka <strong>{{ participant.user.username }}</strong>
+                            </div>
+                        {% empty %}
+                            No participants{% if contest.can_register_now %} a while, <a href="{% url 'contests:join' contest.id %}">be the first</a>! {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+
         </div>
     </div>
 {% endblock %}
