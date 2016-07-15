@@ -317,6 +317,7 @@ def task(request, contest_id, task_id):
                             .values_list('score', flat=True),
                             default=None
                             )
+
     return render(request, 'contests/task.html', {
         'current_contest': contest,
 
@@ -365,11 +366,24 @@ def attempts(request, contest_id):
         'task', 'participant', 'participant__teamparticipant', 'participant__individualparticipant', 'author'
     )
 
+    form = forms.AttemptsSearchForm(data=request.GET)
+    if form.is_valid():
+        pattern = form.cleaned_data['pattern']
+        if pattern != '':
+            attempts = attempts.filter(Q(task__name__icontains=pattern) |
+                                       Q(author__username__icontains=pattern) |
+                                       Q(author__first_name__icontains=pattern) |
+                                       Q(author__last_name__icontains=pattern) |
+                                       Q(participant__teamparticipant__team__name__icontains=pattern) |
+                                       Q(answer__icontains=pattern))
+
     return render(request, 'contests/attempts.html', {
         'current_contest': contest,
 
         'contest': contest,
+        'pattern': pattern,
         'attempts': attempts,
+        'form': form,
     })
 
 

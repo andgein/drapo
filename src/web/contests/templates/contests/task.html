@@ -46,7 +46,7 @@
                 {% csrf_token %}
                 {{ attempt_form|bootstrap_inline }}
                 <div class="form-group">
-                    <button class="ml15 btn btn-success btn-lg">Send</button>
+                    <button class="ml15 btn btn-primary btn-lg btn-inline">Send</button>
                 </div>
             </form>
         {% elif not contest.is_running %}

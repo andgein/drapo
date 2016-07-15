@@ -288,3 +288,15 @@ class CreateRegExpCheckerForm(AbstractCheckerForm):
             flag_dotall=self.cleaned_data['flag_dotall'],
             flag_verbose=self.cleaned_data['flag_verbose'],
         )
+
+
+class AttemptsSearchForm(forms.Form):
+    pattern = forms.CharField(
+        label='Search',
+        max_length=400,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'By answer, author, team name or task title',
+            'class': 'form-control-short form-control-small'
+        })
+    )

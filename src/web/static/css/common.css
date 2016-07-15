@@ -123,10 +123,27 @@ hr {
     font-size: 14pt;
 }
 
+.ml5 {
+    margin-left: 5px;
+}
+
+.ml10 {
+    margin-left: 10px;
+}
+
 .form-control-short,
 .input-group .form-control-short,
+.form-inline .form-control-short,
 .input-group /* Dangerous! Be careful, it's redefining width for all input-groups, use only in pair with .form-control-short */ {
     width: 350px;
+}
+
+.btn-inline {
+    border-radius: 4px;
+}
+
+.form-control-small {
+    height: 29px;
 }
 
 form label {

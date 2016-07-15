@@ -29,18 +29,24 @@
                         {% for category in categories %}
                             {% for task in category.tasks.all %}
                                 <td>
-                                    <small title="{{ category.name }} {{ task.max_score }}: {{ task.name }}">
-                                        {{ task.max_score }}
-                                    </small>
+                                    <a href="{% url 'contests:task' contest.id task.id %}">
+                                        <small title="{{ category.name }} {{ task.max_score }}: {{ task.name }}">
+                                            <strong>{{ task.max_score }}</strong>
+                                        </small>
+                                    </a>
                                 </td>
                             {% endfor %}
                         {% endfor %}
                     {% else %}
                         {% for task in tasks %}
                             <td>
-                                <small title="{{ task.max_score }}: {{ task.name }}">
-                                    {{ task.max_score }}
-                                </small>
+                                <a href="{% url 'contests:task' contest.id task.id %}">
+                                    <small title="{{ task.max_score }}: {{ task.name }}">
+                                        <strong>
+                                            {{ task.max_score }}
+                                        </strong>
+                                    </small>
+                                </a>
                             </td>
                         {% endfor %}
                     {% endif %}

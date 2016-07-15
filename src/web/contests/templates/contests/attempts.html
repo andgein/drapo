@@ -1,10 +1,17 @@
 {% extends '_layout.html' %}
 
+{% load bootstrap %}
+
 {% block title %}Attempts in {{ contest.name }}{% endblock %}
 
 {% block content %}
     <div class="page contest-page">
         {% include 'contests/_contest_header.html' with contest=contest %}
+
+        <form action="" method="GET" class="form-inline">
+            {{ form|bootstrap_inline }}
+            <button class="btn btn-success btn-inline ml10">Search</button>
+        </form>
 
         <div class="attempts">
             {% if attempts %}
@@ -15,15 +22,18 @@
                     <div class="col-xs-2"><strong>Status</strong></div>
                 </div>
             {% else %}
-                <hr />
-                <div>
-                    No attempts a while... Wait for answers by participants
+                <div class="mt15">
+                    {% if pattern %}
+                        No attempts found by this pattern. <a href="{% url 'contests:attempts' contest.id %}">Clear filter?</a>
+                    {% else %}
+                        No attempts a while... Wait for answers by participants
+                    {% endif %}
                 </div>
             {% endif %}
             {% for attempt in attempts %}
                 <div class="attempt row">
                     <div class="col-xs-2">
-                        {{ forloop.revcounter }}.
+                        <span title="Attempt id: {{ attempt.id }}">{{ forloop.revcounter }}</span>.
 
                         <a href="{{ attempt.participant.get_absolute_url }}">{{ attempt.participant.name }}</a>
                         {% if contest.is_team %}
