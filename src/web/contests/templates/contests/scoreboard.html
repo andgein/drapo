@@ -6,10 +6,23 @@
 
 {% block content %}
     <div class="page contest-page">
+        {% include 'contests/_contest_header.html' with contest=contest %}
+
         <h1 class="page__header">Scoreboard</h1>
 
         <table class="table table-stripped table-responsive">
             <thead>
+                {% if with_categories %}
+                    <tr>
+                        <td></td>
+                        {% for category in categories %}
+                            {% if category.tasks.count > 0 %}
+                                <td colspan="{{ category.tasks.count }}" class="ellipsis" title="{{ category.name }}"><strong>{{ category.name }}</strong></td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endif %}
+
                 <tr>
                     <td><strong>Participant</strong></td>
                     {% if with_categories %}
@@ -23,6 +36,13 @@
                             {% endfor %}
                         {% endfor %}
                     {% else %}
+                        {% for task in tasks %}
+                            <td>
+                                <small title="{{ task.max_score }}: {{ task.name }}">
+                                    {{ task.max_score }}
+                                </small>
+                            </td>
+                        {% endfor %}
                     {% endif %}
                     <td><strong>Score</strong></td>
                 </tr>
