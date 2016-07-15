@@ -18,7 +18,7 @@
             <div class="task__files mt30 mb20">
                 {% for file in files %}
                     <div class="task__file ib">
-                        <a href="{% url 'contests:task_file' contest.id file.id %}" class="btn btn-primary btn-lg">
+                        <a href="{% url 'contests:task_file' contest.id file.id %}" class="btn btn-primary btn-sm">
                             <span class="glyphicon glyphicon-download"></span>
                             {{ file.name|default:'File' }}
                         </a>
