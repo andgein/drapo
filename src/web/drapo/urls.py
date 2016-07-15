@@ -23,7 +23,6 @@ urlpatterns = [
     url(r'^contests/', include('contests.urls', namespace='contests')),
     url(r'^users/', include('users.urls', namespace='users')),
     url(r'^teams/', include('teams.urls', namespace='teams')),
-    url(r'^about/', lambda r: None, name='about'),
 
     url(r'^admin/', admin.site.urls),
     url(r'^hijack/', include('hijack.urls')),
