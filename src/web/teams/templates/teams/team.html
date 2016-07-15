@@ -44,8 +44,15 @@
                 {% if member == user and team.captain != user %}
                     <form action="{% url 'teams:leave' team.id %}" method="POST" class="ib visible-on-parent-hover">
                         {% csrf_token %}
-                        <button class="btn btn-danger btn-xs">Leave team</button>
+                        <button class="btn btn-danger btn-xs btn-inline">Leave team</button>
                     </form>
+                {% elif team.captain == user or user.is_staff %}
+                    {% if member != team.captain %}
+                        <form action="{% url 'teams:remove_member' team.id member.id %}" method="POST" class="ib visible-on-parent-hover">
+                            {% csrf_token %}
+                            <button class="btn btn-danger btn-xs btn-inline">Remove member</button>
+                        </form>
+                    {% endif %}
                 {% endif %}
             </div>
         {% endfor %}

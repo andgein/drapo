@@ -10,4 +10,5 @@ urlpatterns = [
     url(r'^(?P<team_id>\d+)/$', views.team, name='team'),
     url(r'^(?P<team_id>\d+)/edit/$', views.edit, name='edit'),
     url(r'^(?P<team_id>\d+)/leave/$', views.leave, name='leave'),
+    url(r'^(?P<team_id>\d+)/members/(?P<user_id>\d+)/remove$', views.remove_member, name='remove_member'),
 ]

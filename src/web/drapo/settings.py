@@ -154,6 +154,8 @@ HIJACK_REGISTER_ADMIN = False
 HIJACK_ALLOW_GET_REQUESTS = True
 
 
+DRAPO_TEAM_SIZE_LIMIT = 100
 DRAPO_EMAIL_SENDER = 'admin@summer-ctf.com'
 DRAPO_UPLOAD_DIR = os.path.join(BASE_DIR, '..', '..', 'upload')
 DRAPO_TASKS_FILES_DIR = os.path.join(DRAPO_UPLOAD_DIR, 'tasks_files')
+
