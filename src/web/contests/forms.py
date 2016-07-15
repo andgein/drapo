@@ -26,7 +26,10 @@ class JoinViaInviteHashForm(forms.Form):
     invite_hash = forms.CharField(
         label='Invite hash',
         max_length=32,
-        widget=forms.TextInput()
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Invite hash',
+            'class': 'form-control-short form-control-small'
+        })
     )
 
 

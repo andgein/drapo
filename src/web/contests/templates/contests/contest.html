@@ -20,20 +20,25 @@
                 {% endif %}
             {% else %}
                 {% if contest.can_register_now %}
-                    {% if contest.is_team %}
-                        You can <a href="{% url 'contests:join' contest.id %}" class="btn btn-success">register your team</a>
-                        or <a href="{% url 'contests:join' contest.id %}" class="btn btn-success">join some one</a>
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'users:login' %}?next={{ request.path }}">Login</a>
+                        or
+                        <a href="{% url 'users:register' %}?next={{ request.path }}">register</a>
+                        to join the contest
+                    {% elif contest.is_team %}
+                        You can <a href="{% url 'contests:join' contest.id %}" class="btn btn-primary btn-inline">register your team</a>
+                        or <a href="{% url 'contests:join' contest.id %}" class="btn btn-primary btn-inline">join some one</a>
                     {% else %}
                         <a href=""
                            class="post-link  btn btn-success btn-lg"
                            data-url="{% url 'contests:join' contest.id %}">
-                            Join the contest
+                            Register to the contest
                         </a>
                     {% endif %}
                 {% elif contest.can_register_in_future %}
                     Registration will open {{ contest.registration_start_time }}
                 {% else %}
-                    Sorry, registration is closed already.
+                    Sorry, registration to the contest is closed already.
                 {% endif %}
             {% endif %}
         </div>

@@ -57,7 +57,10 @@
             {% endif %}
         {% elif not user.is_authenticated %}
             <div class="pt15 fw400">
-                <a href="{% url 'users:login' %}?next={{ request.path }}">Authorize</a> to send an answer.
+                <a href="{% url 'users:login' %}?next={{ request.path }}">Login</a>
+                or
+                <a href="{% url 'users:register' %}?next={{ request.path }}">register</a>
+                to send an answer.
             </div>
         {% elif not participant %}
             {% if contest.can_register_now %}

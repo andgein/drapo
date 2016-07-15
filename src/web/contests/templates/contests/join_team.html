@@ -13,18 +13,18 @@
             <form method="POST" class="form form-horizontal">
                 {% csrf_token %}
                 {{ form|bootstrap_horizontal }}
-                <button class="btn btn-success btn-lg  col-sm-offset-2">Register team</button>
+                <button class="btn btn-primary btn-lg  col-sm-offset-2">Register team</button>
             </form>
         {% else %}
-            <p class="text-success">
+            <p>
                 This contest is team-based. <br />
                 For registration you can create <a href="{% url 'teams:create' %}?next={{ request.path }}">your own team</a> or join other team if you have invite hash:
             </p>
-            <form method="POST" action="{% url 'teams:join' %}" class="form form-horizontal">
+            <form method="POST" action="{% url 'teams:join' %}" class="form form-inline">
                 {% csrf_token %}
                 <input type="hidden" name="next" value="{{ request.path }}">
-                {{ invite_hash_form|bootstrap_horizontal }}
-                <button class="btn btn-success btn-lg  col-sm-offset-2">Join</button>
+                {{ invite_hash_form|bootstrap_inline }}
+                <button class="btn btn-primary btn-inline">Join to the team</button>
             </form>
         {% endif %}
     </div>
