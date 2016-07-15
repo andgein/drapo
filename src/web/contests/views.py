@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.core import urlresolvers
 from django.db import transaction
 from django.db.models.query_utils import Q
-from django.http.response import Http404, HttpResponseNotFound
+from django.http.response import Http404, HttpResponseNotFound, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 
@@ -611,6 +611,9 @@ def task_file(request, contest_id, file_id):
     file = get_object_or_404(tasks_models.TaskFile, pk=file_id)
     if not contest.has_task(file.task):
         return HttpResponseNotFound()
+
+    if file.participant is not None and file.participant.id != request.user.id:
+        return HttpResponseForbidden()
 
     file_path = file.get_path_abspath()
     return respond_as_attachment(request, file_path, file.name, file.content_type)
