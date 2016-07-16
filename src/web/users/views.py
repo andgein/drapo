@@ -93,6 +93,9 @@ def register(request):
 def logout(request):
     if request.user.is_authenticated():
         auth.logout(request)
+
+    if 'next' in request.POST and '//' not in request.POST['next']:
+        return redirect(request.POST['next'])
     return redirect('home')
 
 

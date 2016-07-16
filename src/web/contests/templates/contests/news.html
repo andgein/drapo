@@ -1,0 +1,18 @@
+{% extends '_layout.html' %}
+
+{% load markdown_deux_tags %}
+
+{% block title %}{{ news.title }} &bull; {{ contest.name }}{% endblock %}
+
+{% block content %}
+    <div class="page contest-page">
+        {% include 'contests/_contest_header.html' with contest=contest %}
+
+        <h1 class="page__header fw300">
+            {{ news.title }}
+            <div class="text-xs-small fw300 text-muted">Published <strong>{{ news.publish_time }}</strong> by <strong>{{ news.author.username }}</strong></div>
+        </h1>
+
+        {{ news.text|markdown|urlize }}
+    </div>
+{% endblock %}

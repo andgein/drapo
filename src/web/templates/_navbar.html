@@ -54,4 +54,5 @@
 
 <form id="logout-form" method="POST" action="{% url 'users:logout' %}">
     {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.path }}">
 </form>

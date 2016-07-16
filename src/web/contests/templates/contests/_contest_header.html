@@ -1,23 +1,67 @@
-<h1 class="contest__title">
-    {{ contest.name }}
-    {% if user.is_staff %}
-        <small>
-            <a href="{% url 'contests:edit' contest.id %}" title="Edit contest"><span class="glyphicon glyphicon-edit"></span></a>
-        </small>
-    {% endif %}
+{% load humanize %}
+{% load contest %}
 
-    {% if contest.is_finished %}
-        <span class="label label-info label-sm contest__status">Finished</span>
-    {% endif %}
-    {% if contest.is_running %}
-        <span class="label label-primary label-sm contest__status">Running</span>
-    {% endif %}
-</h1>
+<div class="contest-header row">
+    <div class="col-xs-12 col-sm-6">
+        <h1 class="contest__title fw300">
+            {{ contest.name }}
+            {% if user.is_staff %}
+                <small>
+                    <a href="{% url 'contests:edit' contest.id %}" title="Edit contest"><span class="glyphicon glyphicon-edit"></span></a>
+                </small>
+            {% endif %}
 
-<div>
-    <p class="text-small">
-        {{ contest.start_time }}–{{ contest.finish_time }}
-    </p>
+            {% if contest.is_finished %}
+                <span class="contest__status label label-info label-md ml15">Finished</span>
+            {% endif %}
+            {% if contest.is_running %}
+                <span class="contest__status label label-primary label-md ml15">Running</span>
+            {% endif %}
+        </h1>
+
+        <div>
+            <p class="text-small">
+                {{ contest.start_time }}–{{ contest.finish_time }}
+            </p>
+        </div>
+    </div>
+
+    <div class="col-xs-12 col-sm-4 col-sm-offset-2 text-small">
+
+        {% if contest|is_user_participating:user %}
+            {% with participant=contest|get_participant_for:user %}
+                {% if participant.is_approved %}
+                    You are registered to the contest
+                {% else %}
+                    You are waiting for approving by organizers
+                {% endif %}
+
+                {% if contest.is_team %}
+                    <nobr>as a <a href="{{ participant.get_absolute_url }}">{{ participant.name }}</a></nobr>'s member
+                {% endif %}
+            {% endwith %}
+        {% else %}
+            {% if contest.can_register_now %}
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'users:login' %}?next={{ request.path }}">Login</a>
+                    or
+                    <a href="{% url 'users:register' %}?next={{ request.path }}">register</a>
+                    to join the contest
+                {% elif contest.is_team %}
+                    You can <a href="{% url 'contests:join' contest.id %}">register your team</a>
+                    or <a href="{% url 'contests:join' contest.id %}">join some one</a>
+                {% else %}
+                    <a href=""
+                       class="post-link  btn btn-success btn-lg"
+                       data-url="{% url 'contests:join' contest.id %}">
+                        Register to the contest
+                    </a>
+                {% endif %}
+            {% elif contest.can_register_in_future %}
+                Registration will open <span title="{{ contest.registration_start_time }}">{{ contest.registration_start_time|naturaltime }}</span>
+            {% else %}
+                Sorry, registration to the contest is closed already.
+            {% endif %}
+        {% endif %}
+    </div>
 </div>
-
-<hr />

@@ -1,6 +1,7 @@
 {% extends '_layout.html' %}
 
 {% load markdown_deux_tags %}
+{% load humanize %}
 
 {% block title %}{{ contest.name }}{% endblock %}
 
@@ -8,61 +9,25 @@
     <div class="page contest-page">
         {% include 'contests/_contest_header.html' with contest=contest %}
 
-        <div>
-            {% if is_current_user_participating %}
-                {% if current_user_participant.is_approved %}
-                    You are registered to the contest
-                {% else %}
-                    You are waiting for approving by organizers
-                {% endif %}
-                {% if contest.is_team %}
-                    as a <a href="{{ current_user_team.get_absolute_url }}">{{ current_user_team.name }}</a>'s member
-                {% endif %}
-            {% else %}
-                {% if contest.can_register_now %}
-                    {% if not user.is_authenticated %}
-                        <a href="{% url 'users:login' %}?next={{ request.path }}">Login</a>
-                        or
-                        <a href="{% url 'users:register' %}?next={{ request.path }}">register</a>
-                        to join the contest
-                    {% elif contest.is_team %}
-                        You can <a href="{% url 'contests:join' contest.id %}" class="btn btn-primary btn-inline">register your team</a>
-                        or <a href="{% url 'contests:join' contest.id %}" class="btn btn-primary btn-inline">join some one</a>
-                    {% else %}
-                        <a href=""
-                           class="post-link  btn btn-success btn-lg"
-                           data-url="{% url 'contests:join' contest.id %}">
-                            Register to the contest
-                        </a>
-                    {% endif %}
-                {% elif contest.can_register_in_future %}
-                    Registration will open {{ contest.registration_start_time }}
-                {% else %}
-                    Sorry, registration to the contest is closed already.
-                {% endif %}
-            {% endif %}
-        </div>
-
         <div class="row">
             <div class="col-sm-6">
                 {{ contest.description|markdown|urlize }}
 
-                <div class="contest__news">
+                <div class="contest__news-list">
                     {% for one_news in news %}
-                        <hr />
+                        <div class="contest__news">
+                            <h3 class="fw300">
+                                <a href="{% url 'contests:news' contest.id one_news.id %}">{{ one_news.title }}</a>
+                                <a href="" class="post-link btn btn-primary btn-xs btn-inline" data-url="">
+                                    {{ one_news.is_published|yesno:'Hide,Publish' }}
+                                </a>
+                                <div class="text-xs-small fw300" title="{{ one_news.publish_time }}">{{ one_news.publish_time|naturaltime }}</div>
+                            </h3>
 
-                        <h3 class="fw300">
-                            <a href="">{{ one_news.title }}</a>
-                            <a href="" class="post-link btn btn-primary btn-xs btn-inline" data-url="">
-                                {{ one_news.is_published|yesno:'Hide,Publish' }}
-                            </a>
-                            <div class="text-xs-small fw300">{{ one_news.publish_time }}</div>
-                        </h3>
-
-                        <div class="contest__news__text ellipsis" style="max-height: 150px">
-                            {{ one_news.text|markdown|urlize|truncatechars_html:1000 }}
+                            <div class="contest__news__text ellipsis" style="max-height: 150px">
+                                {{ one_news.text|markdown|urlize|truncatechars_html:1000 }}
+                            </div>
                         </div>
-
                     {% endfor %}
                 </div>
 

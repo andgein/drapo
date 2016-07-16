@@ -112,12 +112,6 @@ def contest(request, contest_id):
         if not has_access:
             return Http404()
 
-    is_current_user_participating = request.user.is_authenticated() and contest.is_user_participating(request.user)
-
-    # Contest.get_user_team() returns None if contest isn't team-based or user is not participating
-    current_user_team = contest.get_user_team(request.user)
-    current_user_participant = contest.get_participant_for_user(request.user)
-
     participants = contest.participants.filter(is_approved=True)
 
     news = contest.news.order_by('-publish_time')
@@ -129,9 +123,6 @@ def contest(request, contest_id):
 
         'contest': contest,
         'news': news,
-        'is_current_user_participating': is_current_user_participating,
-        'current_user_participant': current_user_participant,
-        'current_user_team': current_user_team,
         'participants': participants,
     })
 
@@ -658,3 +649,24 @@ def delete_task(request, contest_id, task_id):
     return redirect(urlresolvers.reverse('contests:tasks', args=[contest.id]))
 
 
+def news(request, contest_id, news_id):
+    contest = get_object_or_404(models.Contest, pk=contest_id)
+    news = get_object_or_404(models.News, pk=news_id)
+
+    if news.contest_id != contest.id:
+        return HttpResponseNotFound()
+
+    # Only staff can see unpublished news
+    if not news.is_published and not request.user.is_staff:
+        return HttpResponseNotFound()
+
+    return render(request, 'contests/news.html', {
+        'current_contest': contest,
+
+        'contest': contest,
+        'news': news
+    })
+
+
+def add_news(request, contest_id):
+    contest = get_object_or_404(models.Contest, pk=contest_id)

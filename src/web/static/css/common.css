@@ -48,6 +48,11 @@ hr {
     height: 1px;
 }
 
+table thead strong,
+table thead th {
+    font-weight: 500;
+}
+
 .one-line {
     white-space: nowrap;
 }
@@ -63,6 +68,10 @@ hr {
 
 .label-sm {
     font-size: 12px;
+}
+
+.label-primary {
+    /* background-color: #62627A; */
 }
 
 .modal-body {
@@ -189,12 +198,41 @@ form label {
 h1.page__header {
     margin-top: 0;
     margin-bottom: 30px;
+    font-weight: 300;
 }
 
 /* Navbar */
 .dropdown-menu > li > a.text-danger,
 .navbar-default .navbar-nav .open .dropdown-menu>li>.text-danger {
     color: #a94442;
+}
+
+@media (min-width: 768px) {
+    .dropdown .dropdown-menu {
+        display: none;
+    }
+}
+
+/* Contest header */
+.contest-header {
+    color: white;
+    background-color: rgb(143, 218, 209);
+    margin: -30px -30px 0;
+    padding: 20px 20px 15px 15px;
+}
+
+.contest-header .contest__title {
+    color: white;
+}
+
+.contest-header a:not(.btn) {
+    color: white;
+    text-decoration: underline;
+}
+
+.contest-header a:not(.btn):hover {
+    color: #4c2c56;
+    transition-duration: 0.1s;
 }
 
 /* Contests page */
@@ -222,6 +260,14 @@ h1.page__header {
 .contest-page .contest__status {
     vertical-align: middle;
     font-weight: normal;
+    background-color: white;
+    color: #62627A;
+}
+
+.contest__news {
+    border-top: 1px solid #ccc;
+    padding: 0;
+    margin-top: 30px;
 }
 
 /* Profile page */
@@ -244,7 +290,12 @@ h1.page__header {
 }
 
 .category .category-info {
-    background-color: #d9edf7;
+    background-color: #339999;
+    color: white;
+}
+
+.category .category-info * {
+    color: white;
 }
 
 .category .add-category {
