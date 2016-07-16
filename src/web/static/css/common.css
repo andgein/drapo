@@ -201,6 +201,10 @@ h1.page__header {
     font-weight: 300;
 }
 
+.contest-header + .page__header {
+    margin-top: 30px;
+}
+
 /* Navbar */
 .dropdown-menu > li > a.text-danger,
 .navbar-default .navbar-nav .open .dropdown-menu>li>.text-danger {

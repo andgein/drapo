@@ -8,6 +8,8 @@
     <div class="page contest-page">
         {% include 'contests/_contest_header.html' with contest=contest %}
 
+        <h1 class="page__header">Participants</h1>
+
         <div class="participants">
             {% if participants %}
                 <form method="POST" action="{% url 'contests:add_participant' contest.id %}" class="form form-inline mt10">
@@ -20,7 +22,7 @@
                     <div class="col-xs-3 col-lg-2"><strong>Participant</strong></div>
                     <div class="col-xs-3 col-sm-2"><strong>Approved?</strong></div>
                     <div class="col-xs-3 col-lg-2"><strong>Disqualified?</strong></div>
-                    <div class="col-xs-3 col-lg-2"><strong>Visible in scoreboard?</strong></div>
+                    <div class="col-xs-3 col-lg-3"><strong>Visible in scoreboard?</strong></div>
                 </div>
             {% else %}
                 <hr />
@@ -80,7 +82,7 @@
                             </a>
                         {% endif %}
                     </div>
-                    <div class="col-xs-3 col-lg-2">
+                    <div class="col-xs-3 col-lg-3">
                         {% if participant.is_visible_in_scoreboard %}
                             <span class="text-success text-small">Visible</span>
                             <a href="" class="post-link"
