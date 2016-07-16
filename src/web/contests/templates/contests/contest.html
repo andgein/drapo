@@ -18,9 +18,6 @@
                         <div class="contest__news">
                             <h3 class="fw300">
                                 <a href="{% url 'contests:news' contest.id one_news.id %}">{{ one_news.title }}</a>
-                                <a href="" class="post-link btn btn-primary btn-xs btn-inline" data-url="">
-                                    {{ one_news.is_published|yesno:'Hide,Publish' }}
-                                </a>
                                 <div class="text-xs-small fw300" title="{{ one_news.publish_time }}">{{ one_news.publish_time|naturaltime }}</div>
                             </h3>
 
@@ -29,6 +26,12 @@
                             </div>
                         </div>
                     {% endfor %}
+
+                    {% if user.is_staff %}
+                        <a href="{% url 'contests:add_news' contest.id %}" class="contest__add-news">
+                            + Add news
+                        </a>
+                    {% endif %}
                 </div>
 
             </div>

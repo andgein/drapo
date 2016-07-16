@@ -21,8 +21,9 @@ urlpatterns = [
     url(r'^(?P<contest_id>\d+)/scoreboard/$', views.scoreboard, name='scoreboard'),
     url(r'^(?P<contest_id>\d+)/attempts/$', views.attempts, name='attempts'),
 
-    url(r'^(?P<contest_id>\d+)/news/(?P<news_id>\d+)/$', views.news, name='news'),
     url(r'^(?P<contest_id>\d+)/news/add/$', views.add_news, name='add_news'),
+    url(r'^(?P<contest_id>\d+)/news/(?P<news_id>\d+)/$', views.news, name='news'),
+    # url(r'^(?P<contest_id>\d+)/news/(?P<news_id>\d+)/edit/$', views.edit_news, name='edit_news'),
 
     url(r'^(?P<contest_id>\d+)/participants/$', views.participants, name='participants'),
     url(r'^(?P<contest_id>\d+)/participants/add/$', views.add_participant, name='add_participant'),

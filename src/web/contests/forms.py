@@ -303,3 +303,34 @@ class AttemptsSearchForm(forms.Form):
             'class': 'form-control-short form-control-small'
         })
     )
+
+
+class NewsForm(forms.Form):
+    title = forms.CharField(
+        label='Title',
+        max_length=1000,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control-short'
+        })
+    )
+
+    text = forms.CharField(
+        label='Text',
+        help_text='Supports markdown',
+        widget=forms.Textarea()
+    )
+
+    is_published = forms.BooleanField(
+        label='Is published',
+        required=False,
+    )
+
+    publish_time = forms.DateTimeField(
+        label='Publish time',
+        widget=DateTimePicker(
+            options={'format': 'YYYY-MM-DD HH:mm'},
+            attrs={
+                'class': 'form-control-short'
+            }
+        )
+    )

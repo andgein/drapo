@@ -270,3 +270,6 @@ class News(ModelWithTimestamps):
 
     class Meta:
         verbose_name_plural = 'News'
+
+    def get_absolute_url(self):
+        return urlresolvers.reverse('contests:news', args=[self.contest_id, self.id])

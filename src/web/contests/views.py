@@ -2,8 +2,8 @@ import itertools
 import operator
 import re
 import collections
+from datetime import datetime
 
-from django.conf import settings
 from django.contrib import messages
 from django.core import urlresolvers
 from django.db import transaction
@@ -668,5 +668,25 @@ def news(request, contest_id, news_id):
     })
 
 
+@staff_required
 def add_news(request, contest_id):
     contest = get_object_or_404(models.Contest, pk=contest_id)
+
+    if request.method == 'POST':
+        form = forms.NewsForm(data=request.POST)
+        if form.is_valid():
+            news = models.News(author=request.user, contest=contest, **form.cleaned_data)
+            news.save()
+
+            messages.success(request, 'News added')
+
+            return redirect(news)
+    else:
+        form = forms.NewsForm(initial={'publish_time': datetime.now})
+
+    return render(request, 'contests/add_news.html', {
+        'current_contest': contest,
+
+        'contest': contest,
+        'form': form,
+    })

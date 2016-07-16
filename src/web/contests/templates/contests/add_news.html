@@ -1,0 +1,21 @@
+{% extends '_layout.html' %}
+
+{% load bootstrap %}
+
+{% block title %}Add news for {{ contest.name }}{% endblock %}
+
+{% block content %}
+
+    <div class="page">
+        {% include 'contests/_contest_header.html' with contest=contest %}
+
+        <h1 class="page__header">Add news</h1>
+
+        <form action="" method="POST" class="form-horizontal">
+            {% csrf_token %}
+            {{ form|bootstrap_horizontal }}
+            <button class="btn btn-success btn-lg  col-xs-offset-2">Add news</button>
+        </form>
+    </div>
+
+{% endblock %}
