@@ -690,3 +690,32 @@ def add_news(request, contest_id):
         'contest': contest,
         'form': form,
     })
+
+@staff_required
+def edit_news(request, contest_id, news_id):
+    contest = get_object_or_404(models.Contest, pk=contest_id)
+    news = get_object_or_404(models.News, pk=news_id)
+
+    if contest.id != news.contest_id:
+        return HttpResponseNotFound()
+
+    if request.method == 'POST':
+        form = forms.NewsForm(data=request.POST)
+        if form.is_valid():
+            new_news = models.News(author=news.author, contest=contest, **form.cleaned_data)
+            new_news.id = news.id
+            new_news.save()
+
+            messages.success(request, 'News saved')
+
+            return redirect(new_news)
+    else:
+        form = forms.NewsForm(initial=news.__dict__)
+
+    return render(request, 'contests/edit_news.html', {
+        'current_contest': contest,
+
+        'contest': contest,
+        'news': news,
+        'form': form,
+    })

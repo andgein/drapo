@@ -15,7 +15,7 @@
                 <form method="POST" action="{% url 'contests:add_participant' contest.id %}" class="form form-inline mt10">
                     {% csrf_token %}
                     {{ manual_register_participant_form|bootstrap_inline }}
-                    <button class="btn btn-success">Add participant</button>
+                    <button class="btn btn-success btn-inline">Add participant</button>
                 </form>
 
                 <div class="row mb10 mt15">
