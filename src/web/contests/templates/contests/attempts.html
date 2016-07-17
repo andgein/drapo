@@ -21,7 +21,7 @@
                     <div class="col-xs-2 pl40"><strong>Participant</strong></div>
                     <div class="col-sm-3 col-xs-4"><strong>Task</strong></div>
                     <div class="col-sm-4 col-xs-5"><strong>Answer</strong></div>
-                    <div class="col-xs-2"><strong>Status</strong></div>
+                    <div class="col-sm-3 col-xs-2"><strong>Status</strong></div>
                 </div>
             {% else %}
                 <div class="mt15">
@@ -51,24 +51,32 @@
                     <div class="col-sm-4 col-xs-5" title="{{ attempt.created_at }}">
                         {{ attempt.answer|truncatechars:100 }}
                     </div>
-                    <div class="col-xs-2 text-small">
-                        {% if attempt.is_checked %}
-                            {% if attempt.is_correct %}
-                                <div class="text-success">
-                                    <span class="glyphicon glyphicon-ok-sign"></span>
-                                    Correct
-                                    ({{ attempt.score }}/{{ attempt.task.max_score }})
-                                </div>
+                    <div class="col-sm-3 col-xs-2 text-small  attempt-status">
+                        <a href="{% url 'contests:attempt' contest.id attempt.id %}" title="See details and edit">
+                            {% if attempt.is_checked %}
+                                {% if attempt.is_correct %}
+                                    <div class="text-success">
+                                        <span class="glyphicon glyphicon-ok-sign"></span>
+                                        <span class="attempt-status__text">
+                                            Correct
+                                            ({{ attempt.score }}/{{ attempt.task.max_score }})
+                                        </span>
+                                    </div>
+                                {% else %}
+                                    <div class="text-danger">
+                                        <span class="glyphicon glyphicon-minus-sign"></span>
+                                        <span class="attempt-status__text">
+                                            Wrong
+                                            ({{ attempt.score }}/{{ attempt.task.max_score }})
+                                        </span>
+                                    </div>
+                                {% endif %}
                             {% else %}
-                                <div class="text-danger">
-                                    <span class="glyphicon glyphicon-minus-sign"></span>
-                                    Wrong
-                                    ({{ attempt.score }}/{{ attempt.task.max_score }})
+                                <div class="text-muted">
+                                    <span class="attempt-status__text">Not checked</span>
                                 </div>
                             {% endif %}
-                        {% else %}
-                            <div class="text-muted">Not checked</div>
-                        {% endif %}
+                        </a>
                     </div>
                 </div>
             {% endfor %}

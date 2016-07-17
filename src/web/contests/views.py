@@ -396,6 +396,43 @@ def attempts(request, contest_id):
 
 
 @staff_required
+def attempt(request, contest_id, attempt_id):
+    contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
+    attempt = get_object_or_404(tasks_models.Attempt, pk=attempt_id)
+
+    if attempt.contest_id != contest.id:
+        return HttpResponseNotFound()
+
+    if request.method == 'POST':
+        form = tasks_forms.EditAttemptForm(attempt, data=request.POST)
+        if form.is_valid():
+            new_attempt = tasks_models.Attempt(
+                contest=contest,
+                task=attempt.task,
+                author=attempt.author,
+                participant=attempt.participant,
+                created_at=attempt.created_at,
+                is_correct=form.cleaned_data['score'] == attempt.task.max_score,
+                **form.cleaned_data
+            )
+            new_attempt.id = attempt.id
+            new_attempt.save()
+
+            messages.success(request, 'Saved!')
+            return redirect(urlresolvers.reverse('contests:attempts', args=[contest.id]))
+    else:
+        form = tasks_forms.EditAttemptForm(attempt)
+
+    return render(request, 'contests/edit_attempt.html', {
+        'current_contest': contest,
+
+        'contest': contest,
+        'attempt': attempt,
+        'form': form,
+    })
+
+
+@staff_required
 def create(request):
     if request.method == 'POST':
         form = forms.TaskBasedContestForm(data=request.POST)

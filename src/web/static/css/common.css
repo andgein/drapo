@@ -359,3 +359,21 @@ h1.page__header {
 .attempt-form #id_answer {
     width: 300px;
 }
+
+/* Attempts page */
+.attempts .attempt-status a,
+.attempts .attempt-status a:hover {
+    text-decoration: none;
+}
+
+.attempts .attempt-status .glyphicon {
+    font-size: 80%;
+}
+
+.attempts .attempt-status a > div > .attempt-status__text {
+    text-decoration: underline;
+}
+
+.attempts .attempt-status a:hover > div {
+    opacity: 0.8;
+}
