@@ -8,5 +8,6 @@ class AttemptForm(forms.Form):
         max_length=1000,
         widget=forms.TextInput(attrs={
             'placeholder': 'Your answer',
+            'autofocus': 'autofocus',
         })
     )

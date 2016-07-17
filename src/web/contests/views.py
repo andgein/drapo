@@ -2,7 +2,7 @@ import itertools
 import operator
 import re
 import collections
-from datetime import datetime
+import datetime
 
 from django.contrib import messages
 from django.core import urlresolvers
@@ -11,6 +11,7 @@ from django.db.models.query_utils import Q
 from django.http.response import Http404, HttpResponseNotFound, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
+from django.conf import settings
 
 from drapo.common import respond_as_attachment
 from drapo.uploads import save_uploaded_file
@@ -253,6 +254,15 @@ def scoreboard(request, contest_id):
     })
 
 
+def get_count_attempts_in_last_minute(contest, participant):
+    minute_ago = datetime.datetime.now() - datetime.timedelta(minutes=1)
+    return tasks_models.Attempt.objects.filter(
+        contest=contest,
+        participant=participant,
+        created_at__gte=minute_ago
+    ).count()
+
+
 def task(request, contest_id, task_id):
     contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
     if not contest.is_visible_in_list and not request.user.is_staff:
@@ -271,6 +281,8 @@ def task(request, contest_id, task_id):
             messages.warning(request, 'You are not registered to the contest')
         elif participant.is_disqualified:
             messages.error(request, 'You are disqualified from the contest')
+        elif get_count_attempts_in_last_minute(contest, participant) >= settings.DRAPO_MAX_TRIES_IN_MINUTE:
+            messages.error(request, 'Too fast, try later')
         elif form.is_valid():
             answer = form.cleaned_data['answer']
             attempt = tasks_models.Attempt(
@@ -682,7 +694,7 @@ def add_news(request, contest_id):
 
             return redirect(news)
     else:
-        form = forms.NewsForm(initial={'publish_time': datetime.now})
+        form = forms.NewsForm(initial={'publish_time': datetime.datetime.now()})
 
     return render(request, 'contests/add_news.html', {
         'current_contest': contest,
@@ -690,6 +702,7 @@ def add_news(request, contest_id):
         'contest': contest,
         'form': form,
     })
+
 
 @staff_required
 def edit_news(request, contest_id, news_id):
