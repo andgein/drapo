@@ -1,3 +1,4 @@
+import copy
 import itertools
 import operator
 import re
@@ -8,7 +9,7 @@ from django.contrib import messages
 from django.core import urlresolvers
 from django.db import transaction
 from django.db.models.query_utils import Q
-from django.http.response import Http404, HttpResponseNotFound, HttpResponseForbidden
+from django.http.response import Http404, HttpResponseNotFound, HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.conf import settings
@@ -27,6 +28,10 @@ import taskbased.tasks.forms as tasks_forms
 
 def _groupby(iterable, keyfunc):
     return {k: list(v) for k, v in itertools.groupby(iterable, keyfunc)}
+
+
+def is_manual_task_opening_available_in_contest(contest):
+    return contest.tasks_opening_policies.instance_of(tasks_models.ManualTasksOpeningPolicy).exists()
 
 
 def contests_list(request):
@@ -141,6 +146,15 @@ def tasks(request, contest_id):
     if request.user.is_authenticated():
         participant = contest.get_participant_for_user(request.user)
         solved_tasks_ids = contest.get_tasks_solved_by_participant(participant)
+    else:
+        participant = None
+
+    # Iterate all policies, collect opened tasks
+    opened_tasks_ids = set(
+        itertools.chain.from_iterable(
+            policy.get_open_tasks(participant) for policy in contest.tasks_opening_policies.all()
+        )
+    )
 
     if contest.tasks_grouping == models.TasksGroping.OneByOne:
         tasks = contest.tasks
@@ -149,7 +163,8 @@ def tasks(request, contest_id):
 
             'contest': contest,
             'tasks': tasks,
-            'solved_tasks_ids': solved_tasks_ids
+            'solved_tasks_ids': solved_tasks_ids,
+            'opened_tasks_ids': opened_tasks_ids,
         })
     if contest.tasks_grouping == models.TasksGroping.ByCategories:
         categories = contest.categories
@@ -158,7 +173,8 @@ def tasks(request, contest_id):
 
             'contest': contest,
             'categories': categories,
-            'solved_tasks_ids': solved_tasks_ids
+            'solved_tasks_ids': solved_tasks_ids,
+            'opened_tasks_ids': opened_tasks_ids,
         })
 
 
@@ -263,6 +279,10 @@ def get_count_attempts_in_last_minute(contest, participant):
     ).count()
 
 
+def is_task_open(contest, task, participant):
+    return any(task.id in policy.get_open_tasks(participant) for policy in contest.tasks_opening_policies.all())
+
+
 def task(request, contest_id, task_id):
     contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
     if not contest.is_visible_in_list and not request.user.is_staff:
@@ -272,7 +292,13 @@ def task(request, contest_id, task_id):
     if not contest.has_task(task):
         return HttpResponseNotFound()
 
+    if not contest.is_started() and not request.user.is_staff:
+        return HttpResponseForbidden('Contest is not started')
+
     participant = contest.get_participant_for_user(request.user)
+
+    if not is_task_open(contest, task, participant) and not request.user.is_staff:
+        return HttpResponseForbidden('Task is closed')
 
     if request.method == 'POST' and request.user.is_authenticated():
         form = tasks_forms.AttemptForm(data=request.POST)
@@ -438,14 +464,29 @@ def create(request):
         form = forms.TaskBasedContestForm(data=request.POST)
         if form.is_valid():
             with transaction.atomic():
+                contest_data = copy.copy(form.cleaned_data)
+                del contest_data['by_categories_tasks_opening_policy']
+                del contest_data['manual_tasks_opening_policy']
+
                 contest = models.TaskBasedContest(
-                    **form.cleaned_data
+                    **contest_data
                 )
                 contest.save()
                 if contest.tasks_grouping == models.TasksGroping.ByCategories:
                     categories_models.ContestCategories(contest=contest).save()
                 elif contest.tasks_grouping == models.TasksGroping.OneByOne:
                     tasks_models.ContestTasks(contest=contest).save()
+
+                if form.cleaned_data['by_categories_tasks_opening_policy'] != '-':
+                    tasks_models.ByCategoriesTasksOpeningPolicy(
+                        contest=contest,
+                        opens_for_all_participants=form.cleaned_data['by_categories_tasks_opening_policy'] == 'E'
+                    ).save()
+
+                if form.cleaned_data['manual_tasks_opening_policy']:
+                    tasks_models.ManualTasksOpeningPolicy(
+                        contest=contest
+                    ).save()
             messages.success(request, 'Contest «%s» created' % contest.name)
             return redirect(contest)
     else:
@@ -643,8 +684,13 @@ def edit(request, contest_id):
         if form.is_valid():
             with transaction.atomic():
                 contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
+
+                contest_data = copy.copy(form.cleaned_data)
+                del contest_data['by_categories_tasks_opening_policy']
+                del contest_data['manual_tasks_opening_policy']
+
                 new_contest = models.TaskBasedContest(
-                    **form.cleaned_data
+                    **contest_data
                 )
                 new_contest.id = contest.id
                 new_contest.save()
@@ -656,10 +702,33 @@ def edit(request, contest_id):
                     if not hasattr(contest, 'tasks_list'):
                         tasks_models.ContestTasks(contest=new_contest).save()
 
+                # Remove all old tasks opening policies
+                contest.tasks_opening_policies.all().delete()
+                # And create new
+                if form.cleaned_data['by_categories_tasks_opening_policy'] != '-':
+                    tasks_models.ByCategoriesTasksOpeningPolicy(
+                        contest=contest,
+                        opens_for_all_participants=form.cleaned_data['by_categories_tasks_opening_policy'] == 'E'
+                    ).save()
+
+                if form.cleaned_data['manual_tasks_opening_policy']:
+                    tasks_models.ManualTasksOpeningPolicy(
+                        contest=contest
+                    ).save()
+
             messages.success(request, 'Contest «%s» has been updated' % new_contest.name)
             return redirect(contest)
     else:
-        form = forms.TaskBasedContestForm(initial=contest.__dict__)
+        contest_data = copy.copy(contest.__dict__)
+
+        by_categories = contest.tasks_opening_policies.instance_of(tasks_models.ByCategoriesTasksOpeningPolicy).first()
+        contest_data['by_categories_tasks_opening_policy'] =\
+            '-' if by_categories is None else ['T', 'E'][by_categories.opens_for_all_participants]
+
+        manual = contest.tasks_opening_policies.instance_of(tasks_models.ManualTasksOpeningPolicy).first()
+        contest_data['manual_tasks_opening_policy'] = manual is not None
+
+        form = forms.TaskBasedContestForm(initial=contest_data)
 
     return render(request, 'contests/edit.html', {
         'current_contest': contest,
@@ -677,6 +746,13 @@ def task_file(request, contest_id, file_id):
     if not contest.has_task(file.task):
         return HttpResponseNotFound()
 
+    if not contest.is_started() and not request.user.is_staff:
+        return HttpResponseForbidden('Contest is not started')
+
+    participant = contest.get_participant_for_user(request.user)
+    if not is_task_open(contest, file.task, participant) and not request.user.is_staff:
+        return HttpResponseForbidden('Task is closed')
+
     if file.participant is not None and file.participant.id != request.user.id:
         return HttpResponseForbidden()
 
@@ -688,7 +764,6 @@ def task_file(request, contest_id, file_id):
 @require_POST
 def delete_task(request, contest_id, task_id):
     contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
-
     task = get_object_or_404(tasks_models.Task, pk=task_id)
     if not contest.has_task(task):
         return HttpResponseNotFound()
@@ -769,3 +844,65 @@ def edit_news(request, contest_id, news_id):
         'news': news,
         'form': form,
     })
+
+
+@staff_required
+def task_opens(request, contest_id, task_id):
+    contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
+    task = get_object_or_404(tasks_models.Task, pk=task_id)
+    if not contest.has_task(task):
+        return HttpResponseNotFound()
+
+    participants = sorted(contest.participants.all(), key=operator.attrgetter('name'))
+    for participant in participants:
+        participant.is_task_open = is_task_open(contest, task, participant)
+
+    is_manual_task_opening_available = is_manual_task_opening_available_in_contest(contest)
+
+    return render(request, 'contests/task_opens.html', {
+        'current_contest': contest,
+
+        'contest': contest,
+        'task': task,
+        'participants': participants,
+        'is_manual_task_opening_available': is_manual_task_opening_available,
+    })
+
+
+@staff_required
+@require_POST
+def open_task(request, contest_id, task_id, participant_id):
+    contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
+    task = get_object_or_404(tasks_models.Task, pk=task_id)
+    if not contest.has_task(task):
+        return HttpResponseNotFound()
+
+    if not is_manual_task_opening_available_in_contest(contest):
+        messages.error(request, 'Manual task opening is forbidden for this contest')
+        return redirect(urlresolvers.reverse('contests:task_opens', args=[contest.id, task.id]))
+
+    participant = get_object_or_404(models.AbstractParticipant, pk=participant_id)
+    if participant.contest_id != contest.id:
+        return HttpResponseNotFound()
+
+    qs = tasks_models.ManualOpenedTask.objects.filter(
+        contest=contest,
+        task=task,
+        participant=participant
+    )
+    # Toggle opens state: close if it's open, open otherwise
+    if qs.exists():
+        qs.delete()
+        if is_task_open(contest, task, participant):
+            messages.warning(request, 'Task is opened for this participant not manually, you can\'t close it')
+        else:
+            messages.success(request, 'Task is closed for %s' % participant.name)
+    else:
+        tasks_models.ManualOpenedTask(
+            contest=contest,
+            task=task,
+            participant=participant
+        ).save()
+        messages.success(request, 'Task is opened for %s' % participant.name)
+
+    return JsonResponse({'done': 'ok'})

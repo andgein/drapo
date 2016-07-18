@@ -11,6 +11,10 @@
             {{ task.max_score }}.
             {{ statement.title }}
 
+            {% if user.is_staff %}
+                <a href="{% url 'contests:task_opens' contest.id task.id %}" class="text-small">Opening status</a>
+            {% endif %}
+
             {% if participant_score %}
                 <div class="fs14 fw300 mt10">
                     {% if participant_score == task.max_score %}

@@ -44,3 +44,24 @@ class AttemptAdmin(admin.ModelAdmin):
     list_filter = ('contest', 'task')
 
 admin.site.register(models.Attempt, AttemptAdmin)
+
+
+class ByCategoriesTasksOpeningPolicyAdmin(admin.ModelAdmin):
+    list_display = ('id', 'contest', 'opens_for_all_participants')
+    list_editable = ('opens_for_all_participants', )
+    list_filter = ('contest', )
+
+admin.site.register(models.ByCategoriesTasksOpeningPolicy, ByCategoriesTasksOpeningPolicyAdmin)
+
+
+class ManualTasksOpeningPolicyAdmin(admin.ModelAdmin):
+    list_display = ('id', 'contest')
+
+admin.site.register(models.ManualTasksOpeningPolicy, ManualTasksOpeningPolicyAdmin)
+
+
+class ManualOpenedTaskAdmin(admin.ModelAdmin):
+    list_display = ('id', 'contest', 'task', 'participant')
+    list_filter = ('contest', 'task')
+
+admin.site.register(models.ManualOpenedTask, ManualOpenedTaskAdmin)

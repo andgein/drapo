@@ -37,14 +37,6 @@ class ScoreByPlaceAdditionalScorerAdmin(admin.ModelAdmin):
 admin.site.register(models.ScoreByPlaceAdditionalScorer, ScoreByPlaceAdditionalScorerAdmin)
 
 
-class ByCategoriesTasksOpeningPolicyAdmin(admin.ModelAdmin):
-    list_display = ('id', 'contest', 'opens_for_all_participants')
-    list_editable = ('opens_for_all_participants', )
-    list_filter = ('contest', )
-
-admin.site.register(models.ByCategoriesTasksOpeningPolicy, ByCategoriesTasksOpeningPolicyAdmin)
-
-
 class NewsAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'is_published', 'publish_time')
     list_editable = ('title', 'is_published')

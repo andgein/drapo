@@ -164,6 +164,29 @@ class TaskBasedContestForm(forms.Form):
         )
     )
 
+    by_categories_tasks_opening_policy = forms.CharField(
+        label='Tasks opening policy: next task opening',
+        max_length=1,
+        widget=forms.Select(
+            choices=[('-', 'No'), ('T', 'Only for team who solved the task'), ('E', 'Task will be open for everyone')],
+            attrs={
+                'class': 'form-control-short'
+            }
+        )
+    )
+
+    manual_tasks_opening_policy = forms.BooleanField(
+        label='Tasks opening policy: manual',
+        required=False,
+        help_text='Can admins open tasks manually for everyone or one participant',
+        widget=forms.Select(
+            choices=[(False, 'No'), (True, 'Yes')],
+            attrs={
+                'class': 'form-control-short'
+            }
+        )
+    )
+
 
 class ManualRegisterParticipant(forms.Form):
     participant_link = forms.CharField(

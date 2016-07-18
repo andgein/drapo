@@ -74,6 +74,10 @@ table thead th {
     /* background-color: #62627A; */
 }
 
+.label-disabled {
+    background-color: #7B7B7B;
+}
+
 .modal-body {
     padding: 20px 40px;
 }

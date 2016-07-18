@@ -1,0 +1,38 @@
+{% extends '_layout.html' %}
+
+{% block title %}Task {{ task.name }} opening status{% endblock %}
+
+{% block content %}
+    <div class="page contest-page">
+        {% include 'contests/_contest_header.html' with contest=contest %}
+
+        <h1 class="page__header">
+            <strong><a href="{% url 'contests:task' contest.id task.id %}">{{ task.name }}</a></strong>. Opening status
+        </h1>
+
+        {% for participant in participants %}
+            <div class="row">
+                <div class="col-xs-6 col-sm-4 col-md-3">
+                    {{ forloop.counter }}.
+                    <a href="{{ participant.get_absolute_url }}">{{ participant.name }}</a>
+                </div>
+                <div class="col-xs-6 col-sm-2 col-md-1">
+                    <span class="{{ participant.is_task_open|yesno:'text-success,text-danger' }}">
+                        {% with opening_status=participant.is_task_open|yesno:'Opened,Closed' %}
+                            {% if is_manual_task_opening_available %}
+                                <a href=""
+                                   class="post-link {{ participant.is_task_open|yesno:'text-success,text-danger' }}"
+                                   data-url="{% url 'contests:open_task' contest.id task.id participant.id %}"
+                                   title="Click to toggle">{{ opening_status }}</a>
+                            {% else %}
+                                {{ opening_status }}
+                            {% endif %}
+                        {% endwith %}
+                    </span>
+
+
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

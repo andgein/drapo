@@ -9,6 +9,7 @@ from django.conf import settings
 
 import sortedm2m.fields
 import polymorphic.models
+from django.db.models.query_utils import Q
 from relativefilepathfield.fields import RelativeFilePathField
 
 import drapo.models
@@ -154,6 +155,11 @@ class RegExpChecker(AbstractChecker):
         return self.compiled_regexp.fullmatch(attempt.answer) is not None
 
 
+class ManualChecker(AbstractChecker):
+    def check_attempt(self, attempt, context):
+        return PostponeForManualCheck()
+
+
 class Task(models.Model):
     name = models.CharField(max_length=100, help_text='Shows on tasks page')
 
@@ -258,3 +264,84 @@ class Attempt(drapo.models.ModelWithTimestamps):
             self.score = check_result.score
 
             self.save()
+
+
+class AbstractTasksOpeningPolicy(polymorphic.models.PolymorphicModel):
+    """ Defined tasks opening policies, only for task-based CTFs """
+    contest = models.ForeignKey(contests.models.TaskBasedContest, related_name='tasks_opening_policies')
+
+    class Meta:
+        verbose_name = 'Task opening policy'
+        verbose_name_plural = 'Task opening policies'
+
+    def get_open_tasks(self, participant):
+        raise NotImplementedError()
+
+
+class ByCategoriesTasksOpeningPolicy(AbstractTasksOpeningPolicy):
+    opens_for_all_participants = models.BooleanField(default=True)
+
+    def __str__(self):
+        return ('Tasks are opening inside category for %s in %s' %
+                ('all' if self.opens_for_all_participants else 'participant who solved previous task',
+                 self.contest)
+                )
+
+    class Meta:
+        verbose_name = 'Task opening policy: by categories'
+        verbose_name_plural = 'Task opening policies: by categories'
+
+    def get_open_tasks(self, participant):
+        if self.opens_for_all_participants:
+            done_tasks = set(self.contest.attempts
+                                         .filter(is_correct=True)
+                                         .values_list('task_id', flat=True))
+        else:
+            done_tasks = set(self.contest.attempts
+                                         .filter(participant=participant, is_correct=True)
+                                         .values_list('task_id', flat=True))
+
+        opened_tasks = []
+        if self.contest.tasks_grouping == contests.models.TasksGroping.ByCategories:
+            for category in self.contest.categories:
+                prev_task = None
+                for task in category.tasks.all():
+                    if prev_task is None or prev_task.id in done_tasks:
+                        opened_tasks.append(task.id)
+                    prev_task = task
+        elif self.contest.tasks_grouping == contests.models.TasksGroping.OneByOne:
+            prev_task = None
+            for task in self.contest.tasks:
+                if prev_task is None or prev_task.id in done_tasks:
+                    opened_tasks.append(task.id)
+                prev_task = task
+        else:
+            raise ValueError('Invalid tasks grouping')
+
+        return opened_tasks
+
+
+class ManualTasksOpeningPolicy(AbstractTasksOpeningPolicy):
+    class Meta:
+        verbose_name = 'Task opening policy: manual'
+        verbose_name_plural = 'Task opening policies: manual'
+
+    def get_open_tasks(self, participant):
+        return ManualOpenedTask.objects.filter(
+            contest=self.contest
+        ).filter(
+            Q(participant__isnull=True) | Q(participant=participant)
+        ).values_list('task_id', flat=True)
+
+
+class ManualOpenedTask(models.Model):
+    contest = models.ForeignKey(contests.models.TaskBasedContest, related_name='+')
+
+    task = models.ForeignKey(Task, related_name='manual_opens')
+
+    participant = models.ForeignKey(
+        contests.models.AbstractParticipant,
+        null=True,
+        default=None,
+        help_text='Set NULL to open task for everyone'
+    )

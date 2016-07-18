@@ -232,29 +232,6 @@ class ScoreByPlaceAdditionalScorer(AbstractAdditionalScorer):
         return '%d additional points for %d team' % (self.points, self.place)
 
 
-class AbstractTasksOpeningPolicy(polymorphic.models.PolymorphicModel):
-    """ Defined tasks opening policies, only for task-based CTFs """
-    contest = models.ForeignKey(TaskBasedContest, related_name='tasks_opening_policies')
-
-    class Meta:
-        verbose_name = 'Task opening policy'
-        verbose_name_plural = 'Task opening policies'
-
-
-class ByCategoriesTasksOpeningPolicy(AbstractTasksOpeningPolicy):
-    opens_for_all_participants = models.BooleanField(default=True)
-
-    def __str__(self):
-        return ('Tasks are opening inside category for %s in %s' %
-                ('all' if self.opens_for_all_participants else 'participant who solved previous task',
-                 self.contest)
-                )
-
-    class Meta:
-        verbose_name = 'Task opening policy: by categories'
-        verbose_name_plural = 'Task opening policies: by categories'
-
-
 class News(ModelWithTimestamps):
     contest = models.ForeignKey(Contest, related_name='news')
 
