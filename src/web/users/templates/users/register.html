@@ -9,6 +9,7 @@
             {% csrf_token %}
             {{ form|bootstrap_horizontal }}
             <button class="btn btn-success btn-lg  col-sm-offset-2">Join</button>
+            <a href="{% url 'users:login' %}" class="btn btn-link">Login &rarr;</a>
         </form>
     </div>
 {% endblock %}

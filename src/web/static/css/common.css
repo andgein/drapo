@@ -156,6 +156,11 @@ table thead th {
     border-radius: 4px;
 }
 
+.text-muted {
+    color: #aaa;
+    font-weight: 200;
+}
+
 .form-control-small {
     height: 29px;
 }

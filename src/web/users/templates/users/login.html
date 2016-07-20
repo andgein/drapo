@@ -4,11 +4,15 @@
 
 {% block content %}
     <div class="page">
-        <h1 class="page__header">Login</h1>
+        <h1 class="page__header">
+            Login
+
+        </h1>
         <form action="" method="POST" class="form form-horizontal">
             {% csrf_token %}
             {{ form|bootstrap_horizontal }}
             <button class="btn btn-success btn-lg  col-sm-offset-2">Login</button>
+            <a href="{% url 'users:register' %}" class="btn btn-link">Registration &rarr;</a>
         </form>
     </div>
 {% endblock %}

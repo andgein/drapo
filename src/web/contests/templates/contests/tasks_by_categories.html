@@ -54,6 +54,12 @@
                                     {% endif %}
                                 </div>
                             </div>
+                        {% empty %}
+                            {% if not user.is_staff %}
+                                <div class="text-muted">
+                                    No tasks in this category
+                                </div>
+                            {% endif %}
                         {% endfor %}
 
                         {% if user.is_staff %}
