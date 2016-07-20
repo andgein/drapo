@@ -1,6 +1,7 @@
 {% extends '_layout.html' %}
 
 {% load markdown_deux_tags %}
+{% load humanize %}
 
 {% block title %}{{ news.title }} &bull; {{ contest.name }}{% endblock %}
 
@@ -17,7 +18,14 @@
                     </a>
                 </small>
             {% endif %}
-            <div class="text-xs-small fw300 text-muted">Published <strong>{{ news.publish_time }}</strong> by <strong>{{ news.author.username }}</strong></div>
+            <div class="text-xs-small fw300 text-muted">
+                <span title="{{ news.publish_time }}">{{ news.publish_time|naturaltime }}</span>
+                by
+                <a href="{% url 'users:profile' news.author_id %}">{{ news.author.username }}</a>
+                {% if not news.is_published %}
+                    (not published)
+                {% endif %}
+            </div>
         </h1>
 
         {{ news.text|markdown|urlize }}

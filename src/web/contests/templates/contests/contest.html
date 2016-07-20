@@ -16,10 +16,17 @@
                 <div class="contest__news-list">
                     {% for one_news in news %}
                         <div class="contest__news">
-                            <h3 class="fw300">
+                            <h2 class="fw300">
                                 <a href="{% url 'contests:news' contest.id one_news.id %}">{{ one_news.title }}</a>
-                                <div class="text-xs-small fw300" title="{{ one_news.publish_time }}">{{ one_news.publish_time|naturaltime }}</div>
-                            </h3>
+                                <div class="text-xs-small fw300" title="{{ one_news.publish_time }}">
+                                    {{ one_news.publish_time|naturaltime }}
+                                    by
+                                    <a href="{% url 'users:profile' one_news.author_id %}">{{ one_news.author.username }}</a>
+                                    {% if not one_news.is_published %}
+                                        (not published)
+                                    {% endif %}
+                                </div>
+                            </h2>
 
                             <div class="contest__news__text ellipsis" style="max-height: 150px">
                                 {{ one_news.text|markdown|urlize|truncatechars_html:1000 }}
