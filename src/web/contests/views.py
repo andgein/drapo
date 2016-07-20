@@ -827,7 +827,13 @@ def edit_news(request, contest_id, news_id):
     if request.method == 'POST':
         form = forms.NewsForm(data=request.POST)
         if form.is_valid():
-            new_news = models.News(author=news.author, contest=contest, **form.cleaned_data)
+            new_news = models.News(
+                author=news.author,
+                contest=contest,
+                created_at=news.created_at,
+                updated_at=news.updated_at,
+                **form.cleaned_data,
+            )
             new_news.id = news.id
             new_news.save()
 
