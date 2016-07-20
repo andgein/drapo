@@ -39,7 +39,7 @@
                     <div>
                         {{ forloop.counter }}.
                         {% if team.captain == member %}
-                            <span class="glyphicon glyphicon-star" title="Captain" style="color: darkred"></span>
+                            <span class="glyphicon glyphicon-star text-danger" title="Captain"></span>
                         {% endif %}
                         <a href="{{ member.get_absolute_url }}">{{ member.get_full_name }}</a>
                         aka <strong>{{ member.username }}</strong>
