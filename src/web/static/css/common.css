@@ -277,6 +277,9 @@ h1.page__header {
     font-weight: normal;
     background-color: white;
     color: #62627A;
+
+    position: relative;
+    top: -4px;
 }
 
 .contest__news {
