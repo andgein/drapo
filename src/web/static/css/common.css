@@ -348,21 +348,24 @@ h1.page__header {
 
 }
 
-.category .category__task .task__max_score {
+.category .category__task .task__max_score,
+.task .task__max_score {
     position: relative;
     top: -5px;
     margin-right: 5px;
 }
 
-.category .category__task .category__task__name {
+.category .category__task .task__name,
+.task .task__name {
     font-weight: 300;
 }
 
-.category .category__task .category__task__link {
+.category .category__task .task__link,
+.task .task__link{
     font-size: 16pt;
 }
 
-.category .add-task {
+.add-task {
     text-align: left;
     cursor: pointer;
     color: #999;

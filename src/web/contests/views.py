@@ -604,12 +604,16 @@ def change_participant_status(request, contest_id, participant_id):
     return redirect(urlresolvers.reverse('contests:participants', args=[contest.id]))
 
 
-@staff_required
-def add_task_to_category(request, contest_id, category_id):
-    contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
+def add_task_to_contest(contest, category, task):
+    if category is not None:
+        category.tasks.add(task)
+        category.save()
+    else:
+        contest.tasks_list.tasks.add(task)
+        contest.tasks_list.save()
 
-    category = get_object_or_404(categories_models.Category, pk=category_id, contestcategories__contest_id=contest_id)
 
+def add_task_to_contest_view(request, contest, category=None):
     if request.method == 'POST':
         form = forms.CreateTaskForm(data=request.POST, files=request.FILES)
         create_text_checker_form = forms.CreateTextCheckerForm(data=request.POST)
@@ -641,8 +645,7 @@ def add_task_to_category(request, contest_id, category_id):
                     )
                     task.save()
 
-                    category.tasks.add(task)
-                    category.save()
+                    add_task_to_contest(contest, category, task)
 
                     for uploaded_file in request.FILES.getlist('statement_files'):
                         task_file_dir = tasks_models.TaskFile.generate_directory_name(task, None)
@@ -673,6 +676,26 @@ def add_task_to_category(request, contest_id, category_id):
         'create_text_checker_form': create_text_checker_form,
         'create_regexp_checker_form': create_regexp_checker_form,
     })
+
+
+@staff_required
+def add_task_to_category(request, contest_id, category_id):
+    contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
+    category = get_object_or_404(categories_models.Category, pk=category_id, contestcategories__contest_id=contest_id)
+
+    if contest.tasks_grouping != models.TasksGroping.ByCategories:
+        return HttpResponseNotFound()
+
+    return add_task_to_contest_view(request, contest, category)
+
+
+@staff_required
+def add_task(request, contest_id):
+    contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
+    if contest.tasks_grouping != models.TasksGroping.OneByOne:
+        return HttpResponseNotFound()
+
+    return add_task_to_contest_view(request, contest)
 
 
 @staff_required

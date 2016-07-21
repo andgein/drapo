@@ -1,0 +1,32 @@
+<div class="task__link">
+    {% if task.id in opened_tasks_ids %}
+        {% if task.id in solved_tasks_ids %}
+            <span class="task__max_score label label-sm label-success" title="Score">{{ task.max_score }}</span>
+        {% else %}
+            <span class="task__max_score label label-sm label-primary" title="Score">{{ task.max_score }}</span>
+        {% endif %}
+
+        {% if task.id in solved_tasks_ids %}
+            <a href="{% url 'contests:task' contest.id task.id %}" class="text-success task__name">{{ task.name }}</a>
+        {% else %}
+            <a href="{% url 'contests:task' contest.id task.id %}" class="task__name">{{ task.name }}</a>
+        {% endif %}
+
+        {% if user.is_staff %}
+            <a href="" class="post-link  visible-on-parent-hover  text-danger text-small" data-url="{% url 'contests:delete_task' contest.id task.id %}">
+                <span class="glyphicon glyphicon-remove"></span>
+            </a>
+        {% endif %}
+    {% else %}
+        <span class="task__max_score label label-sm label-disabled" title="Score">{{ task.max_score }}</span>
+        {% if user.is_staff %}
+            <a href="{% url 'contests:task' contest.id task.id %}" class="task__name text-muted">
+        {% endif %}
+
+        {{ task.name }}
+
+        {% if user.is_staff %}
+            </a>
+        {% endif %}
+    {% endif %}
+</div>
