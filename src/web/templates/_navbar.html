@@ -26,6 +26,8 @@
                         <li><a href="{% url 'contests:scoreboard' current_contest.id %}">Scoreboard</a></li>
                         {% if user.is_staff and current_contest.is_started %}
                             <li><a href="{% url 'contests:attempts' current_contest.id %}"><span class="text-danger">Attempts</span></a></li>
+                        {% endif %}
+                        {% if user.is_staff %}
                             <li><a href="{% url 'contests:participants' current_contest.id %}"><span class="text-danger">Participants</span></a></li>
                         {% endif %}
                     {% endif %}
