@@ -116,7 +116,7 @@ def contest(request, contest_id):
         has_access = (request.user.is_authenticated() and
                       (request.user.is_staff or contest.is_user_participating(request.user)))
         if not has_access:
-            return Http404()
+            return HttpResponseNotFound()
 
     participants = contest.participants.filter(is_approved=True)
 
