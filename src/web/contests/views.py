@@ -368,21 +368,24 @@ def task(request, contest_id, task_id):
 @staff_required
 def add_category(request, contest_id):
     contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
+    if contest.tasks_grouping != models.TasksGroping.ByCategories:
+        return HttpResponseNotFound()
+
     if request.method == 'POST':
-        form = forms.CreateCategoryForm(data=request.POST)
+        form = forms.CategoryForm(data=request.POST)
         if form.is_valid():
+            category = categories_models.Category(
+                name=form.cleaned_data['name'],
+                description=form.cleaned_data['description']
+            )
             with transaction.atomic():
-                category = categories_models.Category(
-                    name=form.cleaned_data['name'],
-                    description=form.cleaned_data['description']
-                )
                 category.save()
 
                 contest.categories_list.categories.add(category)
                 contest.save()
             return redirect(urlresolvers.reverse('contests:tasks', args=[contest.id]))
     else:
-        form = forms.CreateCategoryForm()
+        form = forms.CategoryForm()
 
     return render(request, 'contests/create_category.html', {
         'current_contest': contest,
@@ -390,6 +393,53 @@ def add_category(request, contest_id):
         'contest': contest,
         'form': form,
     })
+
+
+@staff_required
+def edit_category(request, contest_id, category_id):
+    contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
+    if contest.tasks_grouping != models.TasksGroping.ByCategories:
+        return HttpResponseNotFound()
+    category = get_object_or_404(categories_models.Category, pk=category_id)
+    if not contest.categories_list.categories.filter(id=category.id).exists():
+        return HttpResponseNotFound()
+
+    if request.method == 'POST':
+        form = forms.CategoryForm(data=request.POST)
+        if form.is_valid():
+            new_category = categories_models.Category(
+                name=form.cleaned_data['name'],
+                description=form.cleaned_data['description']
+            )
+            new_category.id = category.id
+            new_category.save()
+            return redirect(urlresolvers.reverse('contests:tasks', args=[contest.id]))
+    else:
+        form = forms.CategoryForm(initial=category.__dict__)
+
+    return render(request, "contests/edit_category.html", {
+        'current_contest': contest,
+
+        'contest': contest,
+        'category': category,
+        'form': form,
+    })
+
+
+@staff_required
+@require_POST
+def delete_category(request, contest_id, category_id):
+    contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
+    if contest.tasks_grouping != models.TasksGroping.ByCategories:
+        return HttpResponseNotFound()
+    category = get_object_or_404(categories_models.Category, pk=category_id)
+    if not contest.categories_list.categories.filter(id=category.id).exists():
+        return HttpResponseNotFound()
+
+    contest.categories_list.categories.remove(category)
+    contest.categories_list.save()
+
+    return redirect(urlresolvers.reverse('contests:tasks', args=[contest.id]))
 
 
 @staff_required

@@ -15,7 +15,10 @@
             {% for category in categories %}
                 <div class="category row">
                     <div class="category-info col-xs-6 col-md-3">
-                        <h3><strong>{{ category.name }}</strong></h3>
+                        <h3><strong>{{ category.name }}</strong>
+                        {% if user.is_staff %}
+                            <a href="{% url 'contests:edit_category' contest.id category.id %}" title="Edit category"><span class="glyphicon glyphicon-edit small"></span></a>
+                        {% endif %}</h3>
                         {{ category.description|markdown }}
                     </div>
                     <div class="col-xs-6 col-md-9">

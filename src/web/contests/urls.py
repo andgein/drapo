@@ -21,6 +21,8 @@ urlpatterns = [
 
     url(r'^(?P<contest_id>\d+)/categories/add/$', views.add_category, name='add_category'),
     url(r'^(?P<contest_id>\d+)/categories/(?P<category_id>\d+)/add/$', views.add_task_to_category, name='add_task_to_category'),
+    url(r'^(?P<contest_id>\d+)/categories/(?P<category_id>\d+)/edit/$', views.edit_category, name='edit_category'),
+    url(r'^(?P<contest_id>\d+)/categories/(?P<category_id>\d+)/delete/$', views.delete_category, name='delete_category'),
     url(r'^(?P<contest_id>\d+)/scoreboard/$', views.scoreboard, name='scoreboard'),
     url(r'^(?P<contest_id>\d+)/attempts/$', views.attempts, name='attempts'),
     url(r'^(?P<contest_id>\d+)/attempts/(?P<attempt_id>\d+)/$', views.attempt, name='attempt'),

@@ -33,7 +33,7 @@ class JoinViaInviteHashForm(forms.Form):
     )
 
 
-class CreateCategoryForm(forms.Form):
+class CategoryForm(forms.Form):
     name = forms.CharField(
         label='Category name',
         max_length=100,
