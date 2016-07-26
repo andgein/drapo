@@ -23,7 +23,7 @@
             <h2>Time</h2>
             <div class="hline-white"></div>
             {% get_current_timezone as TIME_ZONE %}
-            Server timezone is {{ TIME_ZONE }} (UTC +{{ TIME_ZONE|utcoffset }})<br />
+            Server timezone is {{ TIME_ZONE }} {{ TIME_ZONE|utcoffset }}<br />
         </div>
     </div>
 </div>
