@@ -77,9 +77,9 @@ def register(request):
             if confirmation is not None:
                 confirmation.send(request)
 
-            return render(request, 'message.html', {
-                'message': 'We have sent you an email with confirmation link. Please follow it.'
-            })
+                return render(request, 'message.html', {
+                    'message': 'We have sent you an email with confirmation link. Please follow it.'
+                })
 
     else:
         form = forms.RegisterForm()
