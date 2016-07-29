@@ -321,6 +321,23 @@ class ByCategoriesTasksOpeningPolicy(AbstractTasksOpeningPolicy):
         return opened_tasks
 
 
+class AllTasksOpenedOpeningPolicy(AbstractTasksOpeningPolicy):
+    class Meta:
+        verbose_name = 'Task opening policy: all'
+        verbose_name_plural = 'Task opening policies: all'
+
+    def get_open_tasks(self, participant):
+        if self.contest.tasks_grouping == contests.models.TasksGroping.ByCategories:
+            tasks_ids = []
+            for category in self.contest.categories:
+                tasks_ids.extend(category.tasks.values_list('id', flat=True))
+            return tasks_ids
+        elif self.contest.tasks_grouping == contests.models.TasksGroping.OneByOne:
+            return [task.id for task in self.contest.tasks]
+        else:
+            raise ValueError('Invalid tasks grouping')
+
+
 class ManualTasksOpeningPolicy(AbstractTasksOpeningPolicy):
     class Meta:
         verbose_name = 'Task opening policy: manual'
