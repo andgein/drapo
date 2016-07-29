@@ -27,7 +27,12 @@ import taskbased.tasks.forms as tasks_forms
 
 
 def _groupby(iterable, keyfunc):
-    return {k: list(v) for k, v in itertools.groupby(iterable, keyfunc)}
+    result = collections.defaultdict(list)
+    for item in iterable:
+        key = keyfunc(item)
+        result[key].append(item)
+
+    return result
 
 
 def is_manual_task_opening_available_in_contest(contest):
@@ -184,6 +189,7 @@ def scoreboard(request, contest_id):
         return HttpResponseNotFound()
 
     participants = list(contest.participants.filter(is_visible_in_scoreboard=True))
+
 
     attempts_by_participant = _groupby(contest.attempts.all(), operator.attrgetter('participant_id'))
     attempts_by_participant = collections.defaultdict(list, attempts_by_participant)
