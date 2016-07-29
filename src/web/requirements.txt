@@ -20,3 +20,4 @@ bs4
 python-social-auth
 cached-property
 markdown
+pytz
