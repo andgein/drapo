@@ -24,7 +24,7 @@
             <h2>{% trans 'Time' %}</h2>
             <div class="hline-white"></div>
             {% get_current_timezone as TIME_ZONE %}
-            {% trans 'Server timezone is {{ TIME_ZONE }} {{ TIME_ZONE|utcoffset }}' %}<br />
+            {% blocktrans %}Server timezone is {{ TIME_ZONE }} {{ TIME_ZONE|utcoffset }}{% endblocktrans %}<br />
         </div>
     </div>
 </div>
