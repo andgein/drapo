@@ -1,6 +1,7 @@
 {% extends '_layout.html' %}
 
 {% load markdown_deux_tags %}
+{% load i18n %}
 
 {% block content %}
     <div class="contests-list">
@@ -14,18 +15,18 @@
                             <p>{{ contest.short_description }}</p>
                         {% endif %}
 
-                        <a href="{{ contest.get_absolute_url }}" class="btn btn-primary mt10">Enter</a>
+                        <a href="{{ contest.get_absolute_url }}" class="btn btn-primary mt10">{% trans 'Enter' %}</a>
 
                         {% if contest.is_started %}
-                            <a href="{% url 'contests:scoreboard' contest.id %}" class="btn btn-link mt10">Scoreboard</a>
+                            <a href="{% url 'contests:scoreboard' contest.id %}" class="btn btn-link mt10">{% trans 'Scoreboard' %}</a>
                         {% endif %}
 
                         {% if user.authenticated %}
                             <div>
                                 {% if contest.is_current_user_participating %}
-                                    You are participating
+                                    {% trans 'You are participating' %}
                                 {% else %}
-                                    <a href="{% url 'contest:register' contest.id %}" class="btn btn-success mt10">Register for participation</a>
+                                    <a href="{% url 'contest:register' contest.id %}" class="btn btn-success mt10">{% trans 'Register for participation' %}</a>
                                 {% endif %}
                             </div>
                         {% endif %}
@@ -39,7 +40,7 @@
             {% empty %}
                 <div class="col-xs-12">
                     <div class="page">
-                        <h3 class="mt0 mb0 text-muted">No contests now, come later</h3>
+                        <h3 class="mt0 mb0 text-muted">{% trans 'No contests now, come later' %}</h3>
                     </div>
                 </div>
             {% endfor %}

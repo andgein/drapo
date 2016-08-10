@@ -1,5 +1,6 @@
 {% load tz %}
 {% load timezones %}
+{% load i18n %}
 
 <div class="container">
     <div class="row">
@@ -7,23 +8,23 @@
             <h2>Drapo</h2>
             <div class="hline-white"></div>
             <p>
-                Drapo is a CTF checksystem
+                {% trans 'Drapo is a CTF checksystem' %}
             </p>
             <p>
-                Developed and hosted by <a href="http://kaspersky.com">Kaspersky Lab</a>
+                {% trans 'Developed and hosted by <a href="http://kaspersky.com">Kaspersky Lab</a>' %}
             </p>
         </div>
         <div class="col-md-4 col-xs-6">
-            <h2>Contact us</h2>
+            <h2>{% trans 'Contact us' %}</h2>
             <div class="hline-white"></div>
-            Feel free to <a href="mailto:ctf@kasperksy.com">write us</a>
+            {% trans 'Feel free to <a href="mailto:ctf@kasperksy.com">write us</a>' %}
             <br />
         </div>
         <div class="col-md-4">
-            <h2>Time</h2>
+            <h2>{% trans 'Time' %}</h2>
             <div class="hline-white"></div>
             {% get_current_timezone as TIME_ZONE %}
-            Server timezone is {{ TIME_ZONE }} {{ TIME_ZONE|utcoffset }}<br />
+            {% trans 'Server timezone is {{ TIME_ZONE }} {{ TIME_ZONE|utcoffset }}' %}<br />
         </div>
     </div>
 </div>

@@ -1,5 +1,6 @@
 {% load humanize %}
 {% load contest %}
+{% load i18n %}
 
 <div class="contest-header row">
     <div class="col-xs-12 col-sm-6">
@@ -12,10 +13,10 @@
             {% endif %}
 
             {% if contest.is_finished %}
-                <span class="contest__status label label-info label-md ml15">Finished</span>
+                <span class="contest__status label label-info label-md ml15">{% trans 'Finished' %}</span>
             {% endif %}
             {% if contest.is_running %}
-                <span class="contest__status label label-primary label-md ml15">Running</span>
+                <span class="contest__status label label-primary label-md ml15">{% trans 'Running' %}</span>
             {% endif %}
         </h1>
 
@@ -31,36 +32,39 @@
         {% if contest|is_user_participating:user %}
             {% with participant=contest|get_participant_for:user %}
                 {% if participant.is_approved %}
-                    You are registered to the contest
+                    {% trans 'You are registered to the contest' %}
                 {% else %}
-                    You are waiting for approving by organizers
+                    {% trans 'You are waiting for approving by organizers' %}
                 {% endif %}
 
                 {% if contest.is_team %}
-                    <nobr>as a <a href="{{ participant.get_absolute_url }}">{{ participant.name }}</a></nobr>'s member
+                    {% blocktrans %}
+                        <nobr>as a <a href="{{ participant.get_absolute_url }}">{{ participant.name }}</a></nobr>'s member
+                    {% endblocktrans %}
                 {% endif %}
             {% endwith %}
         {% else %}
             {% if contest.can_register_now %}
                 {% if not user.is_authenticated %}
-                    <a href="{% url 'users:login' %}?next={{ request.path }}">Login</a>
-                    or
-                    <a href="{% url 'users:register' %}?next={{ request.path }}">register</a>
-                    to join the contest
+                    <a href="{% url 'users:login' %}?next={{ request.path }}">{% trans 'Login' %}</a>
+                    {% trans 'or' %}
+                    <a href="{% url 'users:register' %}?next={{ request.path }}">{% trans 'register' %}</a>
+                    {% trans 'to join the contest' %}
                 {% elif contest.is_team %}
-                    You can <a href="{% url 'contests:join' contest.id %}">register your team</a>
-                    or <a href="{% url 'contests:join' contest.id %}">join some one</a>
+                    {% trans 'You can' %} <a href="{% url 'contests:join' contest.id %}">{% trans 'register your team' %}</a>
+                    {% trans 'or' %}
+                    <a href="{% url 'contests:join' contest.id %}">{% trans 'join some one' %}</a>
                 {% else %}
                     <a href=""
                        class="post-link  btn btn-success btn-lg"
                        data-url="{% url 'contests:join' contest.id %}">
-                        Register to the contest
+                        {% trans 'Register to the contest' %}
                     </a>
                 {% endif %}
             {% elif contest.can_register_in_future %}
-                Registration will open <span title="{{ contest.registration_start_time }}">{{ contest.registration_start_time|naturaltime }}</span>
+                {% trans 'Registration will open' %} <span title="{{ contest.registration_start_time }}">{{ contest.registration_start_time|naturaltime }}</span>
             {% else %}
-                Sorry, registration to the contest is closed already.
+                {% trans 'Sorry, registration to the contest is closed already.' %}
             {% endif %}
         {% endif %}
     </div>

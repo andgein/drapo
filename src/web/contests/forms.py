@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.translation import ugettext_lazy as _
 
 from bootstrap3_datetime.widgets import DateTimePicker
 
@@ -8,7 +9,7 @@ import taskbased.tasks.models as tasks_models
 
 class ChooseTeamForm(forms.Form):
     team = forms.TypedChoiceField(
-        label='Select team',
+        label=_('Select team'),
         coerce=int,
         widget=forms.Select(attrs={
             'class': 'form-control-short'
@@ -24,7 +25,7 @@ class ChooseTeamForm(forms.Form):
 
 class JoinViaInviteHashForm(forms.Form):
     invite_hash = forms.CharField(
-        label='Invite hash',
+        label=_('Invite hash'),
         max_length=32,
         widget=forms.TextInput(attrs={
             'placeholder': 'Invite hash',
@@ -35,7 +36,7 @@ class JoinViaInviteHashForm(forms.Form):
 
 class CategoryForm(forms.Form):
     name = forms.CharField(
-        label='Category name',
+        label=_('Category name'),
         max_length=100,
         widget=forms.TextInput(attrs={
             'autofocus': 'autofocus',
@@ -44,7 +45,7 @@ class CategoryForm(forms.Form):
     )
 
     description = forms.CharField(
-        label='Description',
+        label=_('Description'),
         help_text='Supports markdown',
         max_length=500,
         widget=forms.Textarea()
@@ -53,7 +54,7 @@ class CategoryForm(forms.Form):
 
 class TaskBasedContestForm(forms.Form):
     name = forms.CharField(
-        label='Name',
+        label=_('Name'),
         max_length=100,
         required=True,
         widget=forms.TextInput(attrs={
@@ -63,21 +64,21 @@ class TaskBasedContestForm(forms.Form):
     )
 
     short_description = forms.CharField(
-        label='Short description',
-        help_text='Shows on main page',
+        label=_('Short description'),
+        help_text=_('Shows on main page'),
         required=True,
         widget=forms.TextInput()
     )
 
     description = forms.CharField(
-        label='Description',
-        help_text='Full description. Supports MarkDown',
+        label=_('Description'),
+        help_text=_('Full description. Supports MarkDown'),
         required=True,
         widget=forms.Textarea()
     )
 
     is_visible_in_list = forms.BooleanField(
-        label='Visible in list?',
+        label=_('Visible in list?'),
         required=False,
         widget=forms.CheckboxInput()
     )
@@ -94,7 +95,7 @@ class TaskBasedContestForm(forms.Form):
     )
 
     participation_mode = forms.CharField(
-        label='Participation mode',
+        label=_('Participation mode'),
         max_length=20,
         widget=forms.Select(
             choices=models.ContestParticipationMode.choices,
@@ -105,9 +106,9 @@ class TaskBasedContestForm(forms.Form):
     )
 
     start_time = forms.DateTimeField(
-        label='Start',
+        label=_('Start'),
         required=True,
-        help_text='Contest start time',
+        help_text=_('Contest start time'),
         widget=DateTimePicker(
             options={'format': 'YYYY-MM-DD HH:mm'},
             attrs={
@@ -117,9 +118,9 @@ class TaskBasedContestForm(forms.Form):
     )
 
     finish_time = forms.DateTimeField(
-        label='Finish',
+        label=_('Finish'),
         required=True,
-        help_text='Contest finish time',
+        help_text=_('Contest finish time'),
         widget=DateTimePicker(
             options={'format': 'YYYY-MM-DD HH:mm'},
             attrs={
@@ -129,8 +130,8 @@ class TaskBasedContestForm(forms.Form):
     )
 
     registration_start_time = forms.DateTimeField(
-        label='Registration start',
-        help_text='Contest registration start time, only for open and moderated registrations',
+        label=_('Registration start'),
+        help_text=_('Contest registration start time, only for open and moderated registrations'),
         required=False,
         widget=DateTimePicker(
             options={'format': 'YYYY-MM-DD HH:mm'},
@@ -141,8 +142,8 @@ class TaskBasedContestForm(forms.Form):
     )
 
     registration_finish_time = forms.DateTimeField(
-        label='Registration finish',
-        help_text='Contest registration finish time, only for open and moderated registrations',
+        label=_('Registration finish'),
+        help_text=_('Contest registration finish time, only for open and moderated registrations'),
         required=False,
         widget=DateTimePicker(
             options={'format': 'YYYY-MM-DD HH:mm'},
@@ -153,8 +154,8 @@ class TaskBasedContestForm(forms.Form):
     )
 
     tasks_grouping = forms.CharField(
-        label='Task grouping',
-        help_text='Enable categories or list all tasks one by one',
+        label=_('Task grouping'),
+        help_text=_('Enable categories or list all tasks one by one'),
         max_length=20,
         widget=forms.Select(
             choices=models.TasksGroping.choices,
@@ -165,10 +166,10 @@ class TaskBasedContestForm(forms.Form):
     )
 
     by_categories_tasks_opening_policy = forms.CharField(
-        label='Tasks opening policy: next task opening',
+        label=_('Tasks opening policy: next task opening'),
         max_length=1,
         widget=forms.Select(
-            choices=[('-', 'No'), ('T', 'Only for team who solved the task'), ('E', 'Task will be open for everyone')],
+            choices=[('-', _('No')), ('T', _('Only for team who solved the task')), ('E', _('Task will be open for everyone'))],
             attrs={
                 'class': 'form-control-short'
             }
@@ -176,11 +177,11 @@ class TaskBasedContestForm(forms.Form):
     )
 
     manual_tasks_opening_policy = forms.BooleanField(
-        label='Tasks opening policy: manual',
+        label=_('Tasks opening policy: manual'),
         required=False,
-        help_text='Can admins open tasks manually for everyone or one participant',
+        help_text=_('Can admins open tasks manually for everyone or one participant'),
         widget=forms.Select(
-            choices=[(False, 'No'), (True, 'Yes')],
+            choices=[(False, _('No')), (True, _('Yes'))],
             attrs={
                 'class': 'form-control-short'
             }
@@ -190,10 +191,10 @@ class TaskBasedContestForm(forms.Form):
 
 class ManualRegisterParticipant(forms.Form):
     participant_link = forms.CharField(
-        label='Link',
+        label=_('Link'),
         max_length=100,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Link to user or team for registering to the contest. I.e. http://drapo.io/users/1',
+            'placeholder': _('Link to user or team for registering to the contest. I.e. http://drapo.io/users/1'),
             'class': 'input-sm mr15',
             'style': 'width: 500px; height: 30px;'
         })
@@ -202,8 +203,8 @@ class ManualRegisterParticipant(forms.Form):
 
 class CreateTaskForm(forms.Form):
     name = forms.CharField(
-        label='Name',
-        help_text='Shows on tasks page',
+        label=_('Name'),
+        help_text=_('Shows on tasks page'),
         max_length=100,
         widget=forms.TextInput(attrs={
             'class': 'form-control-short'
@@ -211,7 +212,7 @@ class CreateTaskForm(forms.Form):
     )
 
     max_score = forms.IntegerField(
-        label='Max score',
+        label=_('Max score'),
         min_value=0,
         max_value=10000,
         widget=forms.NumberInput(attrs={
@@ -220,19 +221,19 @@ class CreateTaskForm(forms.Form):
     )
 
     statement_title = forms.CharField(
-        label='Title',
-        help_text='Statement title. Supports markdown and substitutes',
+        label=_('Title'),
+        help_text=_('Statement title. Supports markdown and substitutes'),
     )
 
     statement_template = forms.CharField(
-        label='Template',
-        help_text='Statement template. Supports markdown and substitutes',
+        label=_('Template'),
+        help_text=_('Statement template. Supports markdown and substitutes'),
         widget=forms.Textarea(),
     )
 
     statement_files = forms.FileField(
-        label='Files',
-        help_text='Files will be attached to the statement. Up to 10 files',
+        label=_('Files'),
+        help_text=_('Files will be attached to the statement. Up to 10 files'),
         required=False,
         widget=forms.FileInput(attrs={
             'class': 'bootstrap-file-input',
@@ -255,14 +256,14 @@ class AbstractCheckerForm(forms.Form):
 
 class CreateTextCheckerForm(AbstractCheckerForm):
     answer = forms.CharField(
-        label='Answer',
+        label=_('Answer'),
         widget=forms.TextInput(attrs={
             'class': 'form-control-short'
         }),
     )
 
     case_sensitive = forms.BooleanField(
-        label='Is case sensitive',
+        label=_('Is case sensitive'),
         required=False,
     )
 
@@ -275,34 +276,34 @@ class CreateTextCheckerForm(AbstractCheckerForm):
 
 class CreateRegExpCheckerForm(AbstractCheckerForm):
     pattern = forms.CharField(
-        label='Pattern',
-        help_text='Regular expression for matching, don\'t need ^ and $',
+        label=_('Pattern'),
+        help_text=_('Regular expression for matching, don\'t need ^ and $'),
         widget=forms.TextInput(attrs={
             'class': 'form-control-short'
         }),
     )
 
     flag_ignore_case = forms.BooleanField(
-        label='Ignore case',
-        help_text='Python\'s re.IGNORECASE (re.I)',
+        label=_('Ignore case'),
+        help_text=_('Python\'s re.IGNORECASE (re.I)'),
         required=False,
     )
 
     flag_multiline = forms.BooleanField(
-        label='Multiline',
-        help_text='Python\'s re.MULTILINE (re.M)',
+        label=_('Multiline'),
+        help_text=_('Python\'s re.MULTILINE (re.M)'),
         required=False,
     )
 
     flag_dotall = forms.BooleanField(
-        label='Dot (.) includes newline character',
-        help_text='Python\'s re.DOTALL (re.S)',
+        label=_('Dot (.) includes newline character'),
+        help_text=_('Python\'s re.DOTALL (re.S)'),
         required=False,
     )
 
     flag_verbose = forms.BooleanField(
-        label='Verbose',
-        help_text='Python\'s re.VERBOSE (re.X)',
+        label=_('Verbose'),
+        help_text=_('Python\'s re.VERBOSE (re.X)'),
         required=False,
     )
 
@@ -318,7 +319,7 @@ class CreateRegExpCheckerForm(AbstractCheckerForm):
 
 class AttemptsSearchForm(forms.Form):
     pattern = forms.CharField(
-        label='Search',
+        label=_('Search'),
         max_length=400,
         required=False,
         widget=forms.TextInput(attrs={
@@ -330,7 +331,7 @@ class AttemptsSearchForm(forms.Form):
 
 class NewsForm(forms.Form):
     title = forms.CharField(
-        label='Title',
+        label=_('Title'),
         max_length=1000,
         widget=forms.TextInput(attrs={
             'class': 'form-control-short'
@@ -338,18 +339,18 @@ class NewsForm(forms.Form):
     )
 
     text = forms.CharField(
-        label='Text',
-        help_text='Supports markdown',
+        label=_('Text'),
+        help_text=_('Supports markdown'),
         widget=forms.Textarea()
     )
 
     is_published = forms.BooleanField(
-        label='Is published',
+        label=_('Is published'),
         required=False,
     )
 
     publish_time = forms.DateTimeField(
-        label='Publish time',
+        label=_('Publish time'),
         widget=DateTimePicker(
             options={'format': 'YYYY-MM-DD HH:mm'},
             attrs={

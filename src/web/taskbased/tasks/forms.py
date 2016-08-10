@@ -1,10 +1,11 @@
 from django import forms
 from django.core import validators
+from django.utils.translation import ugettext_lazy as _
 
 
 class AttemptForm(forms.Form):
     answer = forms.CharField(
-        label='Answer',
+        label=_('Answer'),
         required=True,
         max_length=1000,
         widget=forms.TextInput(attrs={
@@ -16,7 +17,7 @@ class AttemptForm(forms.Form):
 
 class EditAttemptForm(forms.Form):
     answer = forms.CharField(
-        label='Answer',
+        label=_('Answer'),
         max_length=1000,
         widget=forms.TextInput(attrs={
             'autofocus': 'autofocus',
@@ -25,12 +26,12 @@ class EditAttemptForm(forms.Form):
     )
 
     is_checked = forms.BooleanField(
-        label='Checked?',
+        label=_('Checked?'),
         required=False,
     )
 
     score = forms.IntegerField(
-        label='Score',
+        label=_('Score'),
         min_value=0,
         widget=forms.NumberInput(attrs={
             'class': 'form-control-short'
@@ -38,15 +39,15 @@ class EditAttemptForm(forms.Form):
     )
 
     public_comment = forms.CharField(
-        label='Public comment',
-        help_text='Visible to participant',
+        label=_('Public comment'),
+        help_text=_('Visible to participant'),
         required=False,
         widget=forms.Textarea()
     )
 
     private_comment = forms.CharField(
-        label='Private comment',
-        help_text='Visible only to admins',
+        label=_('Private comment'),
+        help_text=_('Visible only to admins'),
         required=False,
         widget=forms.Textarea()
     )

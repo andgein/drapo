@@ -1,13 +1,14 @@
 from django import forms
+from django.utils.translation import ugettext_lazy as _
 
 
 class LoginForm(forms.Form):
     username = forms.CharField(
         required=True,
-        label='Username',
+        label=_('Username'),
         max_length=100,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Enter username',
+            'placeholder': _('Enter username'),
             'autofocus': 'autofocus',
             'class': 'form-control-short',
         })
@@ -15,10 +16,10 @@ class LoginForm(forms.Form):
 
     password = forms.CharField(
         required=True,
-        label='Password',
+        label=_('Password'),
         max_length=128,
         widget=forms.PasswordInput(attrs={
-            'placeholder': 'Enter password',
+            'placeholder': _('Enter password'),
             'class': 'form-control-short',
         })
     )
@@ -27,20 +28,20 @@ class LoginForm(forms.Form):
 class FormWithRepeatedPassword(forms.Form):
     password = forms.CharField(
         required=True,
-        label='Password',
+        label=_('Password'),
         max_length=128,
         widget=forms.PasswordInput(attrs={
-            'placeholder': 'Enter password',
+            'placeholder': _('Enter password'),
             'class': 'form-control-short',
         })
     )
 
     password_repeat = forms.CharField(
         required=True,
-        label='Password again',
+        label=_('Password again'),
         max_length=128,
         widget=forms.PasswordInput(attrs={
-            'placeholder': 'Repeat password',
+            'placeholder': _('Repeat password'),
             'class': 'form-control-short',
         })
     )
@@ -55,10 +56,10 @@ class FormWithRepeatedPassword(forms.Form):
 class RegisterForm(FormWithRepeatedPassword):
     username = forms.CharField(
         required=True,
-        label='Username',
+        label=_('Username'),
         max_length=100,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Enter username',
+            'placeholder': _('Enter username'),
             'autofocus': 'autofocus',
             'class': 'form-control-short',
         })
@@ -66,28 +67,28 @@ class RegisterForm(FormWithRepeatedPassword):
 
     email = forms.EmailField(
         required=True,
-        label='Email',
+        label=_('Email'),
         max_length=100,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Enter email',
+            'placeholder': _('Enter email'),
             'class': 'form-control-short',
         })
     )
 
     first_name = forms.CharField(
-        label='First name',
+        label=_('First name'),
         max_length=100,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Your first name',
+            'placeholder': _('Your first name'),
             'class': 'form-control-short',
         })
     )
 
     last_name = forms.CharField(
-        label='Last name',
+        label=_('Last name'),
         max_length=100,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Your last name',
+            'placeholder': _('Your last name'),
             'class': 'form-control-short',
         })
     )
@@ -102,29 +103,29 @@ class RegisterForm(FormWithRepeatedPassword):
 class EditUserForm(forms.Form):
     username = forms.CharField(
         required=True,
-        label='Username',
+        label=_('Username'),
         max_length=100,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Your username',
+            'placeholder': _('Your username'),
             'autofocus': 'autofocus',
             'class': 'form-control-short',
         })
     )
 
     first_name = forms.CharField(
-        label='First name',
+        label=_('First name'),
         max_length=100,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Your first name',
+            'placeholder': _('Your first name'),
             'class': 'form-control-short',
         })
     )
 
     last_name = forms.CharField(
-        label='Last name',
+        label=_('Last name'),
         max_length=100,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Your last name',
+            'placeholder': _('Your last name'),
             'class': 'form-control-short',
         })
     )
@@ -141,7 +142,7 @@ class EditUserForm(forms.Form):
 class ChangePasswordForm(FormWithRepeatedPassword):
     old_password = forms.CharField(
         required=True,
-        label='Old password',
+        label=_('Old password'),
         max_length=128,
         widget=forms.PasswordInput(attrs={
             'class': 'form-control-short'

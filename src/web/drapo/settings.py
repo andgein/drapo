@@ -62,6 +62,8 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'drapo.middleware.LocaleMiddleware',
 ]
 
 ROOT_URLCONF = 'drapo.urls'
@@ -131,6 +133,8 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_L10N = True
+
+LOCALE_PATHS = [os.path.join(BASE_DIR, 'locale')]
 
 USE_TZ = True
 

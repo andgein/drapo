@@ -6,6 +6,7 @@ import os.path
 from django.db import models
 import django.db.migrations.writer
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 import sortedm2m.fields
 import polymorphic.models
@@ -65,9 +66,9 @@ class AbstractStatementGenerator(polymorphic.models.PolymorphicModel, drapo.mode
 
 
 class TextStatementGenerator(AbstractStatementGenerator):
-    title = models.TextField(help_text='Markdown with substitutes')
+    title = models.TextField(help_text=_('Markdown with substitutes'))
 
-    template = models.TextField(help_text='Markdown with substitutes')
+    template = models.TextField(help_text=_('Markdown with substitutes'))
 
     def is_available_for_anonymous(self):
         # TODO (andgein): check for substitution patterns
@@ -91,9 +92,9 @@ class AbstractChecker(polymorphic.models.PolymorphicModel):
 
 
 class TextChecker(AbstractChecker):
-    answer = models.TextField(help_text='Correct answer')
+    answer = models.TextField(help_text=_('Correct answer'))
 
-    case_sensitive = models.BooleanField(help_text='Is answer case sensitive', default=False)
+    case_sensitive = models.BooleanField(help_text=_('Is answer case sensitive'), default=False)
 
     def __str__(self):
         return '== "%s"' % (self.answer, )

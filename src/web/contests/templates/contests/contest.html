@@ -2,6 +2,7 @@
 
 {% load markdown_deux_tags %}
 {% load humanize %}
+{% load i18n %}
 
 {% block title %}{{ contest.name }}{% endblock %}
 
@@ -36,7 +37,7 @@
 
                     {% if user.is_staff %}
                         <a href="{% url 'contests:add_news' contest.id %}" class="contest__add-news">
-                            + Add news
+                            {% trans '+ Add news' %}
                         </a>
                     {% endif %}
                 </div>
@@ -46,18 +47,22 @@
             <div class="col-sm-6">
                 <div>
                     {% if contest.is_team %}
-                        <h3>Registered teams</h3>
+                        <h3>{% trans 'Registered teams' %}</h3>
                         {% for participant in participants %}
                             <div>
                                 {{ forloop.counter }}. <a href="{{ participant.team.get_absolute_url }}">{{ participant.team.name }}</a>
                             </div>
                         {% empty %}
                             <div class="text-muted">
-                                No teams{% if contest.can_register_now %} a while, <a href="{% url 'contests:join' contest.id %}">be the first</a>!{% endif %}
+                                {% trans 'No teams' %}
+                                {% if contest.can_register_now %}
+                                    {% url 'contests:join' contest.id as join_url %}
+                                    {% blocktrans %}a while, <a href="{{ join_url }}">be the first</a>!{% endblocktrans %}
+                                {% endif %}
                             </div>
                         {% endfor %}
                     {% else %}
-                        <h3>Participants</h3>
+                        <h3>{% trans 'Participants' %}</h3>
                         {% for participant in participants %}
                             <div>
                                 {{ forloop.counter }}. <a href="{{ participant.user.get_absolute_url }}">{{ participant.user.get_full_name }}</a>
@@ -65,8 +70,12 @@
                             </div>
                         {% empty %}
                             <div class="text-muted">
-                                No participants{% if contest.can_register_now %} a while, <a href="{% url 'contests:join' contest.id %}">be the first</a>! {% endif %}
-                            </div>
+                                {% trans 'No participants' %}
+                                {% if contest.can_register_now %}
+                                    {% url 'contests:join' contest.id as join_url %}
+                                    {% blocktrans %}a while, <a href="{{ join_url }}">be the first</a>!{% endblocktrans %}
+                                {% endif %}
+                                </div>
                         {% endfor %}
                     {% endif %}
                 </div>

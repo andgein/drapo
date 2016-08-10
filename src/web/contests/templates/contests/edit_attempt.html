@@ -1,25 +1,28 @@
 {% extends '_layout.html' %}
 
 {% load bootstrap %}
+{% load i18n %}
 
-{% block title %}Edit attempt{% endblock %}
+{% block title %}{% load 'Edit attempt' %}{% endblock %}
 
 {% block content %}
     <div class="page contest-page">
         {% include 'contests/_contest_header.html' with contest=contest %}
 
         <h1 class="page__header">
-            Edit attempt by
-            <a href="{{ attempt.participant.get_absolute_url }}"><strong>{{ attempt.participant.name }}</strong></a>
-            for
-            <a href="{{ attempt.task.name.get_absolute_url }}"><strong>{{ attempt.task.name }}</strong></a>
+            {% blocktrans %}
+                Edit attempt by
+                <a href="{{ attempt.participant.get_absolute_url }}"><strong>{{ attempt.participant.name }}</strong></a>
+                for
+                <a href="{{ attempt.task.name.get_absolute_url }}"><strong>{{ attempt.task.name }}</strong></a>
+            {% endblocktrans %}
         </h1>
 
         <form action="" method="POST" class="form-horizontal">
             {% csrf_token %}
             {{ form|bootstrap_horizontal }}
-            <button class="btn btn-success btn-lg  col-sm-offset-2" onclick="$('#id_is_checked').prop('checked', true); ">Save (and mark as checked)</button>
-            <button class="btn btn-default btn-lg">Just save</button>
+            <button class="btn btn-success btn-lg  col-sm-offset-2" onclick="$('#id_is_checked').prop('checked', true); ">{% trans 'Save (and mark as checked)' %}</button>
+            <button class="btn btn-default btn-lg">{% trans 'Just save' %}</button>
         </form>
     </div>
 {% endblock %}

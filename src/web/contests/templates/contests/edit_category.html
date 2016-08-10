@@ -1,19 +1,20 @@
 {% extends '_layout.html' %}
 
 {% load bootstrap %}
+{% load i18n %}
 
 {% block content %}
     <div class="page contest-page">
-        <h1 class="page__header">Edit category <strong>{{ category.name }}</strong></h1>
+        <h1 class="page__header">{% trans 'Edit category' %} <strong>{{ category.name }}</strong></h1>
 
         <form method="POST" action="" class="form form-horizontal">
             {% csrf_token %}
             {{ form|bootstrap_horizontal }}
-            <button class="btn btn-success btn-lg col-sm-offset-2">Save</button>
+            <button class="btn btn-success btn-lg col-sm-offset-2">{% trans 'Save' %}</button>
         </form>
         <form method="POST" action="{% url 'contests:delete_category' contest.id category.id %}" class="mt10">
             {% csrf_token %}
-            <button class="btn btn-danger btn-lg  col-sm-offset-2">Delete category</button>
+            <button class="btn btn-danger btn-lg  col-sm-offset-2">{% trans 'Delete category' %}</button>
         </form>
     </div>
 {% endblock %}

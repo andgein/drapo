@@ -1,6 +1,7 @@
 {% extends '_layout.html' %}
 
 {% load bootstrap %}
+{% load i18n %}
 
 {% block title %}Attempts in {{ contest.name }}{% endblock %}
 
@@ -8,34 +9,34 @@
     <div class="page contest-page">
         {% include 'contests/_contest_header.html' with contest=contest %}
 
-        <h1 class="page__header">Attempts</h1>
+        <h1 class="page__header">{% trans 'Attempts' %}</h1>
 
         <form action="" method="GET" class="form-inline">
             {{ form|bootstrap_inline }}
-            <button class="btn btn-success btn-inline ml10">Search</button>
+            <button class="btn btn-success btn-inline ml10">{% trans 'Search' %}</button>
         </form>
 
         <div class="attempts">
             {% if attempts %}
                 <div class="row mb10 mt15">
-                    <div class="col-xs-2 pl40"><strong>Participant</strong></div>
-                    <div class="col-sm-3 col-xs-4"><strong>Task</strong></div>
-                    <div class="col-sm-4 col-xs-5"><strong>Answer</strong></div>
-                    <div class="col-sm-3 col-xs-2"><strong>Status</strong></div>
+                    <div class="col-xs-2 pl40"><strong>{% trans 'Participant' %}</strong></div>
+                    <div class="col-sm-3 col-xs-4"><strong>{% trans 'Task' %}</strong></div>
+                    <div class="col-sm-4 col-xs-5"><strong>{% trans 'Answer' %}</strong></div>
+                    <div class="col-sm-3 col-xs-2"><strong>{% trans 'Status' %}</strong></div>
                 </div>
             {% else %}
                 <div class="mt15">
                     {% if pattern %}
-                        No attempts found by this pattern. <a href="{% url 'contests:attempts' contest.id %}">Clear filter?</a>
+                        {% trans 'No attempts found by this pattern.' %} <a href="{% url 'contests:attempts' contest.id %}">{% trans 'Clear filter?' %}</a>
                     {% else %}
-                        No attempts a while... Wait for answers by participants
+                        {% trans 'No attempts a while... Wait for answers by participants' %}
                     {% endif %}
                 </div>
             {% endif %}
             {% for attempt in attempts %}
                 <div class="attempt row">
                     <div class="col-xs-2">
-                        <span title="Attempt id: {{ attempt.id }}">{{ forloop.revcounter }}</span>.
+                        <span title="{% trans 'Attempt id' %}: {{ attempt.id }}">{{ forloop.revcounter }}</span>.
 
                         <a href="{{ attempt.participant.get_absolute_url }}">{{ attempt.participant.name }}</a>
                         {% if contest.is_team %}
@@ -58,7 +59,7 @@
                                     <div class="text-success">
                                         <span class="glyphicon glyphicon-ok-sign"></span>
                                         <span class="attempt-status__text">
-                                            Correct
+                                            {% trans 'Correct' %}
                                             ({{ attempt.score }}/{{ attempt.task.max_score }})
                                         </span>
                                     </div>
@@ -66,14 +67,14 @@
                                     <div class="text-danger">
                                         <span class="glyphicon glyphicon-minus-sign"></span>
                                         <span class="attempt-status__text">
-                                            Wrong
+                                            {% trans 'Wrong' %}
                                             ({{ attempt.score }}/{{ attempt.task.max_score }})
                                         </span>
                                     </div>
                                 {% endif %}
                             {% else %}
                                 <div class="text-muted">
-                                    <span class="attempt-status__text">Not checked</span>
+                                    <span class="attempt-status__text">{% trans 'Not checked' %}</span>
                                 </div>
                             {% endif %}
                         </a>

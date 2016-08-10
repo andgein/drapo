@@ -1,0 +1,766 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-08-10 03:00+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: .\contests\forms.py:12
+msgid "Select team"
+msgstr ""
+
+#: .\contests\forms.py:28
+msgid "Invite hash"
+msgstr ""
+
+#: .\contests\forms.py:39
+msgid "Category name"
+msgstr ""
+
+#: .\contests\forms.py:48 .\contests\forms.py:74
+msgid "Description"
+msgstr ""
+
+#: .\contests\forms.py:57 .\contests\forms.py:206
+msgid "Name"
+msgstr ""
+
+#: .\contests\forms.py:67
+msgid "Short description"
+msgstr ""
+
+#: .\contests\forms.py:68
+msgid "Shows on main page"
+msgstr ""
+
+#: .\contests\forms.py:75
+msgid "Full description. Supports MarkDown"
+msgstr ""
+
+#: .\contests\forms.py:81
+msgid "Visible in list?"
+msgstr ""
+
+#: .\contests\forms.py:98
+msgid "Participation mode"
+msgstr ""
+
+#: .\contests\forms.py:109
+msgid "Start"
+msgstr ""
+
+#: .\contests\forms.py:111
+msgid "Contest start time"
+msgstr ""
+
+#: .\contests\forms.py:121
+msgid "Finish"
+msgstr ""
+
+#: .\contests\forms.py:123
+msgid "Contest finish time"
+msgstr ""
+
+#: .\contests\forms.py:133
+msgid "Registration start"
+msgstr ""
+
+#: .\contests\forms.py:134
+msgid ""
+"Contest registration start time, only for open and moderated registrations"
+msgstr ""
+
+#: .\contests\forms.py:145
+msgid "Registration finish"
+msgstr ""
+
+#: .\contests\forms.py:146
+msgid ""
+"Contest registration finish time, only for open and moderated registrations"
+msgstr ""
+
+#: .\contests\forms.py:157
+msgid "Task grouping"
+msgstr ""
+
+#: .\contests\forms.py:158
+msgid "Enable categories or list all tasks one by one"
+msgstr ""
+
+#: .\contests\forms.py:169
+msgid "Tasks opening policy: next task opening"
+msgstr ""
+
+#: .\contests\forms.py:172 .\contests\forms.py:184
+msgid "No"
+msgstr ""
+
+#: .\contests\forms.py:172
+msgid "Only for team who solved the task"
+msgstr ""
+
+#: .\contests\forms.py:172
+msgid "Task will be open for everyone"
+msgstr ""
+
+#: .\contests\forms.py:180
+msgid "Tasks opening policy: manual"
+msgstr ""
+
+#: .\contests\forms.py:182
+msgid "Can admins open tasks manually for everyone or one participant"
+msgstr ""
+
+#: .\contests\forms.py:184
+msgid "Yes"
+msgstr ""
+
+#: .\contests\forms.py:194
+msgid "Link"
+msgstr ""
+
+#: .\contests\forms.py:197
+msgid ""
+"Link to user or team for registering to the contest. I.e. http://drapo.io/"
+"users/1"
+msgstr ""
+
+#: .\contests\forms.py:207
+msgid "Shows on tasks page"
+msgstr ""
+
+#: .\contests\forms.py:215
+msgid "Max score"
+msgstr ""
+
+#: .\contests\forms.py:224 .\contests\forms.py:334
+msgid "Title"
+msgstr ""
+
+#: .\contests\forms.py:225
+msgid "Statement title. Supports markdown and substitutes"
+msgstr ""
+
+#: .\contests\forms.py:229
+msgid "Template"
+msgstr ""
+
+#: .\contests\forms.py:230
+msgid "Statement template. Supports markdown and substitutes"
+msgstr ""
+
+#: .\contests\forms.py:235
+msgid "Files"
+msgstr ""
+
+#: .\contests\forms.py:236
+msgid "Files will be attached to the statement. Up to 10 files"
+msgstr ""
+
+#: .\contests\forms.py:259 .\contests\templates\contests\attempts.html:24
+#: .\taskbased\tasks\forms.py:8 .\taskbased\tasks\forms.py:20
+msgid "Answer"
+msgstr ""
+
+#: .\contests\forms.py:266
+msgid "Is case sensitive"
+msgstr ""
+
+#: .\contests\forms.py:279
+msgid "Pattern"
+msgstr ""
+
+#: .\contests\forms.py:280
+msgid "Regular expression for matching, don't need ^ and $"
+msgstr ""
+
+#: .\contests\forms.py:287
+msgid "Ignore case"
+msgstr ""
+
+#: .\contests\forms.py:288
+msgid "Python's re.IGNORECASE (re.I)"
+msgstr ""
+
+#: .\contests\forms.py:293
+msgid "Multiline"
+msgstr ""
+
+#: .\contests\forms.py:294
+msgid "Python's re.MULTILINE (re.M)"
+msgstr ""
+
+#: .\contests\forms.py:299
+msgid "Dot (.) includes newline character"
+msgstr ""
+
+#: .\contests\forms.py:300
+msgid "Python's re.DOTALL (re.S)"
+msgstr ""
+
+#: .\contests\forms.py:305
+msgid "Verbose"
+msgstr ""
+
+#: .\contests\forms.py:306
+msgid "Python's re.VERBOSE (re.X)"
+msgstr ""
+
+#: .\contests\forms.py:322 .\contests\templates\contests\attempts.html:16
+msgid "Search"
+msgstr ""
+
+#: .\contests\forms.py:342
+msgid "Text"
+msgstr ""
+
+#: .\contests\forms.py:343
+msgid "Supports markdown"
+msgstr ""
+
+#: .\contests\forms.py:348
+msgid "Is published"
+msgstr ""
+
+#: .\contests\forms.py:353
+msgid "Publish time"
+msgstr ""
+
+#: .\contests\templates\contests\_contest_header.html:16
+msgid "Finished"
+msgstr ""
+
+#: .\contests\templates\contests\_contest_header.html:19
+msgid "Running"
+msgstr ""
+
+#: .\contests\templates\contests\_contest_header.html:35
+msgid "You are registered to the contest"
+msgstr ""
+
+#: .\contests\templates\contests\_contest_header.html:37
+msgid "You are waiting for approving by organizers"
+msgstr ""
+
+#: .\contests\templates\contests\_contest_header.html:41
+#, python-format
+msgid ""
+"\n"
+"                        <nobr>as a <a href=\"%(participant.get_absolute_url)s"
+"\">%(participant.name)s</a></nobr>'s member\n"
+"                    "
+msgstr ""
+
+#: .\contests\templates\contests\_contest_header.html:49
+#: .\templates\_navbar.html:54 .\users\templates\users\login.html:9
+#: .\users\templates\users\login.html:14
+#: .\users\templates\users\register.html:13
+msgid "Login"
+msgstr ""
+
+#: .\contests\templates\contests\_contest_header.html:50
+#: .\contests\templates\contests\_contest_header.html:55
+msgid "or"
+msgstr ""
+
+#: .\contests\templates\contests\_contest_header.html:51
+msgid "register"
+msgstr ""
+
+#: .\contests\templates\contests\_contest_header.html:52
+msgid "to join the contest"
+msgstr ""
+
+#: .\contests\templates\contests\_contest_header.html:54
+msgid "You can"
+msgstr ""
+
+#: .\contests\templates\contests\_contest_header.html:54
+msgid "register your team"
+msgstr ""
+
+#: .\contests\templates\contests\_contest_header.html:56
+msgid "join some one"
+msgstr ""
+
+#: .\contests\templates\contests\_contest_header.html:61
+msgid "Register to the contest"
+msgstr ""
+
+#: .\contests\templates\contests\_contest_header.html:65
+msgid "Registration will open"
+msgstr ""
+
+#: .\contests\templates\contests\_contest_header.html:67
+msgid "Sorry, registration to the contest is closed already."
+msgstr ""
+
+#: .\contests\templates\contests\attempts.html:12 .\templates\_navbar.html:29
+msgid "Attempts"
+msgstr ""
+
+#: .\contests\templates\contests\attempts.html:22
+msgid "Participant"
+msgstr ""
+
+#: .\contests\templates\contests\attempts.html:23
+msgid "Task"
+msgstr ""
+
+#: .\contests\templates\contests\attempts.html:25
+msgid "Status"
+msgstr ""
+
+#: .\contests\templates\contests\attempts.html:30
+msgid "No attempts found by this pattern."
+msgstr ""
+
+#: .\contests\templates\contests\attempts.html:30
+msgid "Clear filter?"
+msgstr ""
+
+#: .\contests\templates\contests\attempts.html:32
+msgid "No attempts a while... Wait for answers by participants"
+msgstr ""
+
+#: .\contests\templates\contests\attempts.html:39
+msgid "Attempt id"
+msgstr ""
+
+#: .\contests\templates\contests\attempts.html:62
+msgid "Correct"
+msgstr ""
+
+#: .\contests\templates\contests\attempts.html:70
+msgid "Wrong"
+msgstr ""
+
+#: .\contests\templates\contests\attempts.html:77
+msgid "Not checked"
+msgstr ""
+
+#: .\contests\templates\contests\contest.html:40
+msgid "+ Add news"
+msgstr ""
+
+#: .\contests\templates\contests\contest.html:50
+msgid "Registered teams"
+msgstr ""
+
+#: .\contests\templates\contests\contest.html:57
+msgid "No teams"
+msgstr ""
+
+#: .\contests\templates\contests\contest.html:60
+#: .\contests\templates\contests\contest.html:76
+#, python-format
+msgid "a while, <a href=\"%(join_url)s\">be the first</a>!"
+msgstr ""
+
+#: .\contests\templates\contests\contest.html:65 .\templates\_navbar.html:32
+msgid "Participants"
+msgstr ""
+
+#: .\contests\templates\contests\contest.html:73
+msgid "No participants"
+msgstr ""
+
+#: .\contests\templates\contests\create.html:5
+#: .\contests\templates\contests\create.html:7 .\templates\_navbar.html:47
+msgid "Create contest"
+msgstr ""
+
+#: .\contests\templates\contests\create_category.html:8
+#: .\contests\templates\contests\create_category.html:13
+msgid "Create category"
+msgstr ""
+
+#: .\contests\templates\contests\create_task.html:8
+msgid "Add task"
+msgstr ""
+
+#: .\contests\templates\contests\create_task.html:17
+msgid "Text checker"
+msgstr ""
+
+#: .\contests\templates\contests\create_task.html:20
+msgid "RegExp checker"
+msgstr ""
+
+#: .\contests\templates\contests\create_task.html:35
+msgid "Create task"
+msgstr ""
+
+#: .\contests\templates\contests\edit.html:5
+msgid "Edit contest"
+msgstr ""
+
+#: .\contests\templates\contests\edit.html:7
+#: .\contests\templates\contests\edit_category.html:13
+msgid "Save"
+msgstr ""
+
+#: .\contests\templates\contests\edit_attempt.html:13
+#, python-format
+msgid ""
+"\n"
+"                Edit attempt by\n"
+"                <a href=\"%(attempt.participant.get_absolute_url)s\"><strong>"
+"%(attempt.participant.name)s</strong></a>\n"
+"                for\n"
+"                <a href=\"%(attempt.task.name.get_absolute_url)s\"><strong>%"
+"(attempt.task.name)s</strong></a>\n"
+"            "
+msgstr ""
+
+#: .\contests\templates\contests\edit_attempt.html:24
+msgid "Save (and mark as checked)"
+msgstr ""
+
+#: .\contests\templates\contests\edit_attempt.html:25
+msgid "Just save"
+msgstr ""
+
+#: .\contests\templates\contests\edit_category.html:8
+msgid "Edit category"
+msgstr ""
+
+#: .\contests\templates\contests\edit_category.html:17
+msgid "Delete category"
+msgstr ""
+
+#: .\contests\templates\contests\list.html:18
+msgid "Enter"
+msgstr ""
+
+#: .\contests\templates\contests\list.html:21 .\templates\_navbar.html:27
+msgid "Scoreboard"
+msgstr ""
+
+#: .\contests\templates\contests\list.html:27
+msgid "You are participating"
+msgstr ""
+
+#: .\contests\templates\contests\list.html:29
+msgid "Register for participation"
+msgstr ""
+
+#: .\contests\templates\contests\list.html:43
+msgid "No contests now, come later"
+msgstr ""
+
+#: .\taskbased\tasks\forms.py:29
+msgid "Checked?"
+msgstr ""
+
+#: .\taskbased\tasks\forms.py:34
+msgid "Score"
+msgstr ""
+
+#: .\taskbased\tasks\forms.py:42
+msgid "Public comment"
+msgstr ""
+
+#: .\taskbased\tasks\forms.py:43
+msgid "Visible to participant"
+msgstr ""
+
+#: .\taskbased\tasks\forms.py:49
+msgid "Private comment"
+msgstr ""
+
+#: .\taskbased\tasks\forms.py:50
+msgid "Visible only to admins"
+msgstr ""
+
+#: .\taskbased\tasks\models.py:69 .\taskbased\tasks\models.py:71
+msgid "Markdown with substitutes"
+msgstr ""
+
+#: .\taskbased\tasks\models.py:95
+msgid "Correct answer"
+msgstr ""
+
+#: .\taskbased\tasks\models.py:97
+msgid "Is answer case sensitive"
+msgstr ""
+
+#: .\teams\forms.py:8
+msgid "Team name"
+msgstr ""
+
+#: .\teams\templates\teams\team.html:12
+msgid "Your team"
+msgstr ""
+
+#: .\teams\templates\teams\team.html:17
+msgid "Edit team"
+msgstr ""
+
+#: .\teams\templates\teams\team.html:25
+msgid "Invite users to your team, send them the link"
+msgstr ""
+
+#: .\teams\templates\teams\team.html:27
+msgid "or give them invite hash"
+msgstr ""
+
+#: .\teams\templates\teams\team.html:30
+msgid "Captain can't leave the team."
+msgstr ""
+
+#: .\teams\templates\teams\team.html:32
+msgid "You can also"
+msgstr ""
+
+#: .\teams\templates\teams\team.html:32
+msgid "leave the team"
+msgstr ""
+
+#: .\teams\templates\teams\team.html:39
+msgid "Members"
+msgstr ""
+
+#: .\teams\templates\teams\team.html:44
+msgid "Captain"
+msgstr ""
+
+#: .\teams\templates\teams\team.html:52
+msgid "Leave team"
+msgstr ""
+
+#: .\teams\templates\teams\team.html:58
+msgid "Remove member"
+msgstr ""
+
+#: .\teams\templates\teams\team.html:67
+msgid "Participated in"
+msgstr ""
+
+#: .\teams\templates\teams\team.html:74
+msgid "Team has not been participated in contests yet"
+msgstr ""
+
+#: .\templates\_navbar.html:19
+msgid "Contests"
+msgstr ""
+
+#: .\templates\_navbar.html:20 .\users\templates\users\profile.html:19
+msgid "Teams"
+msgstr ""
+
+#: .\templates\_navbar.html:26
+msgid "Tasks"
+msgstr ""
+
+#: .\templates\_navbar.html:43
+msgid "Profile"
+msgstr ""
+
+#: .\templates\_navbar.html:44
+msgid "Edit settings"
+msgstr ""
+
+#: .\templates\_navbar.html:45
+msgid "Create team"
+msgstr ""
+
+#: .\templates\_navbar.html:50
+msgid "Logout"
+msgstr ""
+
+#: .\templates\_navbar.html:55
+msgid "Register"
+msgstr ""
+
+#: .\users\forms.py:8 .\users\forms.py:59 .\users\forms.py:106
+msgid "Username"
+msgstr ""
+
+#: .\users\forms.py:11 .\users\forms.py:62
+msgid "Enter username"
+msgstr ""
+
+#: .\users\forms.py:19 .\users\forms.py:31
+msgid "Password"
+msgstr ""
+
+#: .\users\forms.py:22 .\users\forms.py:34
+msgid "Enter password"
+msgstr ""
+
+#: .\users\forms.py:41
+msgid "Password again"
+msgstr ""
+
+#: .\users\forms.py:44
+msgid "Repeat password"
+msgstr ""
+
+#: .\users\forms.py:70
+msgid "Email"
+msgstr ""
+
+#: .\users\forms.py:73
+msgid "Enter email"
+msgstr ""
+
+#: .\users\forms.py:79 .\users\forms.py:116
+msgid "First name"
+msgstr ""
+
+#: .\users\forms.py:82 .\users\forms.py:119
+msgid "Your first name"
+msgstr ""
+
+#: .\users\forms.py:88 .\users\forms.py:125
+msgid "Last name"
+msgstr ""
+
+#: .\users\forms.py:91 .\users\forms.py:128
+msgid "Your last name"
+msgstr ""
+
+#: .\users\forms.py:109
+msgid "Your username"
+msgstr ""
+
+#: .\users\forms.py:145
+msgid "Old password"
+msgstr ""
+
+#: .\users\models.py:21
+msgid "username"
+msgstr ""
+
+#: .\users\models.py:24
+msgid "Required. 100 characters or fewer. Letters, digits and @/./+/-/_ only."
+msgstr ""
+
+#: .\users\models.py:28
+msgid ""
+"Enter a valid username. This value may contain only letters, numbers and @/./"
+"+/-/_ characters."
+msgstr ""
+
+#: .\users\models.py:33
+msgid "A user with that username already exists."
+msgstr ""
+
+#: .\users\models.py:36
+msgid "first name"
+msgstr ""
+
+#: .\users\models.py:37
+msgid "last name"
+msgstr ""
+
+#: .\users\models.py:38
+msgid "email address"
+msgstr ""
+
+#: .\users\models.py:40
+msgid "staff status"
+msgstr ""
+
+#: .\users\models.py:42
+msgid "Designates whether the user can log into this admin site."
+msgstr ""
+
+#: .\users\models.py:45
+msgid "active"
+msgstr ""
+
+#: .\users\models.py:48
+msgid ""
+"Designates whether this user should be treated as active. Unselect this "
+"instead of deleting accounts."
+msgstr ""
+
+#: .\users\models.py:52
+msgid "date joined"
+msgstr ""
+
+#: .\users\models.py:60
+msgid "user"
+msgstr ""
+
+#: .\users\models.py:61
+msgid "users"
+msgstr ""
+
+#: .\users\templates\_footer.html:11
+msgid "Drapo is a CTF checksystem"
+msgstr ""
+
+#: .\users\templates\_footer.html:14
+msgid ""
+"Developed and hosted by <a href=\"http://kaspersky.com\">Kaspersky Lab</a>"
+msgstr ""
+
+#: .\users\templates\_footer.html:18
+msgid "Contact us"
+msgstr ""
+
+#: .\users\templates\_footer.html:20
+msgid "Feel free to <a href=\"mailto:ctf@kasperksy.com\">write us</a>"
+msgstr ""
+
+#: .\users\templates\_footer.html:24
+msgid "Time"
+msgstr ""
+
+#: .\users\templates\_footer.html:27
+msgid "Server timezone is {{ TIME_ZONE }} {{ TIME_ZONE|utcoffset }}"
+msgstr ""
+
+#: .\users\templates\users\login.html:15
+msgid "Registration"
+msgstr ""
+
+#: .\users\templates\users\profile.html:12
+msgid "Edit your profile"
+msgstr ""
+
+#: .\users\templates\users\profile.html:23
+msgid "You are"
+msgstr ""
+
+#: .\users\templates\users\profile.html:27
+msgid "member of"
+msgstr ""
+
+#: .\users\templates\users\profile.html:30
+msgid "team"
+msgstr ""
+
+#: .\users\templates\users\profile.html:36
+msgid "and"
+msgstr ""
+
+#: .\users\templates\users\profile.html:44
+msgid "You are not any team's member"
+msgstr ""
+
+#: .\users\templates\users\profile.html:46
+msgid "is not any team's member"
+msgstr ""
+
+#: .\users\templates\users\register.html:8
+msgid "Register account"
+msgstr ""
+
+#: .\users\templates\users\register.html:12
+msgid "Join"
+msgstr ""

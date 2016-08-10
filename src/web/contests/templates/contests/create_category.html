@@ -1,15 +1,16 @@
 {% extends '_layout.html' %}
 
 {% load bootstrap %}
+{% load i18n %}
 
 {% block content %}
     <div class="page contest-page">
-        <h1 class="page__header">Create category</h1>
+        <h1 class="page__header">{% trans 'Create category' %}</h1>
 
         <form method="POST" action="" class="form form-horizontal">
             {% csrf_token %}
             {{ form|bootstrap_horizontal }}
-            <button class="btn btn-success btn-lg col-sm-offset-2">Create category</button>
+            <button class="btn btn-success btn-lg col-sm-offset-2">{% trans 'Create category' %}</button>
         </form>
     </div>
 {% endblock %}

@@ -1,10 +1,11 @@
 {% extends '_layout.html' %}
 
 {% load bootstrap %}
+{% load i18n %}
 
 {% block content %}
     <div class="page contest-page">
-        <h1 class="page__header"><strong class="mr15">{{ category.name }}</strong> Add task</h1>
+        <h1 class="page__header"><strong class="mr15">{{ category.name }}</strong> {% trans 'Add task' %}</h1>
 
         <form method="POST" action="" class="form form-horizontal" enctype="multipart/form-data">
             {% csrf_token %}
@@ -13,10 +14,10 @@
             <div class="col-sm-offset-2">
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class="active">
-                        <a href="#text_checker" aria-controls="text_checker" role="tab" data-toggle="tab" onclick="$('#id_checker_type').val('text');">Text checker</a>
+                        <a href="#text_checker" aria-controls="text_checker" role="tab" data-toggle="tab" onclick="$('#id_checker_type').val('text');">{% trans 'Text checker' %}</a>
                     </li>
                     <li role="presentation">
-                        <a href="#regexp_checker" aria-controls="regexp_checker" role="tab" data-toggle="tab" onclick="$('#id_checker_type').val('regexp');">RegExp checker</a>
+                        <a href="#regexp_checker" aria-controls="regexp_checker" role="tab" data-toggle="tab" onclick="$('#id_checker_type').val('regexp');">{% trans 'RegExp checker' %}</a>
                     </li>
                 </ul>
 
@@ -31,7 +32,7 @@
             </div>
 
             <div class="mt30">
-                <button class="btn btn-success btn-lg col-sm-offset-2">Create task</button>
+                <button class="btn btn-success btn-lg col-sm-offset-2">{% trans 'Create task' %}</button>
             </div>
         </form>
     </div>

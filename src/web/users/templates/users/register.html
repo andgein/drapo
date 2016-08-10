@@ -1,15 +1,16 @@
 {% extends '_layout.html' %}
 
 {% load bootstrap %}
+{% load i18n %}
 
 {% block content %}
     <div class="page">
-        <h1 class="page__header">Register account</h1>
+        <h1 class="page__header">{% trans 'Register account' %}</h1>
         <form action="" method="POST" class="form form-horizontal">
             {% csrf_token %}
             {{ form|bootstrap_horizontal }}
-            <button class="btn btn-success btn-lg  col-sm-offset-2">Join</button>
-            <a href="{% url 'users:login' %}" class="btn btn-link">Login &rarr;</a>
+            <button class="btn btn-success btn-lg  col-sm-offset-2">{% trans 'Join' %}</button>
+            <a href="{% url 'users:login' %}" class="btn btn-link">{% trans 'Login' %} &rarr;</a>
         </form>
     </div>
 {% endblock %}
