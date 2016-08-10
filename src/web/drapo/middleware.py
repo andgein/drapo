@@ -12,7 +12,6 @@ class LocaleMiddleware(object):
 
     def process_request(self, request):
         language = translation.get_language_from_request(request)
-        language = 'ru'
         translation.activate(language)
         request.LANGUAGE_CODE = translation.get_language()
 
