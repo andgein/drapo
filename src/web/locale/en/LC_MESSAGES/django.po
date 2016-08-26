@@ -710,7 +710,7 @@ msgid "Contact us"
 msgstr ""
 
 #: .\users\templates\_footer.html:17
-msgid "Feel free to <a href=\"mailto:ctf@kasperksy.com\">write us</a>"
+msgid "Feel free to <a href=\"mailto:industrial-ctf@kaspersky.com\">write us</a>"
 msgstr ""
 
 #: .\users\templates\_footer.html:21

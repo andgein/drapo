@@ -733,8 +733,8 @@ msgid "Contact us"
 msgstr "Напишите нам"
 
 #: .\users\templates\_footer.html:17
-msgid "Feel free to <a href=\"mailto:ctf@kasperksy.com\">write us</a>"
-msgstr "<a href=\"mailto:ctf@kasperksy.com\">Пишите нам</a> по любым вопросам"
+msgid "Feel free to <a href=\"mailto:industrial-ctf@kaspersky.com\">write us</a>"
+msgstr "<a href=\"mailto:industrial-ctf@kaspersky.com\">Пишите нам</a> по любым вопросам"
 
 #: .\users\templates\_footer.html:21
 msgid "Time"
