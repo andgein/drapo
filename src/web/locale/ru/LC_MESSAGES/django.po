@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-10 10:14+0300\n"
+"POT-Creation-Date: 2016-08-26 12:32+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -139,12 +139,13 @@ msgid "Link"
 msgstr "Ссылка"
 
 #: .\contests\forms.py:197
+#, fuzzy
 msgid ""
-"Link to user or team for registering to the contest. I.e. http://drapo.io/"
-"users/1"
+"Link to user or team for registering to the contest. I.e. http://summer-ctf."
+"com/users/1"
 msgstr ""
 "Ссылка на пользователя или команду для регистрации в соревновании. Например, "
-"http://drapo.io/users/1"
+"http://summer-ctf.com/users/1"
 
 #: .\contests\forms.py:207
 msgid "Shows on tasks page"
@@ -723,27 +724,23 @@ msgid "users"
 msgstr ""
 
 #: .\users\templates\_footer.html:11
-msgid "Drapo is a CTF checksystem"
-msgstr "Drapo — платформа для CTF-соревнований"
-
-#: .\users\templates\_footer.html:14
 msgid ""
 "Developed and hosted by <a href=\"http://kaspersky.com\">Kaspersky Lab</a>"
 msgstr "Разработано в <a href=\"http://kaspersky.com\">Kaspersky Lab</a>"
 
-#: .\users\templates\_footer.html:18
+#: .\users\templates\_footer.html:15
 msgid "Contact us"
 msgstr "Напишите нам"
 
-#: .\users\templates\_footer.html:20
+#: .\users\templates\_footer.html:17
 msgid "Feel free to <a href=\"mailto:ctf@kasperksy.com\">write us</a>"
 msgstr "<a href=\"mailto:ctf@kasperksy.com\">Пишите нам</a> по любым вопросам"
 
-#: .\users\templates\_footer.html:24
+#: .\users\templates\_footer.html:21
 msgid "Time"
 msgstr "Время"
 
-#: .\users\templates\_footer.html:27
+#: .\users\templates\_footer.html:24
 #, python-format
 msgid "Server timezone is %(TIME_ZONE)s %(TIME_ZONE|utcoffset)s"
 msgstr "Часовой пояс на сервере {{ TIME_ZONE }} {{ TIME_ZONE|utcoffset }}"

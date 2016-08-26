@@ -194,7 +194,7 @@ class ManualRegisterParticipant(forms.Form):
         label=_('Link'),
         max_length=100,
         widget=forms.TextInput(attrs={
-            'placeholder': _('Link to user or team for registering to the contest. I.e. http://drapo.io/users/1'),
+            'placeholder': _('Link to user or team for registering to the contest. I.e. http://summer-ctf.com/users/1'),
             'class': 'input-sm mr15',
             'style': 'width: 500px; height: 30px;'
         })

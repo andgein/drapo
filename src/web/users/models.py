@@ -102,8 +102,8 @@ class EmailConfirmation(models.Model):
     def send(self, request):
         self.user.email_user(
             'Email confirmation',
-            'Hello!\n\nWelcome to Drapo — CTF checksystem.\n\nConfirm you account by clicking on link: ' +
+            'Hello!\n\nWelcome to Kaspersky CTF.\n\nConfirm you account by clicking on link: ' +
             self._build_confirmation_link(request) +
-            '\n\nDrapo CTF checksystem',
+            '\n\nKaspersky CTF checksystem',
             settings.DRAPO_EMAIL_SENDER)
 
