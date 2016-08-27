@@ -783,6 +783,8 @@ def edit(request, contest_id):
 
                 # Remove all old tasks opening policies
                 contest.tasks_opening_policies.all().delete()
+                contest.save()
+
                 # And create new
                 if form.cleaned_data['by_categories_tasks_opening_policy'] != '-':
                     tasks_models.ByCategoriesTasksOpeningPolicy(
