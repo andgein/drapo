@@ -36,27 +36,38 @@ def create(request):
     if request.method == 'POST':
         form = forms.TeamForm(data=request.POST)
         if form.is_valid():
-            team = models.Team(
-                name=form.cleaned_data['name'],
-                captain=request.user,
-            )
-            with transaction.atomic():
-                team.save()
-                team.members.add(request.user)
-                team.save()
+            team_name = form.cleaned_data['name']
+            team = create_team(request, team_name)
 
-            messages.success(request, 'Team ' + team.name + ' created')
+            if team is None:
+                form.add_error('name', 'Team with this name is already exists')
+            else:
+                messages.success(request, 'Team ' + team.name + ' created')
 
-            if 'next' in request.GET and '//' not in request.GET['next']:
-                return redirect(request.GET['next'])
+                if 'next' in request.GET and '//' not in request.GET['next']:
+                    return redirect(request.GET['next'])
 
-            return redirect(team.get_absolute_url())
+                return redirect(team.get_absolute_url())
     else:
         form = forms.TeamForm()
 
     return render(request, 'teams/create.html', {
         'form': form
     })
+
+
+def create_team(request, team_name):
+    team = models.Team(
+        name=team_name,
+        captain=request.user,
+    )
+    with transaction.atomic():
+        if settings.DRAPO_TEAM_NAMES_ARE_UNIQUE and models.Team.objects.filter(name=team_name).exists():
+            return None
+        team.save()
+        team.members.add(request.user)
+        team.save()
+    return team
 
 
 @login_required

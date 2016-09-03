@@ -168,3 +168,5 @@ DRAPO_EMAIL_SENDER = 'admin@summer-ctf.com'
 DRAPO_UPLOAD_DIR = os.path.join(BASE_DIR, '..', '..', 'upload')
 DRAPO_TASKS_FILES_DIR = os.path.join(DRAPO_UPLOAD_DIR, 'tasks_files')
 
+DRAPO_TEAM_NAMES_ARE_UNIQUE = False
+
