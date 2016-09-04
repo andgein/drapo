@@ -70,9 +70,13 @@
                                 {% for task in category.tasks.all %}
                                     <td>
                                         {% if max_scored_attempt_by_participant_and_task|has_item:participant.id and max_scored_attempt_by_participant_and_task|item:participant.id|has_item:task.id %}
-                                            <small title="{{ max_scored_attempt_by_participant_and_task|item:participant.id|item:task.id|attr:'created_at' }}">
-                                                {{ max_scored_attempt_by_participant_and_task|item:participant.id|item:task.id|attr:'score' }}
-                                            </small>
+                                            {% with attempt=max_scored_attempt_by_participant_and_task|item:participant.id|item:task.id %}
+                                                {% if attempt|attr:'score' > 0 %}
+                                                    <small title="{{ attempt|attr:'created_at' }}">
+                                                        {{ attempt|attr:'score' }}
+                                                    </small>
+                                                {% endif %}
+                                            {% endwith %}
                                         {% endif %}
                                     </td>
                                 {% endfor %}
