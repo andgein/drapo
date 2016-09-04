@@ -25,7 +25,8 @@ def login(request):
     if request.method == 'POST':
         form = forms.LoginForm(request.POST)
         if form.is_valid():
-            user = models.User.objects.filter(email=form.cleaned_data['email']).first()
+            email = form.cleaned_data['email'].lower()
+            user = models.User.objects.filter(email=email).first()
             if user is not None and user.check_password(form.cleaned_data['password']):
                 if user.is_email_confirmed:
                     auth.login(request, user)
@@ -50,7 +51,7 @@ def register(request):
         form = forms.RegisterForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
-            email = form.cleaned_data['email']
+            email = form.cleaned_data['email'].lower()
             password = form.cleaned_data['password']
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
