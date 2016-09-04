@@ -12,12 +12,12 @@ urlpatterns = [
     url(r'^(?P<contest_id>\d+)/edit/$', views.edit, name='edit'),
 
     url(r'^(?P<contest_id>\d+)/tasks/$', views.tasks, name='tasks'),
-    url(r'^(?P<contest_id>\d+)/tasks/(?P<task_id>\d+)$', views.task, name='task'),
+    url(r'^(?P<contest_id>\d+)/tasks/(?P<task_id>\d+)/$', views.task, name='task'),
     url(r'^(?P<contest_id>\d+)/tasks/(?P<task_id>\d+)/delete/$', views.delete_task, name='delete_task'),
     url(r'^(?P<contest_id>\d+)/tasks/(?P<task_id>\d+)/opened/$', views.task_opens, name='task_opens'),
-    url(r'^(?P<contest_id>\d+)/tasks/(?P<task_id>\d+)/open/(?P<participant_id>\d+)$', views.open_task, name='open_task'),
+    url(r'^(?P<contest_id>\d+)/tasks/(?P<task_id>\d+)/open/(?P<participant_id>\d+)/$', views.open_task, name='open_task'),
     url(r'^(?P<contest_id>\d+)/tasks/add/$', views.add_task, name='add_task'),
-    url(r'^(?P<contest_id>\d+)/files/(?P<file_id>\d+)$', views.task_file, name='task_file'),
+    url(r'^(?P<contest_id>\d+)/files/(?P<file_id>\d+)/$', views.task_file, name='task_file'),
 
     url(r'^(?P<contest_id>\d+)/categories/add/$', views.add_category, name='add_category'),
     url(r'^(?P<contest_id>\d+)/categories/(?P<category_id>\d+)/add/$', views.add_task_to_category, name='add_task_to_category'),

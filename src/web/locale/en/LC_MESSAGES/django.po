@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-26 12:32+0500\n"
+"POT-Creation-Date: 2016-09-03 17:36+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -411,6 +411,10 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
+#: .\contests\templates\contests\edit_attempt.html:6
+msgid "Edit attempt"
+msgstr ""
+
 #: .\contests\templates\contests\edit_attempt.html:13
 #, python-format
 msgid ""
@@ -584,12 +588,12 @@ msgstr ""
 msgid "Register"
 msgstr ""
 
-#: .\users\forms.py:8 .\users\forms.py:59 .\users\forms.py:106
-msgid "Username"
+#: .\users\forms.py:8 .\users\forms.py:70
+msgid "Email"
 msgstr ""
 
-#: .\users\forms.py:11 .\users\forms.py:62
-msgid "Enter username"
+#: .\users\forms.py:11
+msgid "Your email"
 msgstr ""
 
 #: .\users\forms.py:19 .\users\forms.py:31
@@ -608,8 +612,12 @@ msgstr ""
 msgid "Repeat password"
 msgstr ""
 
-#: .\users\forms.py:70
-msgid "Email"
+#: .\users\forms.py:59 .\users\forms.py:106
+msgid "Username"
+msgstr ""
+
+#: .\users\forms.py:62
+msgid "Enter username"
 msgstr ""
 
 #: .\users\forms.py:73

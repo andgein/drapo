@@ -15,7 +15,7 @@ admin.site.register(models.TaskBasedContest, ContestAdmin)
 
 class IndividualParticipantAdmin(admin.ModelAdmin):
     list_display = ('id', 'contest', 'user')
-    list_editable = ('id', 'contest')
+    list_editable = ('contest', )
     list_filter = ('contest', )
 
 admin.site.register(models.IndividualParticipant, IndividualParticipantAdmin)
@@ -23,7 +23,7 @@ admin.site.register(models.IndividualParticipant, IndividualParticipantAdmin)
 
 class TeamParticipantAdmin(admin.ModelAdmin):
     list_display = ('id', 'contest', 'team')
-    list_editable = ('id', 'contest')
+    list_editable = ('contest', )
     list_filter = ('contest',)
 
 admin.site.register(models.TeamParticipant, TeamParticipantAdmin)

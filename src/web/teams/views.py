@@ -24,11 +24,42 @@ def team(request, team_id):
     team = get_object_or_404(models.Team, pk=team_id)
     members = list(team.members.all())
     contests = contests_models.Contest.objects.filter(participants__teamparticipant__team=team)
+    can_edit = request.user.is_staff or \
+        (not settings.DRAPO_ONLY_STAFF_CAN_EDIT_TEAM_NAME and team.captain_id == request.user.id)
+
     return render(request, 'teams/team.html', {
         'team': team,
         'members': members,
-        'contests': contests
+        'contests': contests,
+        'can_edit': can_edit,
     })
+
+
+class TeamCreationException(Exception):
+    pass
+
+
+def create_team(team_name, captain):
+    team = models.Team(
+        name=team_name,
+        captain=captain,
+    )
+    with transaction.atomic():
+        if settings.DRAPO_USER_CAN_BE_ONLY_IN_ONE_TEAM and \
+                models.Team.objects.filter(members=captain).exists() and \
+                not captain.is_staff:
+            user_team = models.Team.objects.filter(members=captain).first()
+            raise TeamCreationException(
+                'You can\'t create a new team while you are a member of team %s' % user_team.name
+            )
+        if settings.DRAPO_TEAM_NAMES_ARE_UNIQUE and \
+                models.Team.objects.filter(name=team_name).exists() and \
+                not captain.is_staff:
+            raise TeamCreationException('Team with same name already exists')
+        team.save()
+        team.members.add(captain)
+        team.save()
+    return team
 
 
 @login_required
@@ -36,21 +67,20 @@ def create(request):
     if request.method == 'POST':
         form = forms.TeamForm(data=request.POST)
         if form.is_valid():
-            team = models.Team(
-                name=form.cleaned_data['name'],
-                captain=request.user,
-            )
-            with transaction.atomic():
-                team.save()
-                team.members.add(request.user)
-                team.save()
+            team_name = form.cleaned_data['name']
+            try:
+                team = create_team(team_name, request.user)
+            except TeamCreationException as e:
+                form.add_error('name', str(e))
+                messages.error(request, str(e))
+            else:
+                messages.success(request, 'Team ' + team.name + ' created')
 
-            messages.success(request, 'Team ' + team.name + ' created')
+                if 'next' in request.GET and '//' not in request.GET['next']:
+                    return redirect(request.GET['next'])
 
-            if 'next' in request.GET and '//' not in request.GET['next']:
-                return redirect(request.GET['next'])
+                return redirect(team.get_absolute_url())
 
-            return redirect(team.get_absolute_url())
     else:
         form = forms.TeamForm()
 
@@ -77,6 +107,15 @@ def join(request, invite_hash=None):
             with transaction.atomic():
                 if request.user in team.members.all():
                     messages.warning(request, 'You are already in team ' + team.name)
+                    if 'next' in request.POST and '//' not in request.POST['next']:
+                        return redirect(request.POST['next'])
+                    return redirect(urlresolvers.reverse('teams:team', args=[team.id]))
+
+                if settings.DRAPO_USER_CAN_BE_ONLY_IN_ONE_TEAM and \
+                        models.Team.objects.filter(members=request.user).exists() and \
+                        not request.user.is_staff:
+                    messages.error(request,
+                                   'You can\'t join team %s while you are a member of another team' % team.name)
                     if 'next' in request.POST and '//' not in request.POST['next']:
                         return redirect(request.POST['next'])
                     return redirect(urlresolvers.reverse('teams:team', args=[team.id]))
@@ -128,14 +167,22 @@ def edit(request, team_id):
     if not request.user.is_staff and team.captain != request.user:
         return HttpResponseNotFound()
 
+    if settings.DRAPO_ONLY_STAFF_CAN_EDIT_TEAM_NAME and not request.user.is_staff:
+        return HttpResponseNotFound()
+
     if request.method == 'POST':
         form = forms.TeamForm(data=request.POST)
         if form.is_valid():
-            team.name = form.cleaned_data['name']
-            team.save()
+            team_name = form.cleaned_data['name']
+            with transaction.atomic():
+                if models.Team.objects.filter(name=team_name).exists():
+                    form.add_error('name', 'Team with same name already exists')
+                else:
+                    team.name = team_name
+                    team.save()
 
-            messages.success(request, 'Team %s saved' % team.name)
-            return redirect(team)
+                    messages.success(request, 'Team %s saved' % team.name)
+                    return redirect(team)
     else:
         form = forms.TeamForm(initial={'name': team.name})
 
@@ -162,7 +209,7 @@ def remove_member(request, team_id, user_id):
             return redirect(team)
 
         if user not in team.members.all():
-            messages.warning(request, 'User %s not in the team' % (user.username, ))
+            messages.warning(request, 'User %s not in the team' % (user.username,))
             return redirect(team)
 
         team.members.remove(user)
