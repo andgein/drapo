@@ -24,10 +24,14 @@ def team(request, team_id):
     team = get_object_or_404(models.Team, pk=team_id)
     members = list(team.members.all())
     contests = contests_models.Contest.objects.filter(participants__teamparticipant__team=team)
+    can_edit = request.user.is_staff or \
+        (not settings.DRAPO_ONLY_STAFF_CAN_EDIT_TEAM_NAME and team.captain_id == request.user.id)
+
     return render(request, 'teams/team.html', {
         'team': team,
         'members': members,
-        'contests': contests
+        'contests': contests,
+        'can_edit': can_edit,
     })
 
 
@@ -163,6 +167,9 @@ def edit(request, team_id):
     if not request.user.is_staff and team.captain != request.user:
         return HttpResponseNotFound()
 
+    if settings.DRAPO_ONLY_STAFF_CAN_EDIT_TEAM_NAME and not request.user.is_staff:
+        return HttpResponseNotFound()
+
     if request.method == 'POST':
         form = forms.TeamForm(data=request.POST)
         if form.is_valid():
@@ -202,7 +209,7 @@ def remove_member(request, team_id, user_id):
             return redirect(team)
 
         if user not in team.members.all():
-            messages.warning(request, 'User %s not in the team' % (user.username, ))
+            messages.warning(request, 'User %s not in the team' % (user.username,))
             return redirect(team)
 
         team.members.remove(user)
