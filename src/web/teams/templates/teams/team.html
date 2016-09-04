@@ -35,7 +35,7 @@
         {% endif %}
 
         <div class="row">
-            <div class="col-xs-12 col-sm-6 col-lg-4">
+            <div class="col-xs-12 col-sm-6">
                 <h3>{% trans 'Members' %}</h3>
                 {% for member in members %}
                     <div>
@@ -55,7 +55,7 @@
                             {% if member != team.captain %}
                                 <form action="{% url 'teams:remove_member' team.id member.id %}" method="POST" class="ib visible-on-parent-hover">
                                     {% csrf_token %}
-                                    <button class="btn btn-danger btn-xs btn-inline">{% trans 'Remove member' %}</button>
+                                    <button class="btn btn-danger btn-xs btn-inline">{% trans 'Remove' %}</button>
                                 </form>
                             {% endif %}
                         {% endif %}

@@ -782,8 +782,11 @@ def edit(request, contest_id):
                         tasks_models.ContestTasks(contest=new_contest).save()
 
                 # Remove all old tasks opening policies
-                contest.tasks_opening_policies.all().delete()
-                contest.save()
+                # It's not just call contest.tasks_opening_policies.all().delete() because of
+                # django + django-polymorphic + postgresql bug:
+                # https://github.com/django-polymorphic/django-polymorphic/issues/34
+                for policy in contest.tasks_opening_policies.all():
+                    policy.delete()
 
                 # And create new
                 if form.cleaned_data['by_categories_tasks_opening_policy'] != '-':
