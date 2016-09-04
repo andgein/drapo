@@ -31,16 +31,44 @@ def team(request, team_id):
     })
 
 
+class TeamCreationException(Exception):
+    pass
+
+
+def create_team(team_name, captain):
+    team = models.Team(
+        name=team_name,
+        captain=captain,
+    )
+    with transaction.atomic():
+        if settings.DRAPO_USER_CAN_BE_ONLY_IN_ONE_TEAM and \
+                models.Team.objects.filter(members=captain).exists() and \
+                not captain.is_staff:
+            user_team = models.Team.objects.filter(members=captain).first()
+            raise TeamCreationException(
+                'You can\'t create a new team while you are a member of team %s' % user_team.name
+            )
+        if settings.DRAPO_TEAM_NAMES_ARE_UNIQUE and \
+                models.Team.objects.filter(name=team_name).exists() and \
+                not captain.is_staff:
+            raise TeamCreationException('Team with same name already exists')
+        team.save()
+        team.members.add(captain)
+        team.save()
+    return team
+
+
 @login_required
 def create(request):
     if request.method == 'POST':
         form = forms.TeamForm(data=request.POST)
         if form.is_valid():
             team_name = form.cleaned_data['name']
-            team = create_team(request, team_name)
-
-            if team is None:
-                form.add_error('name', 'Team with this name is already exists')
+            try:
+                team = create_team(team_name, request.user)
+            except TeamCreationException as e:
+                form.add_error('name', str(e))
+                messages.error(request, str(e))
             else:
                 messages.success(request, 'Team ' + team.name + ' created')
 
@@ -48,26 +76,13 @@ def create(request):
                     return redirect(request.GET['next'])
 
                 return redirect(team.get_absolute_url())
+
     else:
         form = forms.TeamForm()
 
     return render(request, 'teams/create.html', {
         'form': form
     })
-
-
-def create_team(request, team_name):
-    team = models.Team(
-        name=team_name,
-        captain=request.user,
-    )
-    with transaction.atomic():
-        if settings.DRAPO_TEAM_NAMES_ARE_UNIQUE and models.Team.objects.filter(name=team_name).exists():
-            return None
-        team.save()
-        team.members.add(request.user)
-        team.save()
-    return team
 
 
 @login_required
@@ -88,6 +103,15 @@ def join(request, invite_hash=None):
             with transaction.atomic():
                 if request.user in team.members.all():
                     messages.warning(request, 'You are already in team ' + team.name)
+                    if 'next' in request.POST and '//' not in request.POST['next']:
+                        return redirect(request.POST['next'])
+                    return redirect(urlresolvers.reverse('teams:team', args=[team.id]))
+
+                if settings.DRAPO_USER_CAN_BE_ONLY_IN_ONE_TEAM and \
+                        models.Team.objects.filter(members=request.user).exists() and \
+                        not request.user.is_staff:
+                    messages.error(request,
+                                   'You can\'t join team %s while you are a member of another team' % team.name)
                     if 'next' in request.POST and '//' not in request.POST['next']:
                         return redirect(request.POST['next'])
                     return redirect(urlresolvers.reverse('teams:team', args=[team.id]))
@@ -142,11 +166,16 @@ def edit(request, team_id):
     if request.method == 'POST':
         form = forms.TeamForm(data=request.POST)
         if form.is_valid():
-            team.name = form.cleaned_data['name']
-            team.save()
+            team_name = form.cleaned_data['name']
+            with transaction.atomic():
+                if models.Team.objects.filter(name=team_name).exists():
+                    form.add_error('name', 'Team with same name already exists')
+                else:
+                    team.name = team_name
+                    team.save()
 
-            messages.success(request, 'Team %s saved' % team.name)
-            return redirect(team)
+                    messages.success(request, 'Team %s saved' % team.name)
+                    return redirect(team)
     else:
         form = forms.TeamForm(initial={'name': team.name})
 
