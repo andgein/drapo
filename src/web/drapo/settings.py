@@ -168,8 +168,8 @@ DRAPO_EMAIL_SENDER = 'admin@summer-ctf.com'
 DRAPO_UPLOAD_DIR = os.path.join(BASE_DIR, '..', '..', 'upload')
 DRAPO_TASKS_FILES_DIR = os.path.join(DRAPO_UPLOAD_DIR, 'tasks_files')
 
-DRAPO_TEAM_NAMES_ARE_UNIQUE = False
-DRAPO_USER_CAN_BE_ONLY_IN_ONE_TEAM = False
+DRAPO_TEAM_NAMES_ARE_UNIQUE = True
+DRAPO_USER_CAN_BE_ONLY_IN_ONE_TEAM = True
 # If False captain can edit team name
-DRAPO_ONLY_STAFF_CAN_EDIT_TEAM_NAME = False
+DRAPO_ONLY_STAFF_CAN_EDIT_TEAM_NAME = True
 
