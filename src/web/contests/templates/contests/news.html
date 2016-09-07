@@ -2,6 +2,7 @@
 
 {% load markdown_deux_tags %}
 {% load humanize %}
+{% load urlize_html %}
 
 {% block title %}{{ news.title }} &bull; {{ contest.name }}{% endblock %}
 
@@ -28,6 +29,6 @@
             </div>
         </h1>
 
-        {{ news.text|markdown|urlize }}
+        {{ news.text|markdown|urlize_html }}
     </div>
 {% endblock %}
