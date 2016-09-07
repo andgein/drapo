@@ -3,6 +3,7 @@
 {% load markdown_deux_tags %}
 {% load humanize %}
 {% load i18n %}
+{% load urlize_html %}
 
 {% block title %}{{ contest.name }}{% endblock %}
 
@@ -12,7 +13,7 @@
 
         <div class="row">
             <div class="col-sm-6">
-                {{ contest.description|markdown|urlize }}
+                {{ contest.description|markdown|urlize_html }}
 
                 <div class="contest__news-list">
                     {% for one_news in news %}
@@ -30,7 +31,7 @@
                             </h2>
 
                             <div class="contest__news__text ellipsis" style="max-height: 150px">
-                                {{ one_news.text|markdown|urlize|truncatechars_html:1000 }}
+                                {{ one_news.text|markdown|urlize_html|truncatechars_html:1000 }}
                             </div>
                         </div>
                     {% endfor %}
