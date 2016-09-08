@@ -257,6 +257,7 @@ class AbstractCheckerForm(forms.Form):
 class CreateTextCheckerForm(AbstractCheckerForm):
     answer = forms.CharField(
         label=_('Answer'),
+        required=False,
         widget=forms.TextInput(attrs={
             'class': 'form-control-short'
         }),
@@ -277,6 +278,7 @@ class CreateTextCheckerForm(AbstractCheckerForm):
 class CreateRegExpCheckerForm(AbstractCheckerForm):
     pattern = forms.CharField(
         label=_('Pattern'),
+        required=False,
         help_text=_('Regular expression for matching, don\'t need ^ and $'),
         widget=forms.TextInput(attrs={
             'class': 'form-control-short'
