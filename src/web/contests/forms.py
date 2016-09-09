@@ -311,7 +311,7 @@ class CreateRegExpCheckerForm(AbstractCheckerForm):
 
     def get_checker(self):
         return tasks_models.RegExpChecker(
-            answer=self.cleaned_data['answer'],
+            pattern=self.cleaned_data['pattern'],
             flag_ignore_case=self.cleaned_data['flag_ignore_case'],
             flag_multiline=self.cleaned_data['flag_multiline'],
             flag_dotall=self.cleaned_data['flag_dotall'],
