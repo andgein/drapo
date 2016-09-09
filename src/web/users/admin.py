@@ -37,7 +37,7 @@ class EmailConfirmationAdmin(admin.ModelAdmin):
 
     list_filter = ('is_confirmed', )
 
-    search_fields = ('user', 'token')
+    search_fields = ('user__first_name', 'user__last_name', 'user__username', 'user__email', 'token')
 
 admin.site.register(models.EmailConfirmation, EmailConfirmationAdmin)
 
