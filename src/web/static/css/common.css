@@ -5,7 +5,6 @@ html {
 body {
     padding-top: 20px;
     padding-bottom: 20px;
-    color: #555;
 }
 
 .navbar {
@@ -230,7 +229,7 @@ h1.page__header {
 /* Contest header */
 .contest-header {
     color: white;
-    background-color: #006D5C;
+    background-color: rgb(143, 218, 209);
     margin: -30px -30px 0;
     padding: 20px 20px 15px 15px;
 }
@@ -254,7 +253,6 @@ h1.page__header {
     background-color: #fefefe;
     border-left: 2px solid #eaeaea;
     padding: 30px;
-    margin-bottom: 30px;
 }
 
 .contests-list__contest h1 {
@@ -324,7 +322,7 @@ h1.page__header {
 }
 
 .category .category-info {
-    background-color: #006D5C;
+    background-color: #339999;
     color: white;
 }
 
