@@ -1,4 +1,5 @@
 import abc
+import traceback
 import unicodedata
 import re
 import os.path
@@ -42,6 +43,15 @@ class Checked(CheckResult):
         self.public_comment = public_comment
         self.private_comment = private_comment
         self.score = score
+
+
+class CheckError(CheckResult):
+    def __init__(self, private_comment=''):
+        self.is_checked = False
+        self.is_correct = False
+        self.public_comment = ''
+        self.private_comment = private_comment
+        self.score = 0
 
 
 class PostponeForManualCheck(CheckResult):
@@ -156,6 +166,25 @@ class RegExpChecker(AbstractChecker):
         return self.compiled_regexp.fullmatch(attempt.answer) is not None
 
 
+class SimplePyChecker(AbstractChecker):
+    source = models.TextField(help_text='Python source code. Must contain function check(attempt, context)')
+
+    def __str__(self):
+        return '=~ %s' % repr(self.source)
+
+    def get_checker(self):
+        module_globals = {}
+        exec(self.source, module_globals)
+        return module_globals['check']
+
+    def check_attempt(self, attempt, context):
+        try:
+            checker = self.get_checker()
+            return checker(attempt, context)
+        except:
+            return CheckError(traceback.format_exc())
+
+
 class ManualChecker(AbstractChecker):
     def check_attempt(self, attempt, context):
         return PostponeForManualCheck()
@@ -257,14 +286,14 @@ class Attempt(drapo.models.ModelWithTimestamps):
     def try_to_check(self):
         context = {}
         check_result = self.task.check_attempt(self, context)
-        if check_result.is_checked:
-            self.is_checked = True
-            self.is_correct = check_result.is_correct
-            self.public_comment = check_result.public_comment
-            self.private_comment = check_result.private_comment
-            self.score = check_result.score
 
-            self.save()
+        self.is_checked = check_result.is_checked
+        self.is_correct = check_result.is_correct
+        self.public_comment = check_result.public_comment
+        self.private_comment = check_result.private_comment
+        self.score = check_result.score
+
+        self.save()
 
 
 class AbstractTasksOpeningPolicy(polymorphic.models.PolymorphicModel):

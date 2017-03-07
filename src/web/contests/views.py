@@ -674,12 +674,15 @@ def add_task_to_contest_view(request, contest, category=None):
         form = forms.CreateTaskForm(data=request.POST, files=request.FILES)
         create_text_checker_form = forms.CreateTextCheckerForm(data=request.POST)
         create_regexp_checker_form = forms.CreateRegExpCheckerForm(data=request.POST)
+        create_simple_py_checker_form = forms.SimplePyCheckerForm(data=request.POST)
         if form.is_valid():
             checker_type = form.cleaned_data['checker_type']
             if checker_type == 'text':
                 checker_form = create_text_checker_form
             elif checker_type == 'regexp':
                 checker_form = create_regexp_checker_form
+            elif checker_type == 'simple_py':
+                checker_form = create_simple_py_checker_form
             else:
                 checker_form = None
 
@@ -722,6 +725,7 @@ def add_task_to_contest_view(request, contest, category=None):
         form = forms.CreateTaskForm()
         create_text_checker_form = forms.CreateTextCheckerForm()
         create_regexp_checker_form = forms.CreateRegExpCheckerForm()
+        create_simple_py_checker_form = forms.SimplePyCheckerForm()
 
     return render(request, 'contests/create_task.html', {
         'current_contest': contest,
@@ -731,6 +735,7 @@ def add_task_to_contest_view(request, contest, category=None):
         'form': form,
         'create_text_checker_form': create_text_checker_form,
         'create_regexp_checker_form': create_regexp_checker_form,
+        'create_simple_py_checker_form': create_simple_py_checker_form,
     })
 
 
