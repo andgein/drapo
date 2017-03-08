@@ -18,6 +18,7 @@ services:
       - "127.0.0.1:8001:80"
     volumes:
       - drapo-upload:/upload
+      - ./static:/static
 
 volumes:
     drapo-upload:
