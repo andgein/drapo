@@ -1,0 +1,14 @@
+[Unit]
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+WorkingDirectory=/home/ructf/drapo/src
+ExecStartPre=-/usr/local/bin/docker-compose down
+ExecStart=/usr/local/bin/docker-compose up --build
+ExecStop=/usr/local/bin/docker-compose stop
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target
