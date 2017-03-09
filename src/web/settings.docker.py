@@ -174,7 +174,7 @@ DRAPO_TEAM_SIZE_LIMIT = 100
 # By one participant in one contest
 DRAPO_MAX_TRIES_IN_MINUTE = env.get('DRAPO_MAX_TRIES_IN_MINUTE', 10)
 
-DRAPO_EMAIL_SENDER = 'admin@summer-ctf.com'
+DRAPO_EMAIL_SENDER = env.get('DRAPO_EMAIL_SENDER', 'nobody@localhost')
 DRAPO_UPLOAD_DIR = '/upload'
 DRAPO_TASKS_FILES_DIR = os.path.join(DRAPO_UPLOAD_DIR, 'tasks_files')
 
@@ -198,3 +198,12 @@ LOGGING = {
         },
     },
 }
+
+#Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = env.get('EMAIL_HOST')
+EMAIL_PORT = int(env.get('EMAIL_PORT', '0'))
+EMAIL_HOST_USER = env.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env.get('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = True
