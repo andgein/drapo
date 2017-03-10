@@ -121,6 +121,10 @@ def edit(request):
     if request.method == 'POST':
         form = forms.EditUserForm(user, data=request.POST)
         if form.is_valid():
+            user.username = form.cleaned_data['username']
+            user.first_name = form.cleaned_data.get('first_name', '')
+            user.last_name = form.cleaned_data.get('last_name', '')
+            user.save()
             messages.success(request, 'Your settings has been changed')
             return redirect(urlresolvers.reverse('users:edit'))
     else:
