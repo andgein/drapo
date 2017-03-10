@@ -324,7 +324,7 @@ class SimplePyCheckerForm(AbstractCheckerForm):
         label=_('Checker source'),
         help_text=_('Must contain function checker(attempt, context) returning bool.'
                     'Answer to check is in attempt.answer'),
-        required=True,
+        required=False,
         widget=forms.Textarea()
     )
 
