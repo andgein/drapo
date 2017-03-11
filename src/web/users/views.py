@@ -26,7 +26,7 @@ def login(request):
         form = forms.LoginForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email'].lower()
-            user = models.User.objects.filter(email=email).first()
+            user = models.User.objects.filter(email__iexact=email).first()
             if user is not None and user.check_password(form.cleaned_data['password']):
                 if user.is_email_confirmed:
                     auth.login(request, user)
