@@ -182,7 +182,7 @@ def tasks(request, contest_id):
             'opened_tasks_ids': opened_tasks_ids,
         })
 
-
+@staff_required
 def scoreboard(request, contest_id):
     contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
     if not contest.is_visible_in_list and not request.user.is_staff:
