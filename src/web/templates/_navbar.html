@@ -15,7 +15,7 @@
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li><a href="{% url 'contests:list' %}">{% trans 'Contests' %}</a></li>
-                <li><a href="{% url 'teams:list' %}">{% trans 'Teams' %}</a></li>
+                {#<li><a href="{% url 'teams:list' %}">{% trans 'Teams' %}</a></li>#}
                 {% if current_contest %}
                     {% if current_contest.show_menu_on_top or user.is_staff %}
                         <li class="divider-vertical"></li>
@@ -42,7 +42,7 @@
                         <ul class="dropdown-menu">
                             <li><a href="{% url 'users:profile' user.id %}">{% trans 'Profile' %}</a></li>
                             <li><a href="{% url 'users:edit' %}">{% trans 'Edit settings' %}</a></li>
-                            <li><a href="{% url 'teams:create' %}">{% trans 'Create team' %}</a></li>
+                            {# <li><a href="{% url 'teams:create' %}">{% trans 'Create team' %}</a></li> #}
                             {% if user.is_staff %}
                                 <li><a href="{% url 'contests:create' %}" class="text-danger">{% trans 'Create contest' %}</a></li>
                             {% endif %}
@@ -52,7 +52,7 @@
                     </li>
                 {% else %}
                     <li><a href="{% url 'users:login' %}?next={{ request.path }}">{% trans 'Login' %}</a></li>
-                    <li><a href="{% url 'users:register' %}">{% trans 'Register' %}</a></li>
+                    {#<li><a href="{% url 'users:register' %}">{% trans 'Register' %}</a></li>#}
                 {% endif %}
             </ul>
         </div>

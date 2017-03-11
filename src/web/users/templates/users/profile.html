@@ -16,6 +16,7 @@
 
         <hr />
 
+        {% comment %}
         <h2>{% trans 'Teams' %}</h2>
         {% if user_teams %}
             {% spaceless %}
@@ -46,7 +47,7 @@
                 <strong>{{ profile_user.username }}</strong> {% trans "is not any team's member" %}
             {% endif %}
         {% endif %}
-
+        {% endcomment %}
 
     </div>
 {% endblock %}
