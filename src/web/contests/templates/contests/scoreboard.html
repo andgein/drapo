@@ -78,6 +78,15 @@
                                 {% endfor %}
                             {% endfor %}
                         {% else %}
+                            {% for task in tasks %}
+                                <td>
+                                    {% if max_scored_attempt_by_participant_and_task|has_item:participant.id and max_scored_attempt_by_participant_and_task|item:participant.id|has_item:task.id %}
+                                        <small title="{{ max_scored_attempt_by_participant_and_task|item:participant.id|item:task.id|attr:'created_at' }}">
+                                            {{ max_scored_attempt_by_participant_and_task|item:participant.id|item:task.id|attr:'score' }}
+                                        </small>
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
                         {% endif %}
 
                         <td>{{ scores_by_participant|item:participant.id }}</td>
