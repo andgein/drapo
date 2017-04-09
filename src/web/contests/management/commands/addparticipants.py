@@ -5,16 +5,11 @@ from contests.models import Contest, IndividualParticipant
 import json
 
 class Command(BaseCommand):
-    help = 'Closes the specified poll for voting'
+    help = 'Creates users from file and registers them to contest'
 
     def add_arguments(self, parser):
         parser.add_argument('contest_id', type=int)
         parser.add_argument('filename', type=str)
-
-    def add_user(self):
-        user = User.objects.create_user(
-        )
-        user.save()
 
     def handle(self, *args, **options):
         contest_id = options['contest_id']
@@ -23,7 +18,7 @@ class Command(BaseCommand):
         except Contest.DoesNotExist:
             raise CommandError('Contest "%s" does not exist' % contest_id)
 
-        with open(options['filename']) as file:
+        with open(options['filename'], encoding='urf-8') as file:
             participants = json.load(file)
 
         for p in participants:
