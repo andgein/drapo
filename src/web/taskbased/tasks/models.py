@@ -191,7 +191,7 @@ class ManualChecker(AbstractChecker):
 
 
 class Task(models.Model):
-    name = models.CharField(max_length=100, help_text='Shows on tasks page')
+    name = models.CharField(max_length=100, help_text='Shows on tasks page', unique=True)
 
     statement_generator = models.OneToOneField(AbstractStatementGenerator, related_name='task')
 
