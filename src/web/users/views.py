@@ -1,5 +1,6 @@
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import redirect_to_login
 from django.core import urlresolvers
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
@@ -13,6 +14,9 @@ def profile(request, user_id):
     user = get_object_or_404(models.User, pk=user_id)
     user_teams = list(user.teams.all())
     is_current_user = user.id == request.user.id
+
+    if not (is_current_user or request.user.is_staff):
+        return redirect_to_login(request.build_absolute_uri())
 
     return render(request, 'users/profile.html', {
         'profile_user': user,
