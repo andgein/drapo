@@ -322,7 +322,7 @@ class CreateRegExpCheckerForm(AbstractCheckerForm):
 class SimplePyCheckerForm(AbstractCheckerForm):
     source = forms.CharField(
         label=_('Checker source'),
-        help_text=_('Must contain function checker(attempt, context) returning bool.'
+        help_text=_('Must contain function check(attempt, context) returning bool.'
                     'Answer to check is in attempt.answer'),
         required=False,
         widget=forms.Textarea()
