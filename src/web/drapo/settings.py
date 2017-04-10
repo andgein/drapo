@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'contests',
     'taskbased.tasks',
     'taskbased.categories',
+    'serialization',
 ]
 
 MIDDLEWARE_CLASSES = [
