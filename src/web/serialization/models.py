@@ -1,12 +1,25 @@
 import yaml
 
+import taskbased.tasks.models as models
+
 
 class Task(object):
-    def __init__(self, name, max_score, checker, statements_generator):
+    def __init__(self, name, max_score, checker, statement_generator):
         self.name = name
         self.max_score = max_score
         self.checker = checker
-        self.statements_generator = statements_generator
+        self.statement_generator = statement_generator
+
+    def to_model(self, ctx):
+        try:
+            old_model = models.Task.objects.get(name=self.name)
+            # TODO
+            raise models.Task.DoesNotExist()
+        except models.Task.DoesNotExist:
+            return models.Task.objects.create(name=self.name,
+                                     max_score=self.max_score,
+                                     checker=self.checker.to_model(ctx),
+                                     statement_generator=self.statement_generator.to_model(ctx))
 
 
 class TextChecker(object):
@@ -14,11 +27,17 @@ class TextChecker(object):
         self.answer = answer
         self.case_sensitive = case_sensitive
 
+    def to_model(self, ctx):
+        return models.TextChecker.objects.create(answer=self.answer, case_sensitive=self.case_sensitive)
 
-class TextStatementsGenerator(object):
-    def __init__(self, title, description):
+
+class TextStatementGenerator(object):
+    def __init__(self, title, template):
         self.title = title
-        self.description = description
+        self.template = template
+
+    def to_model(self, ctx):
+        return models.TextStatementGenerator.objects.create(title=self.title, template=self.template)
 
 
 def register_class(cls):
@@ -31,4 +50,4 @@ def register_class(cls):
 
 register_class(Task)
 register_class(TextChecker)
-register_class(TextStatementsGenerator)
+register_class(TextStatementGenerator)

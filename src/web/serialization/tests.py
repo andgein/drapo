@@ -1,10 +1,18 @@
 import yaml
 from django.test import TestCase
 
-from src.web.serialization.models import TextStatementsGenerator, TextChecker, Task
+import taskbased.tasks.models as models
+
+from src.web.serialization.models import TextStatementGenerator, TextChecker, Task
 
 
 class TaskTestCase(TestCase):
+    def setUp(self):
+        self.task = Task("sample-task",
+                         100,
+                         TextChecker("sample_answer"),
+                         TextStatementGenerator("Sample task", "Sample template"))
+
     def test_deserialize_correctly(self):
         obj = yaml.load("""
         !Task
@@ -12,9 +20,9 @@ class TaskTestCase(TestCase):
         max_score: 100
         checker: !TextChecker
             answer: sample_answer
-        statements_generator: !TextStatementsGenerator
+        statement_generator: !TextStatementGenerator
             title: Sample task
-            description: Sample description
+            template: Sample template
         """)
         self.assertTrue(isinstance(obj, Task), "invalid type after deserialization")
         self.assertEqual(obj.name, "sample-task")
@@ -22,26 +30,30 @@ class TaskTestCase(TestCase):
         self.assertTrue(isinstance(obj.checker, TextChecker), "invalid checker type after deserialization")
         self.assertEqual(obj.checker.answer, "sample_answer")
         self.assertEqual(obj.checker.case_sensitive, False)
-        self.assertTrue(isinstance(obj.statements_generator, TextStatementsGenerator),
+        self.assertTrue(isinstance(obj.statement_generator, TextStatementGenerator),
                         "invalid checker type after deserialization")
-        self.assertEqual(obj.statements_generator.title, "Sample task")
-        self.assertEqual(obj.statements_generator.description, "Sample description")
+        self.assertEqual(obj.statement_generator.title, "Sample task")
+        self.assertEqual(obj.statement_generator.template, "Sample template")
 
     def test_serialize_correctly(self):
-        obj = Task("sample-task",
-                   100,
-                   TextChecker("sample_answer"),
-                   TextStatementsGenerator("Sample task", "Sample description"))
         expected = "!Task\n" + \
                    "checker: !TextChecker\n" + \
                    "  answer: sample_answer\n" + \
                    "  case_sensitive: false\n" + \
                    "max_score: 100\n" + \
                    "name: sample-task\n" + \
-                   "statements_generator: !TextStatementsGenerator\n" + \
-                   "  description: Sample description\n" + \
+                   "statement_generator: !TextStatementGenerator\n" + \
+                   "  template: Sample template\n" + \
                    "  title: Sample task\n"
-        self.assertEqual(expected, yaml.dump(obj, default_flow_style=False))
+        self.assertEqual(expected, yaml.dump(self.task, default_flow_style=False))
+
+    def test_to_model(self):
+        returned = self.task.to_model(None)
+        from_db = models.Task.objects.get(name="sample-task")
+        self.assertIsNotNone(from_db)
+        self.assertEqual(returned, from_db)
+        self.assertEqual(from_db.name, "sample-task")
+        self.assertEqual(from_db.max_score, 100)
 
 
 class TextCheckerTestCase(TestCase):
@@ -71,21 +83,39 @@ class TextCheckerTestCase(TestCase):
                    "case_sensitive: true\n"
         self.assertEqual(expected, yaml.dump(obj, default_flow_style=False))
 
+    def test_to_model(self):
+        obj = TextChecker("dsadsa")
+        returned = obj.to_model(None)
+        from_db = models.TextChecker.objects.get(answer="dsadsa")
+        self.assertIsNotNone(from_db)
+        self.assertEqual(returned, from_db)
+        self.assertEqual(from_db.answer, "dsadsa")
+        self.assertEqual(from_db.case_sensitive, False)
 
-class TextStatementsGeneratorTestCase(TestCase):
+
+class TextStatementGeneratorTestCase(TestCase):
     def test_deserialize_correctly(self):
         obj = yaml.load("""
-        !TextStatementsGenerator
+        !TextStatementGenerator
         title: Sample task
-        description: Sample description
+        template: Sample template
         """)
-        self.assertTrue(isinstance(obj, TextStatementsGenerator), "invalid type after deserialization")
+        self.assertTrue(isinstance(obj, TextStatementGenerator), "invalid type after deserialization")
         self.assertEqual(obj.title, "Sample task")
-        self.assertEqual(obj.description, "Sample description")
+        self.assertEqual(obj.template, "Sample template")
 
     def test_serialize_correctly(self):
-        obj = TextStatementsGenerator("Sample task", "Sample description")
-        expected = "!TextStatementsGenerator\n" + \
-                   "description: Sample description\n" + \
+        obj = TextStatementGenerator("Sample task", "Sample template")
+        expected = "!TextStatementGenerator\n" + \
+                   "template: Sample template\n" + \
                    "title: Sample task\n"
         self.assertEqual(expected, yaml.dump(obj, default_flow_style=False))
+
+    def test_to_model(self):
+        obj = TextStatementGenerator("asdasd", "Sample template")
+        returned = obj.to_model(None)
+        from_db = models.TextStatementGenerator.objects.get(title="asdasd")
+        self.assertIsNotNone(from_db)
+        self.assertEqual(returned, from_db)
+        self.assertEqual(from_db.title, "asdasd")
+        self.assertEqual(from_db.template, "Sample template")
