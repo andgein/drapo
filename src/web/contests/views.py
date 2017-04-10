@@ -345,6 +345,7 @@ def task(request, contest_id, task_id):
         return redirect(urlresolvers.reverse('contests:tasks', args=[contest.id]))
 
     statement = statement_generator.generate({
+        'task': task,
         'user': request.user,
         'participant': participant
     })
