@@ -1,6 +1,28 @@
+import os
 import yaml
 
 import taskbased.tasks.models as models
+
+
+class ContextException(Exception):
+    def __init__(self, *args):
+        super(ContextException, self).__init__(*args)
+
+
+class AbstractContext(object):
+    def get_file(self, path):
+        raise NotImplementedError("Child should implement its own get_file()")
+
+
+class DirectoryContext(object):
+    def __init__(self, directory):
+        self.directory = directory
+
+    def open_file(self, relative_path):
+        if os.path.isabs(relative_path):
+            raise ContextException("Path must be relative")
+
+        return os.path.join(self.directory, relative_path)
 
 
 class Task(object):
@@ -47,6 +69,8 @@ def register_class(cls):
     yaml.add_representer(cls,
                          lambda dumper, data: dumper.represent_yaml_object(yaml_tag, data, cls, flow_style=False))
 
+
+register_class(DirectoryContext)
 
 register_class(Task)
 register_class(TextChecker)
