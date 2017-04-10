@@ -21,3 +21,4 @@ python-social-auth
 cached-property
 markdown
 pytz
+PyYAML
