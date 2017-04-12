@@ -47,6 +47,25 @@ class DirectoryContext(AbstractContext):
         return glob(absolute_glob)
 
 
+class SubdirectoryContext(AbstractContext):
+    def __init__(self, directory, ctx):
+        self.directory = directory
+        self.ctx = ctx
+
+    def get_file(self, relative_path):
+        if os.path.isabs(relative_path):
+            raise ContextException("Path must be relative")
+
+        return self.ctx.get_file(os.path.join(self.directory, relative_path))
+
+    def glob(self, relative_glob):
+        if os.path.isabs(relative_glob):
+            raise ContextException("Path must be relative")
+
+        nested_glob = os.path.join(self.directory, relative_glob)
+        return self.ctx.glob(nested_glob)
+
+
 class GitContext(AbstractContext):
     def __init__(self, url, branch='master'):
         self.tempdir = TemporaryDirectory()
@@ -127,6 +146,19 @@ class TextChecker(object):
         return task_models.TextChecker.objects.create(answer=self.answer, case_sensitive=self.case_sensitive)
 
 
+class SimplePyChecker(object):
+    def __init__(self, source_path=None, source=None):
+        self.source_path = source_path
+        self.source = source
+
+    def to_model(self, ctx):
+        if self.source_path is not None:
+            with open(ctx.get_file(self.source_path), 'rt', encoding='utf-8') as f:
+                self.source = f.read()
+
+        return task_models.SimplePyChecker.objects.create(source=self.source)
+
+
 class TextStatementGenerator(object):
     def __init__(self, title, template):
         self.title = title
@@ -134,6 +166,19 @@ class TextStatementGenerator(object):
 
     def to_model(self, ctx):
         return task_models.TextStatementGenerator.objects.create(title=self.title, template=self.template)
+
+
+class SimplePyStatementGenerator(object):
+    def __init__(self, source_path=None, source=None):
+        self.source_path = source_path
+        self.source = source
+
+    def to_model(self, ctx):
+        if self.source_path is not None:
+            with open(ctx.get_file(self.source_path), 'rt', encoding='utf-8') as f:
+                self.source = f.read()
+
+        return task_models.SimplePyStatementGenerator.objects.create(source=self.source)
 
 
 class TaskSet(object):
@@ -146,7 +191,8 @@ class TaskSet(object):
         with self.context:
             for task_path in self.task_paths:
                 spec = load_yaml_from_file(self.context.get_file(task_path))
-                tasks.append(spec.to_model(self.context))
+                ctx = SubdirectoryContext(os.path.dirname(task_path), self.context)
+                tasks.append(spec.to_model(ctx))
         return tasks
 
 
@@ -235,7 +281,9 @@ register_class(File)
 
 register_class(Task)
 register_class(TextChecker)
+register_class(SimplePyChecker)
 register_class(TextStatementGenerator)
+register_class(SimplePyStatementGenerator)
 
 register_class(TaskSet)
 register_class(TaskBasedContest)

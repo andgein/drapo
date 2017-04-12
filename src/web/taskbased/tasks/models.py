@@ -93,6 +93,25 @@ class TextStatementGenerator(AbstractStatementGenerator):
         return self.template[:50] + '...'
 
 
+class SimplePyStatementGenerator(AbstractStatementGenerator):
+    source = models.TextField(help_text='Python source code. Must contain function generate(context)')
+
+    def get_generator(self):
+        module_globals = {}
+        exec(self.source, module_globals)
+        return module_globals['generate']
+
+    def generate(self, context):
+        generator = self.get_generator()
+        return generator(context)
+
+    def is_available_for_anonymous(self):
+        return False
+
+    def __str__(self):
+        return self.source[:50] + '...'
+
+
 class AbstractChecker(polymorphic.models.PolymorphicModel):
     def check_attempt(self, attempt, context):
         """ Returns CheckResult or bool """
