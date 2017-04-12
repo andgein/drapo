@@ -11,6 +11,7 @@ from django.db import transaction
 from django.db.models.query_utils import Q
 from django.http.response import Http404, HttpResponseNotFound, HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.utils.translation import get_language
 from django.views.decorators.http import require_POST
 from django.conf import settings
 
@@ -347,7 +348,8 @@ def task(request, contest_id, task_id):
     statement = statement_generator.generate({
         'task': task,
         'user': request.user,
-        'participant': participant
+        'participant': participant,
+        'locale': get_language()
     })
 
     # Files can be in statement or in task for this participant

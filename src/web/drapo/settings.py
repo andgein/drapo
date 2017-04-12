@@ -178,3 +178,8 @@ DRAPO_ONLY_STAFF_CAN_EDIT_TEAM_NAME = False
 DRAPO_SENDFILE_WITH_NGINX = False
 DRAPO_SENDFILE_ROOT = os.path.abspath(DRAPO_UPLOAD_DIR)
 DRAPO_SENDFILE_URL = '/protected'
+
+LANGUAGES = [
+    ('ru', 'Russian'),
+    ('en', 'English'),
+]
