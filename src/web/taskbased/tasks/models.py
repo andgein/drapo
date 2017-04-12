@@ -242,6 +242,9 @@ class TaskFile(models.Model):
 
     is_private = models.BooleanField(default=False)
 
+    class Meta:
+        unique_together = (('task', 'participant', 'name'),)
+
     @staticmethod
     def get_private_files(task):
         return list(task.files.filter(Q(participant__isnull=True) & Q(is_private=True)))
