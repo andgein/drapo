@@ -28,7 +28,7 @@ class TasksGroping(djchoices.DjangoChoices):
 
 
 class Contest(polymorphic.models.PolymorphicModel):
-    name = models.TextField(help_text='Contest name')
+    name = models.TextField(help_text='Contest name', unique=True)
 
     is_visible_in_list = models.BooleanField(default=False)
 
