@@ -240,6 +240,32 @@ class TaskFile(models.Model):
 
     content_type = models.CharField(max_length=1000, default='application/octet-stream')
 
+    is_private = models.BooleanField(default=False)
+
+    @staticmethod
+    def get_private_files(task):
+        return list(task.files.filter(Q(participant__isnull=True) & Q(is_private=True)))
+
+    @staticmethod
+    def create_file_for_participant(task, participant, file_bytes, name, content_type=None):
+        try:
+            return TaskFile.objects.get(task=task, participant=participant, name=name)
+        except TaskFile.DoesNotExist:
+            task_file_dir = TaskFile.generate_directory_name(task, participant)
+            task_file_name = save_bytes(file_bytes, task_file_dir)
+
+            task_file = TaskFile(
+                task=task,
+                name=name,
+                path=task_file_name,
+                participant=participant,
+            )
+            if content_type is not None:
+                task_file.content_type = content_type
+            task_file.save()
+
+            return task_file
+
     @staticmethod
     def generate_directory_name(task, participant):
         return os.path.join(
