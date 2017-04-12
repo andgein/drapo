@@ -1,17 +1,32 @@
+import os
+import tempfile
 import yaml
 from django.test import TestCase
 
 import taskbased.tasks.models as models
 
-from src.web.serialization.models import TextStatementGenerator, TextChecker, Task
+from src.web.serialization.models import *
 
 
 class TaskTestCase(TestCase):
     def setUp(self):
+        self.tempdir = tempfile.TemporaryDirectory()
+
+        with open(os.path.join(self.tempdir.name, 'file1.txt'), 'wb') as f:
+            f.write(b'1')
+        with open(os.path.join(self.tempdir.name, 'image001.png'), 'wb') as f:
+            f.write(b'2')
+        with open(os.path.join(self.tempdir.name, 'image002.png'), 'wb') as f:
+            f.write(b'3')
+
         self.task = Task("sample-task",
                          100,
                          TextChecker("sample_answer"),
-                         TextStatementGenerator("Sample task", "Sample template"))
+                         TextStatementGenerator("Sample task", "Sample template"),
+                         [File("file1.txt"), File("image*.png", True)])
+
+    def tearDown(self):
+        self.tempdir.cleanup()
 
     def test_deserialize_correctly(self):
         obj = yaml.load("""
@@ -23,6 +38,12 @@ class TaskTestCase(TestCase):
         statement_generator: !TextStatementGenerator
             title: Sample task
             template: Sample template
+        files:
+        - !File
+          path: file1.txt
+        - !File
+          is_private: True
+          path: image*.png
         """)
         self.assertTrue(isinstance(obj, Task), "invalid type after deserialization")
         self.assertEqual(obj.name, "sample-task")
@@ -34,12 +55,20 @@ class TaskTestCase(TestCase):
                         "invalid checker type after deserialization")
         self.assertEqual(obj.statement_generator.title, "Sample task")
         self.assertEqual(obj.statement_generator.template, "Sample template")
+        self.assertEqual(len(obj.files), 2)
 
     def test_serialize_correctly(self):
         expected = "!Task\n" + \
                    "checker: !TextChecker\n" + \
                    "  answer: sample_answer\n" + \
                    "  case_sensitive: false\n" + \
+                   "files:\n" + \
+                   "- !File\n" + \
+                   "  is_private: false\n" + \
+                   "  path: file1.txt\n" + \
+                   "- !File\n" + \
+                   "  is_private: true\n" + \
+                   "  path: image*.png\n" + \
                    "max_score: 100\n" + \
                    "name: sample-task\n" + \
                    "statement_generator: !TextStatementGenerator\n" + \
@@ -48,12 +77,13 @@ class TaskTestCase(TestCase):
         self.assertEqual(expected, yaml.dump(self.task, default_flow_style=False))
 
     def test_to_model(self):
-        returned = self.task.to_model(None)
+        returned = self.task.to_model(DirectoryContext(self.tempdir.name))
         from_db = models.Task.objects.get(name="sample-task")
         self.assertIsNotNone(from_db)
         self.assertEqual(returned, from_db)
         self.assertEqual(from_db.name, "sample-task")
         self.assertEqual(from_db.max_score, 100)
+        self.assertEqual(len(from_db.files.all()), 3)
 
 
 class TextCheckerTestCase(TestCase):

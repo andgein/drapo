@@ -17,6 +17,7 @@ from relativefilepathfield.fields import RelativeFilePathField
 import drapo.models
 import contests.models
 import users.models
+from drapo.uploads import save_bytes
 
 
 class TaskStatement:
