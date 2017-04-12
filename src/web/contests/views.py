@@ -351,7 +351,7 @@ def task(request, contest_id, task_id):
     })
 
     # Files can be in statement or in task for this participant
-    files = statement.files + list(task.files.filter(Q(participant__isnull=True) | Q(participant=participant)))
+    files = list(task.files.filter(Q(is_private=False) & (Q(participant__isnull=True) | Q(participant=participant))))
 
     participant_score = max(task.attempts
                             .filter(contest=contest_id, participant=participant, is_checked=True)
@@ -838,6 +838,9 @@ def task_file(request, contest_id, file_id):
 
     if not contest.is_started() and not request.user.is_staff:
         return HttpResponseForbidden('Contest is not started')
+
+    if file.is_private:
+        return HttpResponseForbidden()
 
     participant = contest.get_participant_for_user(request.user)
     if not is_task_open(contest, file.task, participant) and not request.user.is_staff:
