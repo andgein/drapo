@@ -52,7 +52,7 @@
                     </li>
                 {% else %}
                     <li><a href="{% url 'users:login' %}?next={{ request.path }}">{% trans 'Login' %}</a></li>
-                    {#<li><a href="{% url 'users:register' %}">{% trans 'Register' %}</a></li>#}
+                    <li><a href="{% url 'users:register' %}">{% trans 'Register' %}</a></li>
                 {% endif %}
 
                 <li class="nav-divider"></li>
