@@ -2,7 +2,8 @@ from django.core.management.base import BaseCommand, CommandError
 from users.models import User
 from contests.models import Contest, IndividualParticipant
 
-import json
+import yaml
+
 
 class Command(BaseCommand):
     help = 'Creates users from file and registers them to contest'
@@ -18,8 +19,8 @@ class Command(BaseCommand):
         except Contest.DoesNotExist:
             raise CommandError('Contest "%s" does not exist' % contest_id)
 
-        with open(options['filename'], encoding='urf-8') as file:
-            participants = json.load(file)
+        with open(options['filename'], encoding='utf-8') as file:
+            participants = yaml.load(file)
 
         for p in participants:
             user = User.objects.create_user(
