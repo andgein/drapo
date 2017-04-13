@@ -4,6 +4,7 @@ import operator
 import re
 import collections
 import datetime
+import logging
 
 from django.contrib import messages
 from django.core import urlresolvers
@@ -345,12 +346,17 @@ def task(request, contest_id, task_id):
         messages.error(request, 'This task is not available for guests. Please sign in')
         return redirect(urlresolvers.reverse('contests:tasks', args=[contest.id]))
 
-    statement = statement_generator.generate({
-        'task': task,
-        'user': request.user,
-        'participant': participant,
-        'locale': get_language()
-    })
+    try:
+        statement = statement_generator.generate({
+            'task': task,
+            'user': request.user,
+            'participant': participant,
+            'locale': get_language()
+        })
+    except Exception as e:
+        logging.getLogger(__name__).exception(e)
+        messages.error(request, 'This task cannot be displayed')
+        return redirect(urlresolvers.reverse('contests:tasks', args=[contest.id]))
 
     # Files can be in statement or in task for this participant
     files = list(task.files.filter(Q(is_private=False) & (Q(participant__isnull=True) | Q(participant=participant))))
