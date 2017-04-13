@@ -184,6 +184,7 @@ def tasks(request, contest_id):
             'opened_tasks_ids': opened_tasks_ids,
         })
 
+
 @staff_required
 def scoreboard(request, contest_id):
     contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
@@ -191,7 +192,6 @@ def scoreboard(request, contest_id):
         return HttpResponseNotFound()
 
     participants = list(contest.participants.filter(is_visible_in_scoreboard=True))
-
 
     attempts_by_participant = _groupby(contest.attempts.all(), operator.attrgetter('participant_id'))
     attempts_by_participant = collections.defaultdict(list, attempts_by_participant)
@@ -202,7 +202,7 @@ def scoreboard(request, contest_id):
             _groupby(attempts_by_participant[p.id], operator.attrgetter('task_id'))
         )
         for p in participants
-        }
+    }
 
     # Stores first success attempt for each pair (participant, task) or None if there is no success tries
     first_success_attempt_by_participant_and_task = {
@@ -216,10 +216,10 @@ def scoreboard(request, contest_id):
                     default=None
                 )
                 for task_id, attempts in attempts_by_participant_and_task[p.id].items()
-                }
+            }
         )
         for p in participants
-        }
+    }
 
     max_scored_attempt_by_participant_and_task = {
         p.id: collections.defaultdict(
@@ -232,20 +232,20 @@ def scoreboard(request, contest_id):
                     default=None
                 )
                 for task_id, attempts in attempts_by_participant_and_task[p.id].items()
-                }
+            }
         )
         for p in participants
-        }
+    }
 
     scores_by_participant = {
         p.id: sum(a.score for a in max_scored_attempt_by_participant_and_task[p.id].values() if a is not None)
         for p in participants
-        }
+    }
 
     last_success_time_by_participant = {
         p.id: max((a.created_at for a in attempts_by_participant[p.id] if a.is_correct), default=0)
         for p in participants
-        }
+    }
 
     ordered_participants = sorted(participants,
                                   key=lambda p: (
@@ -289,6 +289,10 @@ def get_count_attempts_in_last_minute(contest, participant):
 
 def is_task_open(contest, task, participant):
     return any(task.id in policy.get_open_tasks(participant) for policy in contest.tasks_opening_policies.all())
+
+
+def is_task_open_for_all(contest, task):
+    return is_task_open(contest, task, None)
 
 
 def task(request, contest_id, task_id):
@@ -820,7 +824,7 @@ def edit(request, contest_id):
         contest_data = copy.copy(contest.__dict__)
 
         by_categories = contest.tasks_opening_policies.instance_of(tasks_models.ByCategoriesTasksOpeningPolicy).first()
-        contest_data['by_categories_tasks_opening_policy'] =\
+        contest_data['by_categories_tasks_opening_policy'] = \
             '-' if by_categories is None else ['T', 'E'][by_categories.opens_for_all_participants]
 
         manual = contest.tasks_opening_policies.instance_of(tasks_models.ManualTasksOpeningPolicy).first()
@@ -959,6 +963,7 @@ def task_opens(request, contest_id, task_id):
     task = get_object_or_404(tasks_models.Task, pk=task_id)
     if not contest.has_task(task):
         return HttpResponseNotFound()
+    task.is_task_open_for_all = is_task_open_for_all(contest, task)
 
     participants = sorted(contest.participants.all(), key=operator.attrgetter('name'))
     for participant in participants:
@@ -978,6 +983,12 @@ def task_opens(request, contest_id, task_id):
 
 @staff_required
 @require_POST
+def open_task_for_all(request, contest_id, task_id):
+    return open_task(request, contest_id, task_id, None)
+
+
+@staff_required
+@require_POST
 def open_task(request, contest_id, task_id, participant_id):
     contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
     task = get_object_or_404(tasks_models.Task, pk=task_id)
@@ -988,9 +999,11 @@ def open_task(request, contest_id, task_id, participant_id):
         messages.error(request, 'Manual task opening is forbidden for this contest')
         return redirect(urlresolvers.reverse('contests:task_opens', args=[contest.id, task.id]))
 
-    participant = get_object_or_404(models.AbstractParticipant, pk=participant_id)
-    if participant.contest_id != contest.id:
-        return HttpResponseNotFound()
+    participant = None
+    if participant_id is not None:
+        participant = get_object_or_404(models.AbstractParticipant, pk=participant_id)
+        if participant.contest_id != contest.id:
+            return HttpResponseNotFound()
 
     qs = tasks_models.ManualOpenedTask.objects.filter(
         contest=contest,
@@ -1003,13 +1016,15 @@ def open_task(request, contest_id, task_id, participant_id):
         if is_task_open(contest, task, participant):
             messages.warning(request, 'Task is opened for this participant not manually, you can\'t close it')
         else:
-            messages.success(request, 'Task is closed for %s' % participant.name)
+            for_whom = participant.name if participant is not None else 'everyone'
+            messages.success(request, 'Task is closed for %s' % for_whom)
     else:
         tasks_models.ManualOpenedTask(
             contest=contest,
             task=task,
             participant=participant
         ).save()
-        messages.success(request, 'Task is opened for %s' % participant.name)
+        for_whom = participant.name if participant is not None else 'everyone'
+        messages.success(request, 'Task is opened for %s' % for_whom)
 
     return JsonResponse({'done': 'ok'})
