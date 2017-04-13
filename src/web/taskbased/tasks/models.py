@@ -295,7 +295,18 @@ class TaskFile(models.Model):
 
     @staticmethod
     def get_private_files(task):
-        return list(task.files.filter(Q(participant__isnull=True) & Q(is_private=True)))
+        return list(task.files.filter(Q(is_private=True)))
+
+    @staticmethod
+    def copy_file_for_participant(task_file, participant, name):
+        TaskFile.objects.get_or_create(
+            task=task_file.task,
+            participant=participant,
+            name=name,
+            path=task_file.path,
+            content_type=task_file.content_type,
+            is_private=False
+        )
 
     @staticmethod
     def create_file_for_participant(task, participant, file_bytes, name, content_type=None):
