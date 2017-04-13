@@ -1,7 +1,7 @@
 ### This file contains requiremenets for Drapo web project. Install them with `pip install -r requirements.txt`
 
 ### Django stuff
-Django >= 1.10
+Django == 1.10
 django-choices
 django-markdown-deux
 python-postmark
