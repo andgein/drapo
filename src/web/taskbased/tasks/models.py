@@ -3,6 +3,7 @@ import traceback
 import unicodedata
 import re
 import os.path
+import logging
 
 from django.db import models
 import django.db.migrations.writer
@@ -55,10 +56,20 @@ class CheckedPlagiarist(CheckResult):
         self.is_checked = True
         self.is_correct = is_answer_correct
         self.is_plagiarized = True
-        self.plagiarized_from = plagiarized_from
         self.public_comment = public_comment
         self.private_comment = private_comment
         self.score = score
+
+        if isinstance(plagiarized_from, contests.models.AbstractParticipant):
+            self.plagiarized_from = plagiarized_from
+        elif isinstance(plagiarized_from, int):
+            try:
+                self.plagiarized_from = contests.models.AbstractParticipant.objects.get(id=plagiarized_from)
+            except contests.models.AbstractParticipant.DoesNotExist:
+                self.plagiarized_from = None
+        else:
+            self.plagiarized_from = None
+
 
     @staticmethod
     def get_potential_plagiarists(participant):
@@ -229,7 +240,8 @@ class SimplePyChecker(AbstractChecker):
         try:
             checker = self.get_checker()
             return checker(attempt, context)
-        except:
+        except Exception as e:
+            logging.getLogger(__name__).exception(e)
             return CheckError(traceback.format_exc())
 
 

@@ -134,6 +134,7 @@ class Task:
             task.statement_generator = statement_generator
             task.save()
 
+        # TODO: Files are leaking
         for file in self.files:
             file_names = ctx.glob(file.path)
             if len(file_names) == 0:
