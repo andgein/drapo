@@ -60,6 +60,11 @@ class CheckedPlagiarist(CheckResult):
         self.private_comment = private_comment
         self.score = score
 
+    @staticmethod
+    def get_potential_plagiarists(participant):
+        return contests.models.AbstractParticipant.objects.filter(
+            Q(contest=participant.contest) & ~Q(id=participant.id))
+
 
 class CheckError(CheckResult):
     def __init__(self, private_comment=''):
