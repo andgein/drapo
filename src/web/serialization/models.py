@@ -114,15 +114,21 @@ class Task(object):
         self.statement_generator = statement_generator
 
     def to_model(self, ctx):
+        old_id = None
         try:
-            task_models.Task.objects.get(name=self.name).delete()
+            old_task = task_models.Task.objects.get(name=self.name)
+            old_id = old_task.id
+            old_task.delete()
         except task_models.Task.DoesNotExist:
             pass
 
-        task = task_models.Task.objects.create(name=self.name,
-                                               max_score=self.max_score,
-                                               checker=self.checker.to_model(ctx),
-                                               statement_generator=self.statement_generator.to_model(ctx))
+        task = task_models.Task.objects.create(
+            id = old_id,
+            name=self.name,
+            max_score=self.max_score,
+            checker=self.checker.to_model(ctx),
+            statement_generator=self.statement_generator.to_model(ctx)
+        )
         for file in self.files:
             file_names = ctx.glob(file.path)
             if len(file_names) == 0:
@@ -226,13 +232,17 @@ class TaskBasedContest(object):
         self.registration_finish_time = registration_finish_time
 
     def to_model(self, ctx):
+        old_id = None
         try:
-            contest_models.TaskBasedContest.objects.get(name=self.name).delete()
+            old_contest = contest_models.TaskBasedContest.objects.get(name=self.name)
+            old_id = old_contest.id
+            old_contest.delete()
         except contest_models.TaskBasedContest.DoesNotExist:
             pass
 
         tasks = self.task_set.to_model(ctx)
         contest = contest_models.TaskBasedContest(
+            id=old_id,
             name=self.name,
             is_visible_in_list=self.is_visible_in_list,
             registration_type=self.registration_type,
