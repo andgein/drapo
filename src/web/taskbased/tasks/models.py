@@ -32,6 +32,8 @@ class TaskStatement:
 class CheckResult(abc.ABC):
     is_checked = False
     is_correct = False
+    is_plagiarized = False
+    plagiarized_from = None
     public_comment = ''
     private_comment = ''
     score = 0
@@ -41,6 +43,19 @@ class Checked(CheckResult):
     def __init__(self, is_answer_correct, public_comment='', private_comment='', score=0):
         self.is_checked = True
         self.is_correct = is_answer_correct
+        self.is_plagiarized = False
+        self.plagiarized_from = None
+        self.public_comment = public_comment
+        self.private_comment = private_comment
+        self.score = score
+
+
+class CheckedPlagiarist(CheckResult):
+    def __init__(self, is_answer_correct, plagiarized_from=None, public_comment='', private_comment='', score=0):
+        self.is_checked = True
+        self.is_correct = is_answer_correct
+        self.is_plagiarized = True
+        self.plagiarized_from = plagiarized_from
         self.public_comment = public_comment
         self.private_comment = private_comment
         self.score = score
@@ -50,6 +65,8 @@ class CheckError(CheckResult):
     def __init__(self, private_comment=''):
         self.is_checked = False
         self.is_correct = False
+        self.is_plagiarized = False
+        self.plagiarized_from = None
         self.public_comment = ''
         self.private_comment = private_comment
         self.score = 0
@@ -130,7 +147,7 @@ class TextChecker(AbstractChecker):
     case_sensitive = models.BooleanField(help_text=_('Is answer case sensitive'), default=False)
 
     def __str__(self):
-        return '== "%s"' % (self.answer, )
+        return '== "%s"' % (self.answer,)
 
     @classmethod
     def _normalize_case_less(cls, text):
@@ -198,6 +215,7 @@ class SimplePyChecker(AbstractChecker):
     def get_checker(self):
         module_globals = {
             'Checked': Checked,
+            'CheckedPlagiarist': CheckedPlagiarist,
         }
         exec(self.source, module_globals)
         return module_globals['check']
@@ -310,7 +328,7 @@ class ContestTasks(models.Model):
     tasks = sortedm2m.fields.SortedManyToManyField(Task)
 
     def __str__(self):
-        return 'Tasks set for %s' % (self.contest, )
+        return 'Tasks set for %s' % (self.contest,)
 
 
 class Attempt(drapo.models.ModelWithTimestamps):
@@ -328,6 +346,15 @@ class Attempt(drapo.models.ModelWithTimestamps):
 
     is_correct = models.BooleanField(default=False, db_index=True)
 
+    is_plagiarized = models.BooleanField(default=False)
+
+    plagiarized_from = models.ForeignKey(
+        contests.models.AbstractParticipant,
+        related_name='+',
+        default=None,
+        null=True
+    )
+
     score = models.IntegerField(default=0)
 
     public_comment = models.TextField(blank=True)
@@ -343,6 +370,8 @@ class Attempt(drapo.models.ModelWithTimestamps):
 
         self.is_checked = check_result.is_checked
         self.is_correct = check_result.is_correct
+        self.is_plagiarized = check_result.is_plagiarized
+        self.plagiarized_from = check_result.plagiarized_from
         self.public_comment = check_result.public_comment
         self.private_comment = check_result.private_comment
         self.score = check_result.score
