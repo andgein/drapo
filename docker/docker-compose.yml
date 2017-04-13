@@ -21,4 +21,5 @@ services:
     volumes:
       - ./volumes/upload:/upload
       - ./volumes/static:/static
+      - ./volumes/ssh:/root/.ssh/
 
