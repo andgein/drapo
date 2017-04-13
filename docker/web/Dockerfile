@@ -10,13 +10,14 @@ RUN wget -q https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VE
 RUN mkdir -p /app
 WORKDIR /app
 
-COPY requirements.txt /app/
+COPY ./src/web/requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt \
     && pip install --no-cache-dir gunicorn psycopg2
 
-COPY . /app
+COPY ./src/web/ /app
+COPY ./docker/web /app
 
-COPY settings.docker.py /app/drapo/settings.py
+COPY ./docker/web/settings.docker.py /app/drapo/settings.py
 
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
 

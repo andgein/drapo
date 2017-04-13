@@ -2,6 +2,7 @@
 
 db.sqlite3
 upload/
+docker/volumes/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -3,6 +3,9 @@ set -e
 
 dockerize -wait tcp://db:5432 -timeout 1m
 
+# Fix permissions
+chown www-data:www-data /upload
+
 case "$1" in
 "manage.py")
 
