@@ -15,7 +15,7 @@ class ContextException(Exception):
         super(ContextException, self).__init__(*args)
 
 
-class AbstractContext(object):
+class AbstractContext:
     def get_file(self, path):
         raise NotImplementedError("Child should implement its own get_file()")
 
@@ -99,13 +99,13 @@ class GitContext(AbstractContext):
         self.downloaded = True
 
 
-class File(object):
+class File:
     def __init__(self, path, is_private=False):
         self.path = path
         self.is_private = is_private
 
 
-class Task(object):
+class Task:
     def __init__(self, name, max_score, checker, statement_generator, files=None):
         self.files = [] if files is None else files
         self.name = name
@@ -114,36 +114,42 @@ class Task(object):
         self.statement_generator = statement_generator
 
     def to_model(self, ctx):
-        old_id = None
-        try:
-            old_task = task_models.Task.objects.get(name=self.name)
-            old_id = old_task.id
-            old_task.delete()
-        except task_models.Task.DoesNotExist:
-            pass
+        checker = self.checker.to_model(ctx)
+        statement_generator = self.statement_generator.to_model(ctx)
 
-        task = task_models.Task.objects.create(
-            id = old_id,
+        task, created = task_models.Task.objects.get_or_create(
             name=self.name,
-            max_score=self.max_score,
-            checker=self.checker.to_model(ctx),
-            statement_generator=self.statement_generator.to_model(ctx)
+            defaults={
+                'max_score': self.max_score,
+                'checker': checker,
+                'statement_generator': statement_generator,
+            },
         )
+
+        if not created:
+            task.max_score = self.max_score
+            task.checker.delete()
+            task.checker = checker
+            task.statement_generator.delete()
+            task.statement_generator = statement_generator
+            task.save()
+
         for file in self.files:
             file_names = ctx.glob(file.path)
             if len(file_names) == 0:
                 raise RuntimeError("File path '%s' does not specify any files" % file.path)
             for file_name in file_names:
                 with open(file_name, 'rb') as fd:
-                    bytes = fd.read()
+                    file_bytes = fd.read()
                 base_name = os.path.basename(file_name)
-                task_file = task_models.TaskFile.create_file_for_participant(task, None, bytes, base_name)
+                task_file = task_models.TaskFile.create_file_for_participant(task, None, file_bytes, base_name)
                 task_file.is_private = file.is_private
                 task_file.save()
+
         return task
 
 
-class TextChecker(object):
+class TextChecker:
     def __init__(self, answer, case_sensitive=False):
         self.answer = answer
         self.case_sensitive = case_sensitive
@@ -152,7 +158,7 @@ class TextChecker(object):
         return task_models.TextChecker.objects.create(answer=self.answer, case_sensitive=self.case_sensitive)
 
 
-class SimplePyChecker(object):
+class SimplePyChecker:
     def __init__(self, source_path=None, source=None):
         self.source_path = source_path
         self.source = source
@@ -165,7 +171,7 @@ class SimplePyChecker(object):
         return task_models.SimplePyChecker.objects.create(source=self.source)
 
 
-class TextStatementGenerator(object):
+class TextStatementGenerator:
     def __init__(self, title, template):
         self.title = title
         self.template = template
@@ -174,7 +180,7 @@ class TextStatementGenerator(object):
         return task_models.TextStatementGenerator.objects.create(title=self.title, template=self.template)
 
 
-class SimplePyStatementGenerator(object):
+class SimplePyStatementGenerator:
     def __init__(self, source_path=None, source=None):
         self.source_path = source_path
         self.source = source
@@ -187,7 +193,7 @@ class SimplePyStatementGenerator(object):
         return task_models.SimplePyStatementGenerator.objects.create(source=self.source)
 
 
-class TaskSet(object):
+class TaskSet:
     def __init__(self, context, task_paths):
         self.context = context
         self.task_paths = task_paths
@@ -202,7 +208,7 @@ class TaskSet(object):
         return tasks
 
 
-class TaskBasedContest(object):
+class TaskBasedContest:
     def __init__(self,
                  name,
                  is_visible_in_list,
@@ -232,44 +238,31 @@ class TaskBasedContest(object):
         self.registration_finish_time = registration_finish_time
 
     def to_model(self, ctx):
-        old_id = None
-        try:
-            old_contest = contest_models.TaskBasedContest.objects.get(name=self.name)
-            old_id = old_contest.id
-            old_contest.delete()
-        except contest_models.TaskBasedContest.DoesNotExist:
-            pass
-
-        tasks = self.task_set.to_model(ctx)
-        contest = contest_models.TaskBasedContest(
-            id=old_id,
+        contest, _ = contest_models.TaskBasedContest.objects.update_or_create(
             name=self.name,
-            is_visible_in_list=self.is_visible_in_list,
-            registration_type=self.registration_type,
-            participation_mode=self.participation_mode,
-            start_time=self.start_time,
-            finish_time=self.finish_time,
-            registration_start_time=self.registration_start_time,
-            registration_finish_time=self.registration_finish_time,
-            short_description=self.short_description,
-            description=self.description,
-            tasks_grouping=self.tasks_grouping,
+            defaults={
+                'is_visible_in_list': self.is_visible_in_list,
+                'registration_type': self.registration_type,
+                'participation_mode': self.participation_mode,
+                'start_time': self.start_time,
+                'finish_time': self.finish_time,
+                'registration_start_time': self.registration_start_time,
+                'registration_finish_time': self.registration_finish_time,
+                'short_description': self.short_description,
+                'description': self.description,
+                'tasks_grouping': self.tasks_grouping,
+            },
         )
-        contest.save()
-
-        contest_tasks = task_models.ContestTasks(
-            contest=contest,
-        )
-        contest_tasks.save()
 
         if self.task_opening_policy == "All":
-            task_models.AllTasksOpenedOpeningPolicy(contest=contest).save()
+            task_models.AllTasksOpenedOpeningPolicy.objects.get_or_create(contest=contest)
         elif self.task_opening_policy == "Manual":
-            task_models.ManualTasksOpeningPolicy(contest=contest).save()
+            task_models.ManualTasksOpeningPolicy.objects.get_or_create(contest=contest)
         else:
             raise RuntimeError("Unknown task opening policy: %s" % self.task_opening_policy)
 
-        for task in tasks:
+        contest_tasks, _ = task_models.ContestTasks.objects.get_or_create(contest=contest)
+        for task in self.task_set.to_model(ctx):
             contest_tasks.tasks.add(task)
         contest_tasks.save()
 

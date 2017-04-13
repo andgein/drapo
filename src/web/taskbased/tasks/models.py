@@ -310,23 +310,21 @@ class TaskFile(models.Model):
 
     @staticmethod
     def create_file_for_participant(task, participant, file_bytes, name, content_type=None):
-        try:
-            return TaskFile.objects.get(task=task, participant=participant, name=name)
-        except TaskFile.DoesNotExist:
+        task_file, created = TaskFile.objects.get_or_create(task=task, participant=participant, name=name)
+
+        if created:
             task_file_dir = TaskFile.generate_directory_name(task, participant)
             task_file_name = save_bytes(file_bytes, task_file_dir)
+            task_file.path = task_file_name
+        else:
+            with open(task_file.path, 'wb') as fd:
+                fd.write(file_bytes)
 
-            task_file = TaskFile(
-                task=task,
-                name=name,
-                path=task_file_name,
-                participant=participant,
-            )
-            if content_type is not None:
-                task_file.content_type = content_type
-            task_file.save()
+        if content_type is not None:
+            task_file.content_type = content_type
+        task_file.save()
 
-            return task_file
+        return task_file
 
     @staticmethod
     def generate_directory_name(task, participant):
