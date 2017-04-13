@@ -1,4 +1,5 @@
 import os
+import traceback
 from urllib.parse import urlparse
 
 from django.core.management import BaseCommand, CommandError
@@ -33,4 +34,4 @@ class Command(BaseCommand):
         try:
             obj.to_model(ctx)
         except Exception as e:
-            raise CommandError("Failed to import object, the following error occurred: %s" % str(e))
+            raise CommandError("Failed to import object, the following error occurred: %s" %  traceback.format_exc(e))
