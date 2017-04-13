@@ -97,7 +97,10 @@ class SimplePyStatementGenerator(AbstractStatementGenerator):
     source = models.TextField(help_text='Python source code. Must contain function generate(context)')
 
     def get_generator(self):
-        module_globals = {}
+        module_globals = {
+            'TaskFile': TaskFile,
+            'TaskStatement': TaskStatement,
+        }
         exec(self.source, module_globals)
         return module_globals['generate']
 
@@ -193,7 +196,9 @@ class SimplePyChecker(AbstractChecker):
         return '=~ %s' % repr(self.source)
 
     def get_checker(self):
-        module_globals = {}
+        module_globals = {
+            'Checked': Checked,
+        }
         exec(self.source, module_globals)
         return module_globals['check']
 
