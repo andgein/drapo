@@ -76,15 +76,15 @@ def register(request):
                         password=password
                     )
 
-                    confirmation = models.EmailConfirmation(user=user)
+                    confirmation = models.EmailConfirmation(user=user, is_confirmed=True)
                     confirmation.save()
 
-            if confirmation is not None:
-                confirmation.send(request)
-
-                return render(request, 'message.html', {
-                    'message': 'We have sent you an email with confirmation link. Please follow it.'
-                })
+                #if confirmation is not None:
+                #    confirmation.send(request)
+                return redirect_to_login(request.build_absolute_uri())
+                #return render(request, 'message.html', {
+                #    'message': 'We have sent you an email with confirmation link. Please follow it.'
+                #})
 
     else:
         form = forms.RegisterForm()
