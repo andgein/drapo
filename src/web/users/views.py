@@ -31,7 +31,7 @@ def login(request):
         form = forms.LoginForm(request.POST)
         if form.is_valid():
             email_or_login = form.cleaned_data['email_or_login'].lower()
-            user = models.User.objects.filter(Q(email__iexact=email_or_login) | Q(username=email_or_login)).first()
+            user = models.User.objects.filter(Q(email__iexact=email_or_login) | Q(username__iexact=email_or_login)).first()
             if user is not None and user.check_password(form.cleaned_data['password']):
                 if user.is_email_confirmed:
                     auth.login(request, user)
@@ -40,9 +40,9 @@ def login(request):
                         return redirect(request.GET['next'])
                     return redirect('home')
 
-                form.add_error('email', 'Confirm your email by clicking link in email from your inbox')
+                form.add_error('email_or_login', 'Confirm your email by clicking link in email from your inbox')
             else:
-                form.add_error('email', 'Wrong email/login or password')
+                form.add_error('email_or_login', 'Wrong email/login or password')
     else:
         form = forms.LoginForm()
 
