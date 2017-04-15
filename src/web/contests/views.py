@@ -29,6 +29,8 @@ import taskbased.tasks.models as tasks_models
 import taskbased.tasks.forms as tasks_forms
 
 
+from collections import defaultdict
+
 def _groupby(iterable, keyfunc):
     result = collections.defaultdict(list)
     for item in iterable:
@@ -267,10 +269,15 @@ def scoreboard(request, contest_id):
 
     bad_participants = set()
     plagiarized_attempts = contest.attempts.filter(is_plagiarized=True)
+
+    bad_attempts_map = defaultdict(list)
     for attempt in plagiarized_attempts:
+
         bad_participants.add(attempt.author.id)
         if (attempt.plagiarized_from is not None):
             bad_participants.add(attempt.plagiarized_from.id)
+
+        bad_attempts_map[(attempt.author.id, attempt.task.id)].append(attempt)
 
     return render(request, 'contests/scoreboard.html', {
         'current_contest': contest,
@@ -284,6 +291,7 @@ def scoreboard(request, contest_id):
         'max_scored_attempt_by_participant_and_task': max_scored_attempt_by_participant_and_task,
         'first_success_attempt_by_participant_and_task': first_success_attempt_by_participant_and_task,
         'bad_participants' : bad_participants,
+        'bad_attempts_map' : bad_attempts_map
     })
 
 

@@ -56,7 +56,7 @@
             <tbody>
                 {% for participant in participants %}
                     <tr>
-                        <td {{ 'style="color : red;"' if participant.id in bad_participants }}>
+                        <td {%if participant.id in bad_participants %} style="color : red;" {% endif %}>
                             {{ forloop.counter }}. <a href="{{ participant.get_absolute_url }}">{{ participant.name }}</a>
                             {% if participant.is_disqualified %}
                                 <div class="mt0">
@@ -81,7 +81,7 @@
                             {% for task in tasks %}
                                 <td>
                                     {% if max_scored_attempt_by_participant_and_task|has_item:participant.id and max_scored_attempt_by_participant_and_task|item:participant.id|has_item:task.id %}
-                                        <small title="{{ max_scored_attempt_by_participant_and_task|item:participant.id|item:task.id|attr:'created_at' }}">
+                                        <small {%if bad_attempts_map.get((participant.id, task.id))%} style="color:vodka" {% endif  %} title="{{ max_scored_attempt_by_participant_and_task|item:participant.id|item:task.id|attr:'created_at' }}">
                                             {{ max_scored_attempt_by_participant_and_task|item:participant.id|item:task.id|attr:'score' }}
                                         </small>
                                     {% endif %}
