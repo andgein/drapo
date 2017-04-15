@@ -243,7 +243,7 @@ def scoreboard(request, contest_id):
     }
 
     last_success_time_by_participant = {
-        p.id: max((a.created_at for a in attempts_by_participant[p.id] if a.is_correct), default=0)
+        p.id: max((a.created_at for a in attempts_by_participant[p.id] if a.is_correct), default=datetime.datetime(1970, 1, 1))
         for p in participants
     }
 
