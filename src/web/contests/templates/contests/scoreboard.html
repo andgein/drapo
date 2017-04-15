@@ -81,8 +81,11 @@
                             {% for task in tasks %}
                                 <td>
                                     {% if max_scored_attempt_by_participant_and_task|has_item:participant.id and max_scored_attempt_by_participant_and_task|item:participant.id|has_item:task.id %}
-                                        <small {%if bad_attempts_map|item:participant.id|item:task.id %} style="color:vodka" {% endif  %} title="{{ max_scored_attempt_by_participant_and_task|item:participant.id|item:task.id|attr:'created_at' }}">
+                                        <small {% if bad_attempts_map|item:participant.id|item:task.id|length > 0 %} style="color:red;" {% endif  %} title="{{ max_scored_attempt_by_participant_and_task|item:participant.id|item:task.id|attr:'created_at' }}">
                                             {{ max_scored_attempt_by_participant_and_task|item:participant.id|item:task.id|attr:'score' }}
+                                        </small>
+                                        <small>
+                                            {{ bad_attempts_map|item:participant.id|item:task.id|length }}
                                         </small>
                                     {% endif %}
                                 </td>
