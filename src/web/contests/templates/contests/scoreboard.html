@@ -56,7 +56,7 @@
             <tbody>
                 {% for participant in participants %}
                     <tr>
-                        <td>
+                        <td {{ 'style="color : red;"' if participant.id in bad_participants }}>
                             {{ forloop.counter }}. <a href="{{ participant.get_absolute_url }}">{{ participant.name }}</a>
                             {% if participant.is_disqualified %}
                                 <div class="mt0">

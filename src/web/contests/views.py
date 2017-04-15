@@ -244,7 +244,7 @@ def scoreboard(request, contest_id):
     }
 
     last_success_time_by_participant = {
-        p.id: max((a.created_at for a in attempts_by_participant[p.id] if a.is_correct), default=timezone(1970, 1, 1))
+        p.id: max((a.created_at.timestamp() for a in attempts_by_participant[p.id] if a.is_correct), default=0)
         for p in participants
     }
 
@@ -265,6 +265,13 @@ def scoreboard(request, contest_id):
     else:
         raise ValueError('Invalid tasks grouping mode')
 
+    bad_participants = set()
+    plagiarized_attempts = contest.attempts.filter(is_plagiarized=True)
+    for attempt in plagiarized_attempts:
+        bad_participants.add(attempt.author.id)
+        if (attempt.plagiarized_from is not None):
+            bad_participants.add(attempt.plagiarized_from.id)
+
     return render(request, 'contests/scoreboard.html', {
         'current_contest': contest,
 
@@ -275,7 +282,8 @@ def scoreboard(request, contest_id):
         'participants': ordered_participants,
         'scores_by_participant': scores_by_participant,
         'max_scored_attempt_by_participant_and_task': max_scored_attempt_by_participant_and_task,
-        'first_success_attempt_by_participant_and_task': first_success_attempt_by_participant_and_task
+        'first_success_attempt_by_participant_and_task': first_success_attempt_by_participant_and_task,
+        'bad_participants' : bad_participants,
     })
 
 
