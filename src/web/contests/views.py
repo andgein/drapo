@@ -15,6 +15,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.translation import get_language
 from django.views.decorators.http import require_POST
 from django.conf import settings
+from django.utils import timezone
 
 from drapo.common import respond_as_attachment
 from drapo.uploads import save_uploaded_file
@@ -243,7 +244,7 @@ def scoreboard(request, contest_id):
     }
 
     last_success_time_by_participant = {
-        p.id: max((a.created_at for a in attempts_by_participant[p.id] if a.is_correct), default=datetime.datetime(1970, 1, 1))
+        p.id: max((a.created_at for a in attempts_by_participant[p.id] if a.is_correct), default=timezone(1970, 1, 1))
         for p in participants
     }
 
