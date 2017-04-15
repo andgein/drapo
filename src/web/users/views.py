@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
 from django.core import urlresolvers
 from django.db import transaction
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 
@@ -29,8 +30,8 @@ def login(request):
     if request.method == 'POST':
         form = forms.LoginForm(request.POST)
         if form.is_valid():
-            email = form.cleaned_data['email'].lower()
-            user = models.User.objects.filter(email__iexact=email).first()
+            email_or_login = form.cleaned_data['email'].lower()
+            user = models.User.objects.filter(Q(email__iexact=email_or_login) | Q(username=email_or_login)).first()
             if user is not None and user.check_password(form.cleaned_data['password']):
                 if user.is_email_confirmed:
                     auth.login(request, user)
@@ -41,7 +42,7 @@ def login(request):
 
                 form.add_error('email', 'Confirm your email by clicking link in email from your inbox')
             else:
-                form.add_error('email', 'Wrong email of password')
+                form.add_error('email', 'Wrong email/login or password')
     else:
         form = forms.LoginForm()
 

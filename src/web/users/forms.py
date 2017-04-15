@@ -3,12 +3,12 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class LoginForm(forms.Form):
-    email = forms.CharField(
+    email_or_login = forms.CharField(
         required=True,
-        label=_('Email'),
+        label=_('Email or Login'),
         max_length=100,
         widget=forms.TextInput(attrs={
-            'placeholder': _('Your email'),
+            'placeholder': _('Your email or login'),
             'autofocus': 'autofocus',
             'class': 'form-control-short',
         })
