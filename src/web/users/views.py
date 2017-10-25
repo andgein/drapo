@@ -121,8 +121,18 @@ def edit(request):
     if request.method == 'POST':
         form = forms.EditUserForm(user, data=request.POST)
         if form.is_valid():
-            messages.success(request, 'Your settings has been changed')
-            return redirect(urlresolvers.reverse('users:edit'))
+            new_username = form.cleaned_data['username']
+            changed_username = new_username != user.username
+            with transaction.atomic():
+                if changed_username and models.User.objects.filter(username=new_username).exists():
+                    form.add_error('username', 'This username is already taken')
+                else:
+                    user.username = new_username
+                    user.first_name = form.cleaned_data['first_name']
+                    user.last_name = form.cleaned_data['last_name']
+                    user.save()
+                    messages.success(request, 'Your settings has been changed')
+                    return redirect(urlresolvers.reverse('users:edit'))
     else:
         form = forms.EditUserForm(user)
 
