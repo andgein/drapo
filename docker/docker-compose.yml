@@ -1,0 +1,25 @@
+version: '2'
+
+services:
+  db:
+    image: postgres
+    env_file: ./production.env
+    restart: always
+    volumes:
+     - ./volumes/pgdata:/var/lib/postgresql/data
+  web:
+    build:
+      context: ../
+      dockerfile: docker/web/Dockerfile
+    env_file: ./production.env
+    restart: always
+    command: web
+    depends_on:
+      - db
+    ports:
+      - "127.0.0.1:8001:80"
+    volumes:
+      - ./volumes/upload:/upload
+      - ./volumes/static:/static
+      - ./volumes/ssh:/root/.ssh/
+

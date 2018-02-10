@@ -18,7 +18,7 @@
                         <a href="{{ contest.get_absolute_url }}" class="btn btn-primary mt10">{% trans 'Enter' %}</a>
 
                         {% if contest.is_started %}
-                            <a href="{% url 'contests:scoreboard' contest.id %}" class="btn btn-link mt10">{% trans 'Scoreboard' %}</a>
+                            {#<a href="{% url 'contests:scoreboard' contest.id %}" class="btn btn-link mt10">{% trans 'Scoreboard' %}</a>#}
                         {% endif %}
 
                         {% if user.authenticated %}

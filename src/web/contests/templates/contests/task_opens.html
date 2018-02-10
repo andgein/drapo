@@ -10,6 +10,30 @@
             <strong><a href="{% url 'contests:task' contest.id task.id %}">{{ task.name }}</a></strong>. Opening status
         </h1>
 
+        <div class="row">
+            <div class="col-xs-6 col-sm-4 col-md-3">
+                Everyone
+            </div>
+            <div class="col-xs-6 col-sm-2 col-md-1">
+                <span class="{{ task.is_task_open_for_all|yesno:'text-success,text-danger' }}">
+                    {% with opening_status=task.is_task_open_for_all|yesno:'Opened,Closed' %}
+                        {% if is_manual_task_opening_available %}
+                            <a href=""
+                               class="post-link {{ task.is_task_open_for_all|yesno:'text-success,text-danger' }}"
+                               data-url="{% url 'contests:open_task_for_all' contest.id task.id %}"
+                               title="Click to toggle">{{ opening_status }}</a>
+                        {% else %}
+                            {{ opening_status }}
+                        {% endif %}
+                    {% endwith %}
+                </span>
+
+
+            </div>
+        </div>
+
+        <hr />
+
         {% for participant in participants %}
             <div class="row">
                 <div class="col-xs-6 col-sm-4 col-md-3">

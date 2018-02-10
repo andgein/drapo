@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'contests',
     'taskbased.tasks',
     'taskbased.categories',
+    'serialization',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -173,3 +174,12 @@ DRAPO_USER_CAN_BE_ONLY_IN_ONE_TEAM = False
 # If False captain can edit team name
 DRAPO_ONLY_STAFF_CAN_EDIT_TEAM_NAME = False
 
+# For serving files with nginx, disabled by default
+DRAPO_SENDFILE_WITH_NGINX = False
+DRAPO_SENDFILE_ROOT = os.path.abspath(DRAPO_UPLOAD_DIR)
+DRAPO_SENDFILE_URL = '/protected'
+
+LANGUAGES = [
+    ('ru', 'Russian'),
+    ('en', 'English'),
+]

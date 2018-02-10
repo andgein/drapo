@@ -319,6 +319,21 @@ class CreateRegExpCheckerForm(AbstractCheckerForm):
         )
 
 
+class SimplePyCheckerForm(AbstractCheckerForm):
+    source = forms.CharField(
+        label=_('Checker source'),
+        help_text=_('Must contain function check(attempt, context) returning bool.'
+                    'Answer to check is in attempt.answer'),
+        required=False,
+        widget=forms.Textarea()
+    )
+
+    def get_checker(self):
+        return tasks_models.SimplePyChecker(
+            source=self.cleaned_data['source']
+        )
+
+
 class AttemptsSearchForm(forms.Form):
     pattern = forms.CharField(
         label=_('Search'),

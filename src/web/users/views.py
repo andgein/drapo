@@ -1,7 +1,9 @@
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import redirect_to_login
 from django.core import urlresolvers
 from django.db import transaction
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 
@@ -14,6 +16,9 @@ def profile(request, user_id):
     user_teams = list(user.teams.all())
     is_current_user = user.id == request.user.id
 
+    if not (is_current_user or request.user.is_staff):
+        return redirect_to_login(request.build_absolute_uri())
+
     return render(request, 'users/profile.html', {
         'profile_user': user,
         'user_teams': user_teams,
@@ -25,8 +30,8 @@ def login(request):
     if request.method == 'POST':
         form = forms.LoginForm(request.POST)
         if form.is_valid():
-            email = form.cleaned_data['email'].lower()
-            user = models.User.objects.filter(email=email).first()
+            email_or_login = form.cleaned_data['email_or_login'].lower()
+            user = models.User.objects.filter(Q(email__iexact=email_or_login) | Q(username__iexact=email_or_login)).first()
             if user is not None and user.check_password(form.cleaned_data['password']):
                 if user.is_email_confirmed:
                     auth.login(request, user)
@@ -35,9 +40,9 @@ def login(request):
                         return redirect(request.GET['next'])
                     return redirect('home')
 
-                form.add_error('email', 'Confirm your email by clicking link in email from your inbox')
+                form.add_error('email_or_login', 'Confirm your email by clicking link in email from your inbox')
             else:
-                form.add_error('email', 'Wrong email of password')
+                form.add_error('email_or_login', 'Wrong email/login or password')
     else:
         form = forms.LoginForm()
 
@@ -72,15 +77,15 @@ def register(request):
                         password=password
                     )
 
-                    confirmation = models.EmailConfirmation(user=user)
+                    confirmation = models.EmailConfirmation(user=user, is_confirmed=True)
                     confirmation.save()
 
-            if confirmation is not None:
-                confirmation.send(request)
-
-                return render(request, 'message.html', {
-                    'message': 'We have sent you an email with confirmation link. Please follow it.'
-                })
+                #if confirmation is not None:
+                #    confirmation.send(request)
+                return redirect_to_login(request.build_absolute_uri())
+                #return render(request, 'message.html', {
+                #    'message': 'We have sent you an email with confirmation link. Please follow it.'
+                #})
 
     else:
         form = forms.RegisterForm()
@@ -121,6 +126,10 @@ def edit(request):
     if request.method == 'POST':
         form = forms.EditUserForm(user, data=request.POST)
         if form.is_valid():
+            user.username = form.cleaned_data['username']
+            user.first_name = form.cleaned_data.get('first_name', '')
+            user.last_name = form.cleaned_data.get('last_name', '')
+            user.save()
             messages.success(request, 'Your settings has been changed')
             return redirect(urlresolvers.reverse('users:edit'))
     else:

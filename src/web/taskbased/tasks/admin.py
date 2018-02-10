@@ -25,6 +25,12 @@ class RegExpCheckerAdmin(admin.ModelAdmin):
 admin.site.register(models.RegExpChecker, RegExpCheckerAdmin)
 
 
+class SimplePyCheckerAdmin(admin.ModelAdmin):
+    list_display = ('id', 'task')
+    list_display_links = ('id', 'task')
+
+admin.site.register(models.SimplePyChecker, SimplePyCheckerAdmin)
+
 class TextStatementGeneratorAdmin(admin.ModelAdmin):
     list_display = ('id', 'task', 'template', 'last_change_time')
 

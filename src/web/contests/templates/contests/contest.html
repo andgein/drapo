@@ -12,7 +12,7 @@
         {% include 'contests/_contest_header.html' with contest=contest %}
 
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-12">
                 {{ contest.description|markdown|urlize_html }}
 
                 <div class="contest__news-list">
@@ -45,6 +45,7 @@
 
             </div>
 
+            {% comment %}
             <div class="col-sm-6">
                 <div>
                     {% if contest.is_team %}
@@ -81,6 +82,7 @@
                     {% endif %}
                 </div>
             </div>
+            {% endcomment %}
 
         </div>
     </div>
