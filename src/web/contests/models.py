@@ -127,9 +127,6 @@ class Contest(polymorphic.models.PolymorphicModel):
     def is_started(self):
         return self.start_time <= timezone.now()
 
-    def show_menu_on_top(self):
-        return self.is_started()
-
     def is_team(self):
         return self.participation_mode == ContestParticipationMode.Team
 

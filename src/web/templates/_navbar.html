@@ -17,7 +17,7 @@
                 <li><a href="{% url 'contests:list' %}">{% trans 'Contests' %}</a></li>
                 {#<li><a href="{% url 'teams:list' %}">{% trans 'Teams' %}</a></li>#}
                 {% if current_contest %}
-                    {% if current_contest.show_menu_on_top or user.is_staff %}
+                    {% if current_contest.is_started or user.is_staff %}
                         <li class="divider-vertical"></li>
                         <li class="nav-divider"></li>
                         <li class="active"><a href="{% url 'contests:contest' current_contest.id %}">{{ current_contest.name|truncatechars:30 }}<span class="hidden-sm hidden-md hidden-lg">:</span></a></li>
