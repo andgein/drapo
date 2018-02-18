@@ -155,6 +155,9 @@ class ContestRegion(models.Model):
 
     finish_time = models.DateTimeField(help_text='Contest finish time for this region')
 
+    def __str__(self):
+        return self.name
+
 
 class TaskBasedContest(Contest):
     tasks_grouping = models.CharField(
