@@ -146,6 +146,16 @@ class Contest(polymorphic.models.PolymorphicModel):
         return self.participation_mode == ContestParticipationMode.Individual
 
 
+class ContestRegion(models.Model):
+    contest = models.ForeignKey(Contest, related_name='regions')
+
+    name = models.TextField(help_text='Region name')
+
+    start_time = models.DateTimeField(help_text='Contest start time for this region')
+
+    finish_time = models.DateTimeField(help_text='Contest finish time for this region')
+
+
 class TaskBasedContest(Contest):
     tasks_grouping = models.CharField(
         max_length=20,
@@ -190,9 +200,7 @@ class AbstractParticipant(polymorphic.models.PolymorphicModel, drapo.models.Mode
 
     is_visible_in_scoreboard = models.BooleanField(default=True)
 
-    contest_start_time = models.DateTimeField(null=True, blank=True, help_text='Contest start time')
-
-    contest_finish_time = models.DateTimeField(null=True, blank=True, help_text='Contest finish time')
+    region = models.ForeignKey(ContestRegion, null=True, blank=True, related_name='participants')
 
     @property
     def name(self):
