@@ -212,7 +212,7 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = env.get('DEFAULT_FROM_EMAIL', DRAPO_EMAIL_SENDER)
 
 # For serving files with nginx, disabled by default
-DRAPO_SENDFILE_WITH_NGINX = True
+DRAPO_SENDFILE_WITH_NGINX = False
 DRAPO_SENDFILE_ROOT = os.path.abspath(DRAPO_UPLOAD_DIR)
 DRAPO_SENDFILE_URL = '/protected'
 
