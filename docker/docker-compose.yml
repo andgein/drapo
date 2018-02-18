@@ -19,6 +19,7 @@ services:
     volumes:
       - ./volumes/upload:/upload
       - ./volumes/static:/static
+      - ./volumes/contest_import:/contest_import
   nginx:
     image: nginx
     depends_on:
