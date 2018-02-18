@@ -121,13 +121,13 @@ class Contest(polymorphic.models.PolymorphicModel):
                 timezone.now() < self.registration_start_time)
 
     def start_time_for(self, participant):
-        if participant is not None and participant.contest_start_time:
-            return participant.contest_start_time
+        if participant is not None and participant.region:
+            return participant.region.start_time
         return self.start_time
 
     def finish_time_for(self, participant):
-        if participant is not None and participant.contest_finish_time:
-            return participant.contest_finish_time
+        if participant is not None and participant.region:
+            return participant.region.finish_time
         return self.finish_time
 
     def is_running_for(self, participant):
