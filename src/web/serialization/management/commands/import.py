@@ -3,6 +3,7 @@ import traceback
 from urllib.parse import urlparse
 
 from django.core.management import BaseCommand, CommandError
+from django.db import transaction
 
 from serialization.models import DirectoryContext
 from serialization.utils import load_yaml_from_data, load_yaml_from_file
@@ -31,7 +32,9 @@ class Command(BaseCommand):
             raise CommandError("Failed to load spec due to %s" % str(e))
 
         ctx = DirectoryContext(os.path.dirname(file))
-        try:
-            obj.to_model(ctx)
-        except Exception as e:
-            raise CommandError("Failed to import object, the following error occurred: %s" %  traceback.format_exc(e))
+
+        with transaction.atomic():
+            try:
+                obj.to_model(ctx)
+            except Exception as e:
+                raise CommandError("Failed to import object, the following error occurred: %s" %  traceback.format_exc(e))
