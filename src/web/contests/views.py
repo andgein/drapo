@@ -270,7 +270,7 @@ def scoreboard(request, contest_id):
     bad_participants = set()
     plagiarized_attempts = contest.attempts.filter(is_plagiarized=True)
 
-    bad_attempts_map = defaultdict(lambda x: defaultdict(list))
+    bad_attempts_map = defaultdict(lambda: defaultdict(list))
     for attempt in plagiarized_attempts:
 
         bad_participants.add(attempt.author.id)
