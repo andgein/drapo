@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from users.models import User
-from contests.models import Contest, IndividualParticipant
+from contests.models import Contest, ContestRegion, IndividualParticipant
 
 import yaml
 
@@ -28,6 +28,13 @@ class Command(BaseCommand):
                 self.add_participant(p, contest)
                 self.stdout.write(self.style.SUCCESS('Registered user %s to contest' % p['username']))
 
+    def get_region(self, contest, region):
+        if not region:
+            return None
+        if type(region) is int:
+            return ContestRegion.objects.get(id=region, contest=contest)
+        return ContestRegion.objects.get(name=region, contest=contest)
+
     def add_participant(self, p, contest):
         user, _ = User.objects.update_or_create(
             username=p['username'],
@@ -40,13 +47,14 @@ class Command(BaseCommand):
         user.set_password(p['password'])
         user.save()
 
+        region = self.get_region(contest, p.get('region'))
+
         IndividualParticipant.objects.update_or_create(
             contest=contest,
             user=user,
             defaults={
                 'is_approved': True,
-                'contest_start_time': p.get('start_time'),
-                'contest_finish_time': p.get('finish_time'),
+                'region': region,
             }
         )
 
