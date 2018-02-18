@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
+from django.db import transaction
 from users.models import User
 from contests.models import Contest, IndividualParticipant
 
@@ -22,20 +23,27 @@ class Command(BaseCommand):
         with open(options['filename'], encoding='utf-8') as file:
             participants = yaml.load(file)
 
-        for p in participants:
-            user = User.objects.create_user(
-                username=p['username'],
-                email=p['email'],
-                first_name=p['first_name'],
-                last_name=p['last_name'],
-                password=p['password']
-            )
-            user.save()
+        with transaction.atomic():
+            for p in participants:
+                self.add_participant(p, contest)
+                self.stdout.write(self.style.SUCCESS('Registered user %s to contest' % p['username']))
 
-            IndividualParticipant(
-                contest=contest,
-                user=user,
-                is_approved=True,
-            ).save()
+    def add_participant(self, p, contest):
+        user, _ = User.objects.update_or_create(
+            username=p['username'],
+            defaults={
+                'email': p['email'],
+                'first_name': p['first_name'],
+                'last_name': p['last_name'],
+            }
+        )
+        user.set_password(p['password'])
+        user.save()
 
-            self.stdout.write(self.style.SUCCESS('Registered user %s to contest' % p['username']))
+        IndividualParticipant.objects.update_or_create(
+            contest=contest,
+            user=user,
+            defaults={
+                'is_approved': True,
+            }
+        )
