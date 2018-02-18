@@ -1,5 +1,6 @@
 {% load staticfiles %}
 {% load i18n %}
+{% load contest %}
 
 <nav class="navbar navbar-default">
     <div class="container-fluid">
@@ -17,7 +18,7 @@
                 <li><a href="{% url 'contests:list' %}">{% trans 'Contests' %}</a></li>
                 {#<li><a href="{% url 'teams:list' %}">{% trans 'Teams' %}</a></li>#}
                 {% if current_contest %}
-                    {% if current_contest.is_started or user.is_staff %}
+                    {% if current_contest|is_started_for:participant or user.is_staff %}
                         <li class="divider-vertical"></li>
                         <li class="nav-divider"></li>
                         <li class="active"><a href="{% url 'contests:contest' current_contest.id %}">{{ current_contest.name|truncatechars:30 }}<span class="hidden-sm hidden-md hidden-lg">:</span></a></li>
@@ -25,7 +26,7 @@
                         {% if user.is_staff %}
                             <li><a href="{% url 'contests:scoreboard' current_contest.id %}"><span class="text-danger">{% trans 'Scoreboard' %}</span></a></li>
                         {% endif %}
-                        {% if user.is_staff and current_contest.is_started %}
+                        {% if user.is_staff and current_contest|is_started_for:participant %}
                             <li><a href="{% url 'contests:attempts' current_contest.id %}"><span class="text-danger">{% trans 'Attempts' %}</span></a></li>
                         {% endif %}
                         {% if user.is_staff %}

@@ -45,7 +45,7 @@
             </div>
         {% endif %}
 
-        {% if user.is_authenticated and contest.is_running and participant %}
+        {% if user.is_authenticated and participant and contest|is_running_for:participant %}
             <form method="POST" action="" class="attempt-form  mt30  form-inline">
                 {% csrf_token %}
                 {{ attempt_form|bootstrap_inline }}
@@ -53,8 +53,8 @@
                     <button class="ml15 btn btn-primary btn-lg btn-inline">Send</button>
                 </div>
             </form>
-        {% elif not contest.is_running %}
-            {% if contest.is_finished %}
+        {% elif not contest|is_running_for:participant %}
+            {% if contest|is_finished_for:participant %}
                 <div class="text-danger pt15 fw400">
                     Sorry, you can't send answer after the contest finished.
                 </div>

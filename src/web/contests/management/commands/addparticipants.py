@@ -45,5 +45,8 @@ class Command(BaseCommand):
             user=user,
             defaults={
                 'is_approved': True,
+                'contest_start_time': p.get('start_time'),
+                'contest_finish_time': p.get('finish_time'),
             }
         )
+

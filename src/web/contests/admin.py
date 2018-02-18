@@ -14,16 +14,16 @@ admin.site.register(models.TaskBasedContest, ContestAdmin)
 
 
 class IndividualParticipantAdmin(admin.ModelAdmin):
-    list_display = ('id', 'contest', 'user')
-    list_editable = ('contest', )
+    list_display = ('id', 'contest', 'user', 'contest_start_time', 'contest_finish_time')
+    list_editable = ('contest', 'contest_start_time', 'contest_finish_time')
     list_filter = ('contest', )
 
 admin.site.register(models.IndividualParticipant, IndividualParticipantAdmin)
 
 
 class TeamParticipantAdmin(admin.ModelAdmin):
-    list_display = ('id', 'contest', 'team')
-    list_editable = ('contest', )
+    list_display = ('id', 'contest', 'team', 'contest_start_time', 'contest_finish_time')
+    list_editable = ('contest', 'contest_start_time', 'contest_finish_time')
     list_filter = ('contest',)
 
 admin.site.register(models.TeamParticipant, TeamParticipantAdmin)

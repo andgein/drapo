@@ -75,6 +75,8 @@ class Contest(polymorphic.models.PolymorphicModel):
         return urlresolvers.reverse('contests:contest', args=[self.id])
 
     def is_user_participating(self, user):
+        if user.is_anonymous():
+            return False
         if self.participation_mode == ContestParticipationMode.Individual:
             return self.participants.filter(individualparticipant__user=user).exists()
         elif self.participation_mode == ContestParticipationMode.Team:
@@ -118,14 +120,24 @@ class Contest(polymorphic.models.PolymorphicModel):
         return (self.registration_type in [ContestRegistrationType.Open, ContestRegistrationType.Moderated] and
                 timezone.now() < self.registration_start_time)
 
-    def is_running(self):
-        return self.start_time <= timezone.now() < self.finish_time
+    def start_time_for(self, participant):
+        if participant is not None and participant.contest_start_time:
+            return participant.contest_start_time
+        return self.start_time
 
-    def is_finished(self):
-        return self.finish_time <= timezone.now()
+    def finish_time_for(self, participant):
+        if participant is not None and participant.contest_finish_time:
+            return participant.contest_finish_time
+        return self.finish_time
 
-    def is_started(self):
-        return self.start_time <= timezone.now()
+    def is_running_for(self, participant):
+        return self.start_time_for(participant) <= timezone.now() < self.finish_time_for(participant)
+
+    def is_finished_for(self, participant):
+        return self.finish_time_for(participant) <= timezone.now()
+
+    def is_started_for(self, participant):
+        return self.start_time_for(participant) <= timezone.now()
 
     def is_team(self):
         return self.participation_mode == ContestParticipationMode.Team
@@ -177,6 +189,10 @@ class AbstractParticipant(polymorphic.models.PolymorphicModel, drapo.models.Mode
     is_disqualified = models.BooleanField(default=False)
 
     is_visible_in_scoreboard = models.BooleanField(default=True)
+
+    contest_start_time = models.DateTimeField(null=True, blank=True, help_text='Contest start time')
+
+    contest_finish_time = models.DateTimeField(null=True, blank=True, help_text='Contest finish time')
 
     @property
     def name(self):
