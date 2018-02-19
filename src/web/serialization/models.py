@@ -5,6 +5,7 @@ from tempfile import TemporaryDirectory
 
 import taskbased.tasks.models as task_models
 import contests.models as contest_models
+import taskbased.categories.models as categories_models
 from serialization.utils import load_yaml_from_file
 
 from git import Repo
@@ -195,18 +196,41 @@ class SimplePyStatementGenerator:
 
 
 class TaskSet:
-    def __init__(self, context, task_paths):
+    def __init__(self, context=None, task_paths=None, categories=None):
         self.context = context
         self.task_paths = task_paths
+        self.categories = categories
+
+        if (task_paths is None) == (categories is None):
+            raise Exception("Exactly one of task_paths or categories should be defined")
+
+    def import_task(self, task_path):
+        spec = load_yaml_from_file(self.context.get_file(task_path))
+        ctx = SubdirectoryContext(os.path.dirname(task_path), self.context)
+        return spec.to_model(ctx)
+
+    def import_tasks(self, task_paths):
+        return [self.import_task(p) for p in task_paths]
+
+    def import_category(self, category):
+        return {
+            'name': category['name'],
+            'description' : category.get('description', ''),
+            'tasks': self.import_tasks(category['task_paths']),
+        }
+
+    def import_categories(self, categories):
+        return [self.import_category(c) for c in categories]
 
     def to_model(self, ctx):
-        tasks = []
+        if self.context is None:
+            self.context = ctx
+
         with self.context:
-            for task_path in self.task_paths:
-                spec = load_yaml_from_file(self.context.get_file(task_path))
-                ctx = SubdirectoryContext(os.path.dirname(task_path), self.context)
-                tasks.append(spec.to_model(ctx))
-        return tasks
+            if self.task_paths:
+                return self.import_tasks(self.task_paths)
+            else:
+                return self.import_categories(self.categories)
 
 
 class TaskBasedContest:
@@ -265,7 +289,6 @@ class TaskBasedContest:
             raise RuntimeError("Unknown task opening policy: %s" % self.task_opening_policy)
 
         for region in self.regions:
-            print(region)
             contest_models.ContestRegion.objects.update_or_create(
                 contest=contest,
                 name=region['name'],
@@ -275,10 +298,27 @@ class TaskBasedContest:
                 },
             )
 
-        contest_tasks, _ = task_models.ContestTasks.objects.get_or_create(contest=contest)
-        for task in self.task_set.to_model(ctx):
-            contest_tasks.tasks.add(task)
-        contest_tasks.save()
+        if contest.tasks_grouping == contest_models.TasksGroping.OneByOne:
+            contest_tasks, _ = task_models.ContestTasks.objects.get_or_create(contest=contest)
+            for task in self.task_set.to_model(ctx):
+                contest_tasks.tasks.add(task)
+            contest_tasks.save()
+        else:
+            contest_categories, _ = categories_models.ContestCategories.objects.get_or_create(contest=contest)
+            old_categories = {c.name : c for c in contest_categories.categories.all()}
+            contest_categories.categories.clear()
+            for category in self.task_set.to_model(ctx):
+                db_category = old_categories.pop(category['name'], None)
+                if db_category is None:
+                    db_category = categories_models.Category(name=category['name'])
+                db_category.description = category.get('description', '')
+                db_category.save()
+
+                db_category.tasks.set(category['tasks'])
+                contest_categories.categories.add(db_category)
+
+            for old_category in old_categories.values():
+                old_category.delete()
 
         return contest
 
