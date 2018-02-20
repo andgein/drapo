@@ -58,3 +58,6 @@ target/
 
 # PyCharm and other JetBrains products
 .idea/
+
+# macOS
+.DS_Store
