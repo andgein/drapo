@@ -194,7 +194,6 @@ def tasks(request, contest_id):
         })
 
 
-@staff_required
 def scoreboard(request, contest_id):
     contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
     participant = contest.get_participant_for_user(request.user)
@@ -202,71 +201,45 @@ def scoreboard(request, contest_id):
         return HttpResponseNotFound()
 
     participants = list(contest.participants.filter(is_visible_in_scoreboard=True))
+    successful_attempts = contest.attempts.filter(is_correct=True)
 
-    attempts_by_participant = _groupby(contest.attempts.all(), operator.attrgetter('participant_id'))
-    attempts_by_participant = collections.defaultdict(list, attempts_by_participant)
+    scores_by_task = defaultdict(lambda: defaultdict(int))
+    last_success_time = defaultdict(int)
+    for attempt in successful_attempts:
+        p_id, t_id = attempt.participant_id, attempt.task_id
+        scores = scores_by_task[p_id]
+        if attempt.score > scores[t_id]:
+            scores[t_id] = attempt.score
+            last_success_time[p_id] = attempt.created_at.timestamp()
 
-    attempts_by_participant_and_task = {
-        p.id: collections.defaultdict(
-            list,
-            _groupby(attempts_by_participant[p.id], operator.attrgetter('task_id'))
-        )
-        for p in participants
-    }
+    participant_score = {p_id : sum(scores.values())
+                           for (p_id, scores) in scores_by_task.items()}
 
-    # Stores first success attempt for each pair (participant, task) or None if there is no success tries
-    first_success_attempt_by_participant_and_task = {
-        p.id: collections.defaultdict(
-            lambda: None,
-            {
-                # For each task_id filter only correct attempts and select first created
-                task_id: min(
-                    filter(operator.attrgetter('is_correct'), attempts),
-                    key=lambda a: a.created_at,
-                    default=None
-                )
-                for task_id, attempts in attempts_by_participant_and_task[p.id].items()
-            }
-        )
-        for p in participants
-    }
-
-    max_scored_attempt_by_participant_and_task = {
-        p.id: collections.defaultdict(
-            None,
-            {
-                # For each task_id filter only checked attempts and select one with max score
-                task_id: max(
-                    filter(operator.attrgetter('is_checked'), attempts),
-                    key=lambda a: a.score,
-                    default=None
-                )
-                for task_id, attempts in attempts_by_participant_and_task[p.id].items()
-            }
-        )
-        for p in participants
-    }
-
-    scores_by_participant = {
-        p.id: sum(a.score for a in max_scored_attempt_by_participant_and_task[p.id].values() if a is not None)
-        for p in participants
-    }
-
-    last_success_time_by_participant = {
-        p.id: max((a.created_at.timestamp() for a in attempts_by_participant[p.id] if a.is_correct), default=0)
-        for p in participants
-    }
 
     ordered_participants = sorted(participants,
                                   key=lambda p: (
                                       p.is_disqualified,  # First, show not-disqualified participants
-                                      -scores_by_participant[p.id],  # ordered by scores
-                                      last_success_time_by_participant[p.id]  # and by last success time
+                                      -participant_score.get(p.id, 0),  # ordered by scores
+                                      last_success_time.get(p.id, 0),  # and by last success time
+                                      p.id, # and lastly just order somewhat consistent
                                   ))
 
-    tasks = categories = None
+    if request.user.is_staff:
+        plagiarized_attempts = contest.attempts.filter(is_plagiarized=True)
+        plagiarized_tasks = defaultdict(set)
+        for attempt in plagiarized_attempts:
+            plagiarized_tasks[attempt.participant_id].add(attempt.task_id)
+    else:
+        plagiarized_tasks = {}
+
     if contest.tasks_grouping == models.TasksGroping.OneByOne:
-        tasks = contest.tasks
+        categories = [{
+            'name': 'Tasks',
+            'tasks': {
+                'all': contest.tasks,
+                'count': len(contest.tasks),
+            },
+            'description': ''}]
         with_categories = False
     elif contest.tasks_grouping == models.TasksGroping.ByCategories:
         categories = contest.categories
@@ -274,32 +247,17 @@ def scoreboard(request, contest_id):
     else:
         raise ValueError('Invalid tasks grouping mode')
 
-    bad_participants = set()
-    plagiarized_attempts = contest.attempts.filter(is_plagiarized=True)
-
-    bad_attempts_map = defaultdict(lambda: defaultdict(list))
-    for attempt in plagiarized_attempts:
-
-        bad_participants.add(attempt.author.id)
-        if (attempt.plagiarized_from is not None):
-            bad_participants.add(attempt.plagiarized_from.id)
-
-        bad_attempts_map[attempt.author.id][attempt.task.id].append(attempt)
-
     return render(request, 'contests/scoreboard.html', {
         'current_contest': contest,
 
         'contest': contest,
         'participant': participant,
         'with_categories': with_categories,
-        'tasks': tasks,
         'categories': categories,
         'participants': ordered_participants,
-        'scores_by_participant': scores_by_participant,
-        'max_scored_attempt_by_participant_and_task': max_scored_attempt_by_participant_and_task,
-        'first_success_attempt_by_participant_and_task': first_success_attempt_by_participant_and_task,
-        'bad_participants' : bad_participants,
-        'bad_attempts_map' : bad_attempts_map
+        'participant_score': participant_score,
+        'scores_by_task' : scores_by_task,
+        'plagiarized_tasks': plagiarized_tasks,
     })
 
 
