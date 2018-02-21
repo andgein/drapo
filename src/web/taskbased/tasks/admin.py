@@ -45,9 +45,9 @@ admin.site.register(models.ContestTasks, ContestTasksAdmin)
 
 
 class AttemptAdmin(admin.ModelAdmin):
-    list_display = ('id', 'contest', 'task', 'is_checked', 'is_correct')
-    list_editable = ('is_checked', 'is_correct')
-    list_filter = ('contest', 'task')
+    list_display = ('id', 'created_at', 'contest', 'task', 'participant', 'is_checked', 'is_correct', 'is_plagiarized', 'plagiarized_from')
+    list_editable = ('is_checked', 'is_correct', 'is_plagiarized')
+    list_filter = ('contest', 'task', 'is_plagiarized', 'is_checked', 'participant')
 
 admin.site.register(models.Attempt, AttemptAdmin)
 
