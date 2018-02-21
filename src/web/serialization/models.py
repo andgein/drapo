@@ -222,6 +222,7 @@ class TaskBasedContest:
                  tasks_grouping,
                  task_opening_policy,
                  task_set,
+                 regions=None,
                  registration_start_time=None,
                  registration_finish_time=None):
         self.name = name
@@ -235,6 +236,7 @@ class TaskBasedContest:
         self.tasks_grouping = tasks_grouping
         self.task_opening_policy = task_opening_policy
         self.task_set = task_set
+        self.regions = regions or []
         self.registration_start_time = registration_start_time
         self.registration_finish_time = registration_finish_time
 
@@ -262,6 +264,17 @@ class TaskBasedContest:
         else:
             raise RuntimeError("Unknown task opening policy: %s" % self.task_opening_policy)
 
+        for region in self.regions:
+            print(region)
+            contest_models.ContestRegion.objects.update_or_create(
+                contest=contest,
+                name=region['name'],
+                defaults={
+                    'start_time' : region['start_time'],
+                    'finish_time' : region['finish_time'],
+                },
+            )
+
         contest_tasks, _ = task_models.ContestTasks.objects.get_or_create(contest=contest)
         for task in self.task_set.to_model(ctx):
             contest_tasks.tasks.add(task)
@@ -273,7 +286,7 @@ class TaskBasedContest:
 def register_class(cls):
     yaml_tag = "!%s" % cls.__name__
     yaml.add_constructor(yaml_tag,
-                         lambda loader, node: cls(**loader.construct_mapping(node)))
+                         lambda loader, node: cls(**loader.construct_mapping(node, deep=True)))
     yaml.add_representer(cls,
                          lambda dumper, data: dumper.represent_yaml_object(yaml_tag, data, cls, flow_style=False))
 

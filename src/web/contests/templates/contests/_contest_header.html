@@ -12,17 +12,17 @@
                 </small>
             {% endif %}
 
-            {% if contest.is_finished %}
+            {% if contest|is_finished_for:participant %}
                 <span class="contest__status label label-info label-md ml15">{% trans 'Finished' %}</span>
             {% endif %}
-            {% if contest.is_running %}
+            {% if contest|is_running_for:participant %}
                 <span class="contest__status label label-primary label-md ml15">{% trans 'Running' %}</span>
             {% endif %}
         </h1>
 
         <div>
             <p class="text-small">
-                {{ contest.start_time }}–{{ contest.finish_time }}
+                {{ contest|start_time_for:participant }}–{{ contest|finish_time_for:participant }}
             </p>
         </div>
     </div>

@@ -75,6 +75,8 @@ class Contest(polymorphic.models.PolymorphicModel):
         return urlresolvers.reverse('contests:contest', args=[self.id])
 
     def is_user_participating(self, user):
+        if user.is_anonymous():
+            return False
         if self.participation_mode == ContestParticipationMode.Individual:
             return self.participants.filter(individualparticipant__user=user).exists()
         elif self.participation_mode == ContestParticipationMode.Team:
@@ -118,23 +120,43 @@ class Contest(polymorphic.models.PolymorphicModel):
         return (self.registration_type in [ContestRegistrationType.Open, ContestRegistrationType.Moderated] and
                 timezone.now() < self.registration_start_time)
 
-    def is_running(self):
-        return self.start_time <= timezone.now() < self.finish_time
+    def start_time_for(self, participant):
+        if participant is not None and participant.region:
+            return participant.region.start_time
+        return self.start_time
 
-    def is_finished(self):
-        return self.finish_time <= timezone.now()
+    def finish_time_for(self, participant):
+        if participant is not None and participant.region:
+            return participant.region.finish_time
+        return self.finish_time
 
-    def is_started(self):
-        return self.start_time <= timezone.now()
+    def is_running_for(self, participant):
+        return self.start_time_for(participant) <= timezone.now() < self.finish_time_for(participant)
 
-    def show_menu_on_top(self):
-        return self.is_started()
+    def is_finished_for(self, participant):
+        return self.finish_time_for(participant) <= timezone.now()
+
+    def is_started_for(self, participant):
+        return self.start_time_for(participant) <= timezone.now()
 
     def is_team(self):
         return self.participation_mode == ContestParticipationMode.Team
 
     def is_individual(self):
         return self.participation_mode == ContestParticipationMode.Individual
+
+
+class ContestRegion(models.Model):
+    contest = models.ForeignKey(Contest, related_name='regions')
+
+    name = models.TextField(help_text='Region name')
+
+    start_time = models.DateTimeField(help_text='Contest start time for this region')
+
+    finish_time = models.DateTimeField(help_text='Contest finish time for this region')
+
+    def __str__(self):
+        return self.name
 
 
 class TaskBasedContest(Contest):
@@ -180,6 +202,8 @@ class AbstractParticipant(polymorphic.models.PolymorphicModel, drapo.models.Mode
     is_disqualified = models.BooleanField(default=False)
 
     is_visible_in_scoreboard = models.BooleanField(default=True)
+
+    region = models.ForeignKey(ContestRegion, null=True, blank=True, related_name='participants')
 
     @property
     def name(self):

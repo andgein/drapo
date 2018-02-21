@@ -199,6 +199,7 @@ class ManualRegisterParticipant(forms.Form):
             'style': 'width: 500px; height: 30px;'
         })
     )
+    #TODO: add fields to overwrite start_date/finish_date
 
 
 class CreateTaskForm(forms.Form):
