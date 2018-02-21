@@ -212,6 +212,9 @@ class AbstractParticipant(polymorphic.models.PolymorphicModel, drapo.models.Mode
     def get_absolute_url(self):
         return self.get_real_instance().get_absolute_url()
 
+    def __str__(self):
+        return self.name
+
 
 class IndividualParticipant(AbstractParticipant):
     user = models.ForeignKey(users.models.User, related_name='individual_participant_in')
