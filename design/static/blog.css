@@ -5,9 +5,16 @@
   border-bottom: 1px solid #e5e5e5;
 }
 
+@font-face {
+  font-family: 'Cloister Black';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Cloister Black'), url(CloisterBlack.ttf);
+}
+
 .blog-header-logo {
-  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
-  font-size: 2.25rem;
+  font-family: 'Cloister Black', "Playfair Display", Georgia, "Times New Roman", serif;
+  font-size: 3rem;
 }
 
 .blog-header-logo:hover {
@@ -129,4 +136,46 @@ h1, h2, h3, h4, h5, h6 {
 }
 .blog-footer p:last-child {
   margin-bottom: 0;
+}
+
+
+.text-muted {
+  font-size: 0.85rem;
+}
+
+.nav-scroller .text-muted {
+  font-size: 0.95rem;
+}
+
+.article-with-image {
+  height: 200px;
+}
+
+.article-with-image h3 {
+  font-size: 1.35rem;
+  line-height: 1.2;
+}
+
+.article {
+  height: 155px;
+}
+
+.article h3 {
+  font-size: 1.1rem;
+  line-height: 1.2;
+}
+
+.card .text-primary {
+  color: darkcyan !important;
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+.card .text-primary .middot {
+  color: #ccc;
+}
+
+.card .text-primary .icon {
+  height: 0.8rem;
+  margin-bottom: 3px;
 }
