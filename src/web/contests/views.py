@@ -200,7 +200,14 @@ def scoreboard(request, contest_id):
     if not contest.is_visible_in_list and not request.user.is_staff:
         return HttpResponseNotFound()
 
-    participants = list(contest.participants.filter(is_visible_in_scoreboard=True))
+    region = None
+    form = forms.ScoreboardFilterForm(contest, data=request.GET)
+    if form.is_valid():
+        region = form.cleaned_data['region']
+
+    participants = contest.participants.filter(is_visible_in_scoreboard=True)
+    if region:
+        participants = participants.filter(region=region)
     successful_attempts = contest.attempts.filter(is_correct=True)
 
     scores_by_task = defaultdict(lambda: defaultdict(int))
@@ -258,6 +265,7 @@ def scoreboard(request, contest_id):
         'participant_score': participant_score,
         'scores_by_task' : scores_by_task,
         'plagiarized_tasks': plagiarized_tasks,
+        'form': form,
     })
 
 

@@ -1,5 +1,6 @@
 {% extends '_layout.html' %}
 
+{% load bootstrap %}
 {% load dict_filters %}
 
 {% block title %}Scoreboard &bull; {{ contest.name }}{% endblock %}
@@ -9,6 +10,11 @@
         {% include 'contests/_contest_header.html' with contest=contest %}
 
         <h1 class="page__header">Scoreboard</h1>
+
+        <form action="" method="GET" class="form-inline">
+            {{ form|bootstrap_inline }}
+            <button class="btn btn-success btn-inline ml10">Search</button>
+        </form>
 
         <table class="table table-stripped table-responsive">
             <thead>

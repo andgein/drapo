@@ -347,6 +347,22 @@ class AttemptsSearchForm(forms.Form):
     )
 
 
+class ScoreboardFilterForm(forms.Form):
+    region = forms.ModelChoiceField(
+        label=_('Region'),
+        queryset=None,
+        empty_label='All',
+        required=False,
+        widget=forms.Select(attrs={
+            'class': 'form-control-short'
+        })
+    )
+
+    def __init__(self, contest, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['region'].queryset = contest.regions
+
+
 class NewsForm(forms.Form):
     title = forms.CharField(
         label=_('Title'),
