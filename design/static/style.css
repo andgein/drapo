@@ -282,7 +282,10 @@ td .region {
 td .elapsed-time {
   color: darkcyan;
   font-size: 0.65rem;
-  margin-left: 15px;
+}
+
+td .middot {
+  color: #ccc;
 }
 
 td.accepted {
