@@ -198,3 +198,99 @@ header .text-muted {
 .unread-count {
   color: darkcyan;
 }
+
+
+table {
+  border-collapse: collapse;
+}
+
+th {
+  background-color: white;
+}
+
+th, td {
+  border: 1px solid #dee2e6 !important;
+  font-size: 0.85rem;
+  font-weight: normal;
+  text-align: center;
+}
+
+th {
+  border-bottom: 1px solid #bbb !important;
+}
+
+.cat-end {
+  border-right: none !important;
+}
+
+.cat-end + * {
+  border-left: 1px solid #bbb !important;
+}
+
+th.category {
+  border-bottom: 1px solid #dee2e6 !important;
+  padding: 6px;
+}
+
+.task-prices th {
+  font-size: 0.8rem;
+  padding: 4px;
+  width: 45px;
+  text-align: center;
+}
+
+.task-prices p {
+  margin: 0;
+}
+
+.task-prices p:last-child {
+  margin-top: 4px;
+}
+
+.task-prices .icon {
+  height: 0.5rem;
+  margin-bottom: 3px;
+}
+
+.task-prices .stats {
+  color: #aaa;
+  font-size: 0.7rem;
+}
+
+td {
+  vertical-align: middle !important;
+}
+
+td.team {
+  line-height: 1.5;
+  overflow-x: hidden;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  text-align: left;
+  max-width: 200px;
+}
+
+td.team p {
+  margin: 0;
+}
+
+td .region {
+  color: #aaa;
+  font-size: 0.75rem;
+}
+
+td .elapsed-time {
+  font-size: 10px;
+  color: darkcyan;
+  margin-left: 3px;
+}
+
+td.accepted {
+  color: darkcyan;
+  padding: 4px;
+}
+
+td.accepted .time {
+  color: #aaa;
+  font-size: 0.6rem;
+}
