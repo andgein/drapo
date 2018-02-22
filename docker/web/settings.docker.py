@@ -220,3 +220,12 @@ LANGUAGES = [
     ('ru', 'Russian'),
     ('en', 'English'),
 ]
+
+MARKDOWN_DEUX_STYLES = {
+    'default': {
+        'extras': {
+            'code-friendly': None,
+        },
+        'safe_mode': False if env.get('MARKDOWN_DISABLE_SAFE_MODE') == 'True' else 'escape',
+    }
+}
