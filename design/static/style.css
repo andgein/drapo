@@ -205,7 +205,11 @@ table {
 }
 
 th, td {
-  border: 2px solid white !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-bottom: 3px solid white !important;
+  border-right: 2px solid white !important;
+
   font-size: 0.85rem;
   font-weight: normal;
   text-align: center;
@@ -217,7 +221,7 @@ thead {
 
 th {
   background-color: #eee;
-  border-bottom: 5px solid white !important;
+  border-bottom: 3px solid white !important;
 }
 
 .cat-end {
@@ -225,33 +229,35 @@ th {
 }
 
 th.category {
-  border-bottom: 2px solid white !important;
   padding: 8px;
 }
 
 .task-prices th {
+  cursor: pointer;
   font-size: 0.8rem;
   padding: 6px 4px;
   width: 45px;
   text-align: center;
 }
 
-.task-prices p {
-  margin: 0;
-}
-
-.task-prices p:last-child {
-  margin-top: 4px;
-}
-
 .task-prices .icon {
   height: 0.5rem;
-  margin-bottom: 3px;
+  margin-bottom: 2px;
 }
 
 .task-prices .stats {
+  display: inline-block;
+  margin-top: 4px;
   color: #aaa;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
+}
+
+.task-prices th:hover {
+  text-decoration: underline;
+}
+
+.task-prices th:hover .stats {
+  text-decoration: none;
 }
 
 tr:nth-child(even) {
@@ -268,11 +274,14 @@ td {
 
 td.team {
   line-height: 1.35;
-  overflow-x: hidden;
   padding-top: 8px;
   padding-bottom: 8px;
   text-align: left;
   max-width: 200px;
+}
+
+td.team > div {
+  overflow-x: hidden;
 }
 
 td.team p {
@@ -301,4 +310,8 @@ td.accepted {
 td.accepted .time {
   color: #aaa;
   font-size: 0.6rem;
+}
+
+tr.my-team {
+  background-color: #e0f2e0;
 }
