@@ -204,37 +204,34 @@ table {
   border-collapse: collapse;
 }
 
-th {
-  background-color: white;
-}
-
 th, td {
-  border: 1px solid #dee2e6 !important;
+  border: 2px solid white !important;
   font-size: 0.85rem;
   font-weight: normal;
   text-align: center;
 }
 
+thead {
+  background-color: white;
+}
+
 th {
-  border-bottom: 1px solid #bbb !important;
+  background-color: #eee;
+  border-bottom: 5px solid white !important;
 }
 
 .cat-end {
-  border-right: none !important;
-}
-
-.cat-end + * {
-  border-left: 1px solid #bbb !important;
+  border-right: 5px solid white !important;
 }
 
 th.category {
-  border-bottom: 1px solid #dee2e6 !important;
-  padding: 6px;
+  border-bottom: 2px solid white !important;
+  padding: 8px;
 }
 
 .task-prices th {
   font-size: 0.8rem;
-  padding: 4px;
+  padding: 6px 4px;
   width: 45px;
   text-align: center;
 }
@@ -255,6 +252,14 @@ th.category {
 .task-prices .stats {
   color: #aaa;
   font-size: 0.7rem;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+tr:nth-child(odd) {
+  background-color: #fcfcfc;
 }
 
 td {
