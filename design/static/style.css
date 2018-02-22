@@ -262,7 +262,7 @@ td {
 }
 
 td.team {
-  line-height: 1.5;
+  line-height: 1.35;
   overflow-x: hidden;
   padding-top: 8px;
   padding-bottom: 8px;
@@ -280,9 +280,9 @@ td .region {
 }
 
 td .elapsed-time {
-  font-size: 10px;
   color: darkcyan;
-  margin-left: 3px;
+  font-size: 0.65rem;
+  margin-left: 15px;
 }
 
 td.accepted {
