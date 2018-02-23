@@ -335,3 +335,13 @@ tr:hover td.accepted .time {
 tr.my-team {
   background-color: #e8fae8;
 }
+
+
+.article-content {
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-size: 0.97rem;
+}
+
+.article-content li {
+  margin-bottom: 15px;
+}
