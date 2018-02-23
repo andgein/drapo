@@ -54,6 +54,7 @@ class Command(BaseCommand):
             user=user,
             defaults={
                 'is_approved': True,
+                'is_visible_in_scoreboard': p.get('is_visible_in_scoreboard', True),
                 'region': region,
             }
         )
