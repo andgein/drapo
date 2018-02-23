@@ -318,8 +318,13 @@ td.accepted {
 }
 
 td.accepted .time {
+  display: none;
   color: #aaa;
   font-size: 0.6rem;
+}
+
+tr:hover td.accepted .time {
+  display: block;
 }
 
 tr.my-team {
