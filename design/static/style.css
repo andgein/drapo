@@ -204,28 +204,34 @@ table {
   border-collapse: collapse;
 }
 
+thead {
+  background-color: white;
+  border-bottom: 1px solid #ccc !important;
+}
+
 th, td {
   border-top: none !important;
-  border-left: none !important;
-  border-bottom: 3px solid white !important;
-  border-right: 2px solid white !important;
+  border-bottom: none !important;
 
   font-size: 0.85rem;
   font-weight: normal;
   text-align: center;
 }
 
-thead {
-  background-color: white;
+.cat-adjacent {
+  border-right: none !important;
+}
+
+td {
+  border-right: 1px solid #eee !important;
+}
+
+.cat-end {
+  border-right: 1px solid #ddd !important;
 }
 
 th {
   background-color: #eee;
-  border-bottom: 3px solid white !important;
-}
-
-.cat-end {
-  border-right: 5px solid white !important;
 }
 
 th.category {
@@ -248,7 +254,7 @@ th.category {
 .task-prices .stats {
   display: inline-block;
   margin-top: 4px;
-  color: #aaa;
+  color: #999;
   font-size: 0.65rem;
 }
 
@@ -266,6 +272,10 @@ tr:nth-child(even) {
 
 tr:nth-child(odd) {
   background-color: #fcfcfc;
+}
+
+tr:hover {
+  background-color: #f3f3f3 !important;
 }
 
 td {
@@ -313,5 +323,5 @@ td.accepted .time {
 }
 
 tr.my-team {
-  background-color: #e0f2e0;
+  background-color: #e8fae8;
 }
