@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'serialization',
 ]
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -64,6 +64,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
+    'drapo.middleware.log_requests_middleware',
     'drapo.middleware.LocaleMiddleware',
 ]
 
@@ -99,6 +100,32 @@ DATABASES = {
     }
 }
 
+
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'loggers': {
+        'drapo.requests': {
+            'handlers': ['drapo.requests'],
+            'level': 'INFO',
+        },
+    },
+    'handlers': {
+        'drapo.requests': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'drapo.requests',
+        },
+    },
+    'formatters': {
+        'drapo.requests': {
+            '()': 'django.utils.log.ServerFormatter',
+            'format': '[%(server_time)s] %(message)s',
+        }
+    },
+
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
