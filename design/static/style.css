@@ -476,3 +476,24 @@ h2 {
   font-size: 0.8rem;
   padding: 10px;
 }
+
+
+footer {
+  margin: 0 !important;
+  padding: 24px;
+
+  position: absolute;
+  bottom: 0;
+  left: 84px;
+  width: calc(100% - 168px);
+  height: 120px;
+}
+
+body > .container {
+  margin-bottom: 144px;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
