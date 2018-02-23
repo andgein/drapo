@@ -315,6 +315,8 @@ def task(request, contest_id, task_id):
             messages.warning(request, 'You are not registered to the contest')
         elif participant.is_disqualified:
             messages.error(request, 'You are disqualified from the contest')
+        elif contest.is_finished_for(participant):
+            messages.error(request, 'Contest is finished! You are too late, sorry')
         elif get_count_attempts_in_last_minute(contest, participant) >= settings.DRAPO_MAX_TRIES_IN_MINUTE:
             messages.error(request, 'Too fast, try later')
         elif form.is_valid():
