@@ -179,8 +179,13 @@ header .text-muted {
   color: #ccc;
 }
 
-.card .text-primary .icon {
+.card .text-primary .price-icon {
   height: 0.8rem;
+  margin-bottom: 3px;
+}
+
+.card .text-primary .stats-icon {
+  height: 0.7rem;
   margin-bottom: 3px;
 }
 
