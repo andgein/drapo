@@ -14,8 +14,7 @@ admin.site.register(models.TaskBasedContest, ContestAdmin)
 
 
 class ContestRegionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'contest', 'name', 'start_time', 'finish_time')
-    list_editable = ('name', 'start_time', 'finish_time')
+    list_display = ('id', 'contest', 'name', 'start_time', 'finish_time', 'timezone')
     list_filter = ('contest', )
 
 admin.site.register(models.ContestRegion, ContestRegionAdmin)

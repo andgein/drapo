@@ -299,6 +299,7 @@ class TaskBasedContest:
                 defaults={
                     'start_time' : region['start_time'],
                     'finish_time' : region['finish_time'],
+                    'timezone' : region.get('timezone', 'UTC'),
                 },
             )
 

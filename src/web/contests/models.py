@@ -155,6 +155,8 @@ class ContestRegion(models.Model):
 
     finish_time = models.DateTimeField(help_text='Contest finish time for this region')
 
+    timezone = models.TextField(default='UTC', help_text='Timezone for the region')
+
     def __str__(self):
         return self.name
 
