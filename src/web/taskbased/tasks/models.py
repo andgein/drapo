@@ -417,6 +417,33 @@ class AbstractTasksOpeningPolicy(polymorphic.models.PolymorphicModel):
         raise NotImplementedError()
 
 
+class WelcomeTasksOpeningPolicy(AbstractTasksOpeningPolicy):
+
+    class Meta:
+        verbose_name = 'Task opening policy: welcome'
+        verbose_name_plural = 'Task opening policies: welcome'
+
+    def get_open_tasks(self, participant):
+        correct_attempts = self.contest.attempts.filter(participant=participant, is_correct=True)
+
+        print('kokoko')
+
+        if correct_attempts.count() > 0:
+            return AllTasksOpenedOpeningPolicy.get_open_tasks(self, participant)
+
+        if self.contest.tasks_grouping == contests.models.TasksGroping.ByCategories:
+            if self.contest.categories:
+                category = self.contest.categories[0]
+                return category.tasks.values_list('id', flat=True)
+            else:
+                return []
+        elif self.contest.tasks_grouping == contests.models.TasksGroping.OneByOne:
+            task = self.contest.tasks.first()
+            return [task.id] if task else []
+        else:
+            raise ValueError('Invalid tasks grouping')
+
+
 class ByCategoriesTasksOpeningPolicy(AbstractTasksOpeningPolicy):
     opens_for_all_participants = models.BooleanField(default=True)
 

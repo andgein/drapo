@@ -60,6 +60,12 @@ class ByCategoriesTasksOpeningPolicyAdmin(admin.ModelAdmin):
 admin.site.register(models.ByCategoriesTasksOpeningPolicy, ByCategoriesTasksOpeningPolicyAdmin)
 
 
+class WelcomeTasksOpeningPolicyAdmin(admin.ModelAdmin):
+    list_display = ('id', 'contest')
+
+admin.site.register(models.WelcomeTasksOpeningPolicy, WelcomeTasksOpeningPolicyAdmin)
+
+
 class ManualTasksOpeningPolicyAdmin(admin.ModelAdmin):
     list_display = ('id', 'contest')
 

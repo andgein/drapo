@@ -285,6 +285,8 @@ class TaskBasedContest:
             task_models.AllTasksOpenedOpeningPolicy.objects.get_or_create(contest=contest)
         elif self.task_opening_policy == "Manual":
             task_models.ManualTasksOpeningPolicy.objects.get_or_create(contest=contest)
+        elif self.task_opening_policy == "Welcome":
+            task_models.WelcomeTasksOpeningPolicy.objects.get_or_create(contest=contest)
         else:
             raise RuntimeError("Unknown task opening policy: %s" % self.task_opening_policy)
 
