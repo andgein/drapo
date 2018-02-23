@@ -234,10 +234,14 @@ def scoreboard(request, contest_id):
     if request.user.is_staff:
         plagiarized_attempts = contest.attempts.filter(is_plagiarized=True)
         plagiarized_tasks = defaultdict(set)
+        plagiarized_from = set()
         for attempt in plagiarized_attempts:
             plagiarized_tasks[attempt.participant_id].add(attempt.task_id)
+            if attempt.plagiarized_from:
+                plagiarized_from.add(attempt.plagiarized_from.id)
     else:
         plagiarized_tasks = {}
+        plagiarized_from = set()
 
     if contest.tasks_grouping == models.TasksGroping.OneByOne:
         categories = [{
@@ -265,6 +269,7 @@ def scoreboard(request, contest_id):
         'participant_score': participant_score,
         'scores_by_task' : scores_by_task,
         'plagiarized_tasks': plagiarized_tasks,
+        'plagiarized_from': plagiarized_from,
         'form': form,
     })
 

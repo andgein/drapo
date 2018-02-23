@@ -57,6 +57,16 @@
                                     <small class="text-danger">Disqualified</small>
                                 </div>
                             {% endif %}
+                            {% if user.is_staff and participant.id in plagiarized_from %}
+                                <div class="mt0">
+                                    <small class="text-danger">Давал списывать</small>
+                                </div>
+                            {% endif %}
+                            {% if user.is_staff and plagiarized %}
+                                <div class="mt0">
+                                    <small class="text-danger">Списывал</small>
+                                </div>
+                            {% endif %}
                         </td>
                         <td>{{ participant_score|get:participant.id|default:0 }}</td>
 
