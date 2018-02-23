@@ -426,8 +426,6 @@ class WelcomeTasksOpeningPolicy(AbstractTasksOpeningPolicy):
     def get_open_tasks(self, participant):
         correct_attempts = self.contest.attempts.filter(participant=participant, is_correct=True)
 
-        print('kokoko')
-
         if correct_attempts.count() > 0:
             return AllTasksOpenedOpeningPolicy.get_open_tasks(self, participant)
 
