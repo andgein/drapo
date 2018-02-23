@@ -903,6 +903,9 @@ def news(request, contest_id, news_id):
     if not news.is_published and not request.user.is_staff:
         return HttpResponseNotFound()
 
+    # Update last read time
+    request.session['news_last_read_timestamp'] = timezone.now().timestamp()
+
     participant = contest.get_participant_for_user(request.user)
     return render(request, 'contests/news.html', {
         'current_contest': contest,
@@ -975,6 +978,18 @@ def edit_news(request, contest_id, news_id):
         'news': news,
         'form': form,
     })
+
+
+def unread_news_count(request, contest_id):
+    contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
+    last_read_timestamp = request.session.get('news_last_read_timestamp')
+    if last_read_timestamp:
+        last_read = datetime.datetime.utcfromtimestamp(last_read_timestamp)
+        count = contest.news.filter(is_published=True, publish_time__gt=last_read).count()
+    else:
+        count = contest.news.filter(is_published=True).count()
+
+    return JsonResponse({'unread_count': count})
 
 
 @staff_required
