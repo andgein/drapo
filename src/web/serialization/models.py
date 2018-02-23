@@ -129,11 +129,13 @@ class Task:
 
         if not created:
             task.max_score = self.max_score
-            task.checker.delete()
+            old_checker = task.checker
+            old_statement_generator = task.statement_generator
             task.checker = checker
-            task.statement_generator.delete()
             task.statement_generator = statement_generator
             task.save()
+            old_checker.delete()
+            old_statement_generator.delete()
 
         # TODO: Files are leaking
         for file in self.files:
