@@ -40,11 +40,18 @@
         <nav class="nav d-flex justify-content-center p-2">
           <a class="px-4 text-muted" href="index.html">Новости</a>
           <a class="px-4 text-muted" href="scoreboard.html">Рейтинг</a>
-          <a class="px-4 text-muted" href="#">
+          <a class="px-4 text-muted" href="notifications.html">
             Оповещения <span class="unread-count">(1)</span>
           </a>
-          <a class="px-4 text-muted" href="#">Правила</a>
+          <a class="px-4 text-muted" href="rules.html">Правила</a>
         </nav>
+      </div>
+
+      <div class="row float-right px-4 pb-2 scoreboard-toggle-row">
+        <div class="scoreboard-toggle custom-control custom-checkbox">
+          <input type="checkbox" class="custom-control-input" id="customCheck1">
+          <label class="custom-control-label" for="customCheck1">Только мой регион</label>
+        </div>
       </div>
 
       <div class="bs-component table-component">
@@ -525,56 +532,10 @@
               <td class="cat-adjacent">1200</td>
             </tr>
 
-            <tr>
-              <td class="cat-adjacent">4</td>
-              <td class="team cat-end">
-                <p>Just a Team</p>
-                <p class="region">
-                  Санкт-Петербург
-                  <span class="middot mx-1">&middot;</span>
-                  <span class="elapsed-time">02:38</span>
-                </p>
-              </td>
-
-              <td class="accepted">
-                <div>&#9679;</div><div class="time" title="Время сдачи флага (от начала соревнования)">01:12</div>
-              </td>
-              <td class="cat-end accepted">
-                <div>&#9679;</div><div class="time" title="Время сдачи флага (от начала соревнования)">03:16</div>
-              </td>
-              <td></td>
-              <td class="cat-end accepted">
-                <div>&#9679;</div><div class="time" title="Время сдачи флага (от начала соревнования)">03:00</div>
-              </td>
-              <td></td>
-              <td class="cat-end"></td>
-              <td class="accepted">
-                <div>&#9679;</div><div class="time" title="Время сдачи флага (от начала соревнования)">02:00</div>
-              </td>
-              <td></td>
-              <td class="accepted">
-                <div>&#9679;</div><div class="time" title="Время сдачи флага (от начала соревнования)">01:57</div>
-              </td>
-              <td class="accepted">
-                <div>&#9679;</div><div class="time" title="Время сдачи флага (от начала соревнования)">02:00</div>
-              </td>
-              <td class="cat-end accepted">
-                <div>&#9679;</div><div class="time" title="Время сдачи флага (от начала соревнования)">02:00</div>
-              </td>
-              <td></td>
-              <td></td>
-              <td class="accepted">
-                <div>&#9679;</div><div class="time" title="Время сдачи флага (от начала соревнования)">03:11</div>
-              </td>
-              <td></td><td class="cat-end"></td>
-
-              <td class="cat-adjacent">1200</td>
-            </tr>
-
             <tr class="my-team">
               <td class="cat-adjacent">5</td>
               <td class="team cat-end">
-                <p>Just a Team</p>
+                <p>My Team</p>
                 <p class="region">
                   Санкт-Петербург
                   <span class="middot mx-1">&middot;</span>

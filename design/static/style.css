@@ -336,6 +336,20 @@ tr.my-team {
   background-color: #e8fae8;
 }
 
+.scoreboard-toggle {
+  font-size: 0.85rem;
+}
+
+.scoreboard-toggle-row {
+  margin-top: -18px;
+}
+
+.scoreboard-toggle .custom-control-label::before, .scoreboard-toggle .custom-control-label::after {
+  margin-top: -1px;
+  height: 0.9rem;
+  width: 0.9rem;
+}
+
 
 .article-content {
   font-family: "Playfair Display", Georgia, "Times New Roman", serif;
