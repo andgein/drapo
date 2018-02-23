@@ -372,7 +372,7 @@ class Attempt(drapo.models.ModelWithTimestamps):
 
     is_correct = models.BooleanField(default=False, db_index=True)
 
-    is_plagiarized = models.BooleanField(default=False)
+    is_plagiarized = models.BooleanField(default=False, db_index=True)
 
     plagiarized_from = models.ForeignKey(
         contests.models.AbstractParticipant,
