@@ -365,7 +365,7 @@ tr.my-team {
 }
 
 
-.notification-list h2 {
+h2 {
   font-size: 1.45rem;
 }
 
@@ -395,4 +395,13 @@ tr.my-team {
 .notification h3 {
   font-size: 1.15rem;
   line-height: 1.2;
+}
+
+
+.login-form {
+  font-size: 0.9rem;
+}
+
+.login-form > .flex-column {
+  width: 350px;
 }
