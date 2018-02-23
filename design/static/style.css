@@ -169,22 +169,22 @@ header .text-muted {
   line-height: 1.2;
 }
 
-.card .text-primary {
+.task-info {
   color: darkcyan !important;
   font-size: 0.85rem;
   font-weight: 400;
 }
 
-.card .text-primary .middot {
+.task-info .middot {
   color: #ccc;
 }
 
-.card .text-primary .price-icon {
+.task-info .price-icon {
   height: 0.8rem;
   margin-bottom: 3px;
 }
 
-.card .text-primary .stats-icon {
+.task-info .stats-icon {
   height: 0.7rem;
   margin-bottom: 3px;
 }
@@ -404,4 +404,70 @@ h2 {
 
 .login-form > .flex-column {
   width: 350px;
+}
+
+
+.modal {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.modal-dialog {
+  max-width: 600px !important;
+}
+
+.modal-content {
+  box-shadow: 0 .25rem 1.5rem rgba(0, 0, 0, 0.5);
+}
+
+.task .modal-task-content {
+  margin: 10px;
+}
+
+.task h3 {
+  font-size: 1.45rem;
+  line-height: 1.2;
+  margin-bottom: 1.3rem;
+}
+
+.task .content {
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-size: 0.94rem;
+}
+
+.task .content p {
+  margin-bottom: 1.3rem;
+}
+
+.task .content a {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+               sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 0.89rem;
+  margin-right: 10px;
+}
+
+.flag-submit-card .card-body {
+  background-color: #fcefdc;
+  padding: 15px;
+  font-size: 0.85rem;
+  line-height: 1.35;
+}
+
+.flag-submit-card input {
+  width: calc(100% - 150px);
+  margin-left: 15px;
+}
+
+.flag-submit-card button {
+  width: 100px;
+  margin: 0 15px;
+}
+
+.alert {
+  color: black;
+  font-size: 0.85rem;
+}
+
+.flag-submit-card .alert {
+  font-size: 0.8rem;
+  padding: 10px;
 }
