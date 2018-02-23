@@ -419,6 +419,11 @@ h2 {
   box-shadow: 0 .25rem 1.5rem rgba(0, 0, 0, 0.5);
 }
 
+.task .modal-body {
+  max-height: calc(100vh - 100px);
+  overflow-y: scroll;
+}
+
 .task .modal-task-content {
   margin: 10px;
 }
