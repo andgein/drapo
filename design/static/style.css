@@ -356,6 +356,43 @@ tr.my-team {
   font-size: 0.97rem;
 }
 
+.article-content h2 {
+  font-size: 1.75rem;
+}
+
 .article-content li {
   margin-bottom: 15px;
+}
+
+
+.notification-list h2 {
+  font-size: 1.45rem;
+}
+
+.notification-list .card {
+  max-width: 600px;
+}
+
+.notification.unread {
+  box-shadow: 0 .25rem .75rem rgba(255, 184, 51, 0.5);
+}
+
+.notification .content {
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-size: 0.89rem;
+}
+
+.notification .content a {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+               sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 0.84rem;
+}
+
+.notification .content p:last-child {
+  margin-bottom: 0;
+}
+
+.notification h3 {
+  font-size: 1.15rem;
+  line-height: 1.2;
 }
