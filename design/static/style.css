@@ -295,12 +295,9 @@ td.team {
   max-width: 200px;
 }
 
-td.team > div {
+td.team div {
+  white-space: nowrap;
   overflow-x: hidden;
-}
-
-td.team p {
-  margin: 0;
 }
 
 td .region {
@@ -354,6 +351,13 @@ tr.my-team {
 .article-content {
   font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: 0.97rem;
+}
+
+@media (min-width: 1200px) {
+  .article-content {
+    margin-left: 75px;
+    margin-right: 100px;
+  }
 }
 
 .article-content h2 {
@@ -420,7 +424,7 @@ h2 {
 }
 
 .task .modal-body {
-  max-height: calc(100vh - 100px);
+  max-height: calc(100vh - 50px);
   overflow-y: scroll;
 }
 
@@ -472,9 +476,10 @@ h2 {
   font-size: 0.85rem;
 }
 
-.flag-submit-card .alert {
+.task .alert {
   font-size: 0.8rem;
   padding: 10px;
+  line-height: 1.35;
 }
 
 
