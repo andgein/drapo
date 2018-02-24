@@ -147,6 +147,44 @@ def contest(request, contest_id):
     })
 
 
+def qctf_unread_notifications_count(request):
+    contest = get_object_or_404(models.TaskBasedContest, pk=settings.QCTF_CONTEST_ID)
+    last_read_timestamp = request.session.get('notifications_last_read_timestamp')
+    if last_read_timestamp:
+        last_read = datetime.datetime.fromtimestamp(last_read_timestamp, tz=timezone.utc)
+        count = contest.news.filter(is_published=True, publish_time__gt=last_read).count()
+    else:
+        count = contest.news.filter(is_published=True).count()
+
+    return JsonResponse({'unread_count': count})
+
+
+def qctf_notifications(request):
+    contest = get_object_or_404(models.TaskBasedContest, pk=settings.QCTF_CONTEST_ID)
+    participant = contest.get_participant_for_user(request.user)
+
+    if not (request.user.is_staff or participant):
+        return HttpResponseNotFound()
+
+    # Update last read time
+    last_read_timestamp = request.session.get('notifications_last_read_timestamp')
+    last_read = datetime.datetime.fromtimestamp(last_read_timestamp, tz=timezone.utc) if last_read_timestamp else None
+    request.session['notifications_last_read_timestamp'] = timezone.now().timestamp()
+
+    notifications = list(contest.news.filter(is_published=True).order_by('-publish_time'))
+    for notification in notifications:
+        print(timezone.is_naive(last_read))
+        notification.is_unread = (notification.publish_time > last_read) if last_read else True
+
+    return render(request, 'contests/qctf_notifications.html', {
+        'current_contest': contest,
+
+        'contest': contest,
+        'participant' : participant,
+        'notifications': notifications,
+    })
+
+
 def tasks(request, contest_id):
     contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
 
@@ -1038,9 +1076,6 @@ def news(request, contest_id, news_id):
     if not news.is_published and not request.user.is_staff:
         return HttpResponseNotFound()
 
-    # Update last read time
-    request.session['news_last_read_timestamp'] = timezone.now().timestamp()
-
     participant = contest.get_participant_for_user(request.user)
     return render(request, 'contests/news.html', {
         'current_contest': contest,
@@ -1113,18 +1148,6 @@ def edit_news(request, contest_id, news_id):
         'news': news,
         'form': form,
     })
-
-
-def unread_news_count(request, contest_id):
-    contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
-    last_read_timestamp = request.session.get('news_last_read_timestamp')
-    if last_read_timestamp:
-        last_read = datetime.datetime.utcfromtimestamp(last_read_timestamp)
-        count = contest.news.filter(is_published=True, publish_time__gt=last_read).count()
-    else:
-        count = contest.news.filter(is_published=True).count()
-
-    return JsonResponse({'unread_count': count})
 
 
 @staff_required

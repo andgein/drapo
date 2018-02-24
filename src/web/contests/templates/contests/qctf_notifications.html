@@ -1,0 +1,32 @@
+{% extends '_qctf_layout.html' %}
+
+{% load markdown_deux_tags %}
+{% load humanize %}
+{% load i18n %}
+{% load urlize_html %}
+
+{% block title %}The QCTF Times - Оповещения{% endblock %}
+
+{% block content %}
+<main class="notification-list d-flex justify-content-center">
+  <div class="flex-column">
+    <h2 class="text-center mb-4">Оповещения</h2>
+
+    {% for notification in notifications %}
+    <div class="card flex-md-row mb-4 box-shadow notification {% if notification.is_unread %}unread{% endif %}">
+      <div class="card-body d-flex flex-column align-items-start">
+        <div class="row ml-0 w-100 mb-2">
+          <h3 class="col-10 px-0">{{ notification.title }}</h3>
+          <div class="task-info text-primary text-right col-2 px-0">{{ notification.publish_time|naturaltime }} </div>
+        </div>
+
+        <div class="content">
+          {{ notification.text | markdown | urlize_html}}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+  </div>
+</main>
+{% endblock %}

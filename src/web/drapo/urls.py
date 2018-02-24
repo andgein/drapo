@@ -22,6 +22,8 @@ urlpatterns = [
     url(r'^$', contests.views.qctf_tasks, name='home'),
     url(r'^rules/$', contests.views.qctf_rules, name='qctf_rules'),
     url(r'^scoreboard/$', contests.views.qctf_scoreboard, name='qctf_scoreboard'),
+    url(r'^notifications/$', contests.views.qctf_notifications, name='qctf_notifications'),
+    url(r'^api/unread_notifications_count/$', contests.views.qctf_unread_notifications_count, name='qctf_unread_notifications_count'),
 
     # Non-QCTF URLs
 

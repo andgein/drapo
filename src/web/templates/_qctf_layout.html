@@ -61,8 +61,8 @@
           {% if user.is_authenticated %}
           <a class="px-4 text-muted" href="{% url 'home' %}">Новости</a>
           <a class="px-4 text-muted" href="{% url 'qctf_scoreboard' %}">Рейтинг</a>
-          <a class="px-4 text-muted" href="#">
-            Оповещения <span class="unread-count">(1)</span>
+          <a class="px-4 text-muted" href="{% url 'qctf_notifications' %}">
+            Оповещения <span class="unread-count"></span>
           </a>
           <a class="px-4 text-muted" href="{% url 'qctf_rules' %}">Правила</a>
           {% else %}
