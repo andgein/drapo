@@ -335,7 +335,7 @@ def qctf_scoreboard(request):
     completion_time = defaultdict(int)
     for attempt in successful_attempts:
         p_id, t_id = attempt.participant_id, attempt.task_id
-        if p_id not in visible_participants:
+        if p_id not in participant_by_id:
             continue
         if t_id not in first_success_time[p_id]:
             first_success_time[p_id][t_id] = attempt.created_at
