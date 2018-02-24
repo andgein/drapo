@@ -235,11 +235,36 @@ QCTF_CONTEST_ID = 1
 
 QCTF_CARD_LAYOUT = [
     [
-        ('bank', 'http://crlaw.com/news/wp-content/uploads/2017/05/brandon-k-jones-profile-image-180x198.jpg'),
-        ('auth-system', 'http://crlaw.com/news/wp-content/uploads/2017/05/brandon-k-jones-profile-image-180x198.jpg'),
+        ('permanent-302', '/static/statement_img/podifruxx.jpg'),
+        ('storage', '/static/statement_img/babushka.png'),
     ],
-    [('cats-vs-dogs', None), ('make-some-noise', None), ('permanent-302', None)],
-    [('getflagchar', None), ('cipher', None), ('python-vm', None)],
+    [
+        ('getflagchar', '/static/statement_img/gohdjhr.jpg'),
+        ('minecrypt', '/static/statement_img/msslrrijc.png'),
+    ],
+    [
+        ('make-some-noise', None),
+        ('cipher', None),
+        ('weird-video', None),
+    ],
+    [
+        ('unpack-reverse', None),
+        ('cats-vs-dogs', None),
+        ('notemaster', None),
+    ],
+    [
+        ('browser-mining', None),
+        ('bank', None),
+        ('passengers-1', None),
+    ],
+    [
+        ('auth-system', None),
+        ('obscure-archive', None),
+        ('passengers-2', None),
+    ],
+    [
+        ('python-vm', None),
+    ],
 ]
 
 # Place tasks ordered by cost. They will be shown in the QCTF scoreboard in the same order.

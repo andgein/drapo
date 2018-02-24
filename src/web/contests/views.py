@@ -160,11 +160,12 @@ def qctf_unread_notifications_count(request):
 
 
 def qctf_notifications(request):
+    if not request.user.is_authenticated:
+        return redirect(urlresolvers.reverse('users:login'))
+
     contest = get_object_or_404(models.TaskBasedContest, pk=settings.QCTF_CONTEST_ID)
     participant = contest.get_participant_for_user(request.user)
-
-    if not (request.user.is_staff or participant):
-        return HttpResponseNotFound()
+    tasks_visible = contest.is_started_for(participant) or request.user.is_staff
 
     # Update last read time
     last_read_timestamp = request.session.get('notifications_last_read_timestamp')
@@ -173,7 +174,6 @@ def qctf_notifications(request):
 
     notifications = list(contest.news.filter(is_published=True).order_by('-publish_time'))
     for notification in notifications:
-        print(timezone.is_naive(last_read))
         notification.is_unread = (notification.publish_time > last_read) if last_read else True
 
     return render(request, 'contests/qctf_notifications.html', {
@@ -182,6 +182,7 @@ def qctf_notifications(request):
         'contest': contest,
         'participant' : participant,
         'notifications': notifications,
+        'tasks_visible': tasks_visible,
     })
 
 
@@ -233,7 +234,6 @@ def tasks(request, contest_id):
 
 
 def qctf_tasks(request):
-    # TODO: Check non-auth users and users the contest didn't start for
     if not request.user.is_authenticated:
         return redirect(urlresolvers.reverse('users:login'))
 
@@ -343,6 +343,8 @@ def qctf_scoreboard(request):
 
     visible_participants.sort(
         key=lambda item: (-total_scores[item.id], completion_time[item.id], item.id))
+    visible_participants = [item for item in visible_participants
+                            if contest.is_started_for(item)]
 
     data.update({
         'current_contest': contest,

@@ -57,7 +57,13 @@
                     {{ team.region.name|remove_after_comma }}
                     <span class="middot mx-1">&middot;</span>
                     <span class="elapsed-time" title="Время от начала соревнования на этой площадке">
-                        {{ current_contest|start_time_for:team|timesince_hhmm }}
+                        {% if current_contest|is_running_for:team %}
+                            {{ current_contest|start_time_for:team|timesince_hhmm }}
+                        {% else %}
+                            {% with finish_time=current_contest|finish_time_for:team %}
+                            {{ current_contest|start_time_for:team|timesince_hhmm:finish_time }}
+                            {% endwith %}
+                        {% endif %}
                     </span>
                 </div>
             </td>
