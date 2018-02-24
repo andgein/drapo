@@ -4,7 +4,7 @@
 
 {% for task_id, stmt in statements.items %}
 {% with task=task_by_id|item:task_id %}
-<div class="modal task flex-column justify-content-center modal-task"
+<div class="modal task flex-column justify-content-center modal-task task-info-container"
      data-id="{{ task.id }}" style="display: none;">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -29,10 +29,11 @@
                             {{ task_solved_by|item:task.id|length }}
                         </span>
 
-                        {% if task.id in solved_tasks_ids %}
+                        <span class="solved-label"
+                             style="{% if task.id not in solved_tasks_ids %}display: none;{% endif %}">
                             <span class="middot mx-2">&middot;</span>
                             <span>Решено</span>
-                        {% endif %}
+                        </span>
                     </div>
                     <h3>{{ stmt.title }}</h3>
 
@@ -55,16 +56,6 @@
                     </form>
 
                     <div class="alert mt-3 mb-0" style="display: none;"></div>
-                    <!--<div class="alert alert-success mt-3 mb-0">-->
-                    <!--Спасибо за интересные данные!-->
-                    <!--Вознаграждение перечислено на ваш счёт.-->
-                    <!--</div>-->
-
-                    <!--<div class="alert alert-danger mt-3 mb-0">-->
-                        <!--Эта строка не является правильным ответом на задание.-->
-                        <!--Попробуйте найти что&#8209;нибудь ещё. Обратите внимание, что-->
-                        <!--правильный ответ начинается с символов <code>QCTF</code>.-->
-                    <!--</div>-->
                 </div>
             </div>
         </div>

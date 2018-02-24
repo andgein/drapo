@@ -17,6 +17,11 @@ function update_unread_notifications_count() {
     });
 }
 
+function markAsSolved(task_id) {
+    $('.task-info-container[data-id="' + task_id + '"] .solved-label').show();
+    $('.card.task-info-container[data-id="' + task_id + '"]').addClass('solved');
+}
+
 function submitFlag(modal_task, task_id, form) {
     var alert = $(modal_task).find('.alert');
     alert.removeClass('alert-danger').removeClass('alert-success').addClass('alert-dismissible')
@@ -27,9 +32,10 @@ function submitFlag(modal_task, task_id, form) {
 
     $.post("/api/submit_flag/" + task_id + "/", form.serialize())
         .done(function (response) {
-            if (response.status === 'success')
+            if (response.status === 'success') {
+                markAsSolved(task_id);
                 alert.removeClass('alert-dismissible').removeClass('alert-danger').addClass('alert-success');
-            else
+            } else
                 alert.removeClass('alert-dismissible').removeClass('alert-success').addClass('alert-danger');
 
             alert.html(response.message)
@@ -75,8 +81,9 @@ function updateRemainingTime() {
 $(function () {
     $('.article, .article-with-image').each(function (_, article) {
         var task_id = $(article).data('id');
-        $(article).find('a').click(function () {
+        $(article).find('a').click(function (event) {
             showModal(task_id);
+            event.preventDefault();
         });
     });
     $('.task-prices th').click(function () {

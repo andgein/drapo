@@ -13,7 +13,7 @@
         {% with task=task_by_name|item:task_name %}
         {% if task.id in statements and task.id in opened_tasks_ids %}
         <div class="{% if img_src %}col-md-6{% else %}col-lg-4{% endif %}">
-            <div class="card flex-md-row mb-4
+            <div class="card flex-md-row mb-4 task-info-container
                         {% if img_src %}article-with-image box-shadow{% else %}article{% endif %}
                         {% if task.id in solved_tasks_ids %}solved{% endif %}"
                  data-id="{{ task.id }}">
@@ -34,10 +34,11 @@
                             {{ task_solved_by|item:task.id|length }}
                         </span>
 
-                        {% if task.id in solved_tasks_ids %}
+                        <span class="solved-label"
+                             style="{% if task.id not in solved_tasks_ids %}display: none;{% endif %}">
                             <span class="middot mx-2">&middot;</span>
                             <span>Решено</span>
-                        {% endif %}
+                        </span>
                     </div>
                     <h3 class="mb-0">
                         <a class="text-dark" href="#">{{ stmt.title }}</a>
