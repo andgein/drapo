@@ -217,9 +217,8 @@ class AbstractParticipant(polymorphic.models.PolymorphicModel, drapo.models.Mode
 
     def get_current_score(self):
         correct_attempts = self.attempts.filter(is_correct=True)
-        scores_by_task = correct_attempts.values('task_id').annotate(score_for_task=Max('score'))
-        result = scores_by_task.aggregate(sum=Sum('score_for_task'))
-        return result['sum']
+        solved_tasks = correct_attempts.values('task').distinct()
+        return solved_tasks.aggregate(sum=Sum('task__max_score'))['sum']
 
     def __str__(self):
         return self.name

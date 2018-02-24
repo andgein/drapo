@@ -45,7 +45,7 @@
         </thead>
         <tbody>
         {% for team in visible_participants %}
-        <tr>
+        <tr class="{% if team.id == participant.id %}my-team{% endif %}">
             <td class="cat-adjacent">{{ forloop.counter }}</td>
             <td class="team cat-end">
                 <div>{{ team.name }}</div>
