@@ -239,9 +239,7 @@ def qctf_tasks(request):
 
     contest = get_object_or_404(models.TaskBasedContest, pk=settings.QCTF_CONTEST_ID)
     participant = contest.get_participant_for_user(request.user)
-    if not contest.is_started_for(participant) and not request.user.is_staff:
-        messages.error(request, '%s is not started yet' % contest.name)
-        return redirect(contest)
+    tasks_visible = contest.is_started_for(participant) or request.user.is_staff
 
     data = prepare_task_popups(request, contest, participant)
 
@@ -258,6 +256,7 @@ def qctf_tasks(request):
 
         'layout': settings.QCTF_CARD_LAYOUT,
         'opened_tasks_ids': opened_tasks_ids,
+        'tasks_visible': tasks_visible,
     })
     return render(request, 'contests/qctf_tasks.html', data)
 
@@ -352,7 +351,7 @@ def qctf_scoreboard(request):
         'first_success_time': first_success_time,
         'visible_participants': visible_participants,
         'task_columns': task_columns,
-        'tasks_visible': tasks_visible,  # TODO: Use and check it
+        'tasks_visible': tasks_visible,
         'total_scores': total_scores,
     })
 
