@@ -318,15 +318,16 @@ def qctf_scoreboard(request):
 
     data = prepare_task_popups(request, contest, participant)
     task_by_name = data['task_by_name']
+    task_by_id = data['task_by_id']
 
     task_columns = []
     for category, names in sorted(settings.QCTF_TASK_CATEGORIES.items()):
-        ids = []
-        for name in names:
-            ids.append(task_by_name[name].id)
+        ids = [task_by_name[name].id for name in names]
         task_columns.append((category, ids))
 
-    visible_participants = list(contest.participants.filter(is_visible_in_scoreboard=True))
+    visible_participants = list(models.IndividualParticipant.objects.select_related('user', 'region')
+                                .filter(contest_id=contest.id, is_visible_in_scoreboard=True))
+    participant_by_id = {p.id : p for p in visible_participants}
     successful_attempts = contest.attempts.filter(is_correct=True).order_by('created_at')
 
     first_success_time = defaultdict(dict)
@@ -334,10 +335,12 @@ def qctf_scoreboard(request):
     completion_time = defaultdict(int)
     for attempt in successful_attempts:
         p_id, t_id = attempt.participant_id, attempt.task_id
+        if p_id not in visible_participants:
+            continue
         if t_id not in first_success_time[p_id]:
             first_success_time[p_id][t_id] = attempt.created_at
-            total_scores[p_id] += attempt.task.max_score
-            completion_time[p_id] = attempt.created_at - contest.start_time_for(attempt.participant)
+            total_scores[p_id] += task_by_id[attempt.task_id].max_score
+            completion_time[p_id] = attempt.created_at - contest.start_time_for(participant_by_id[attempt.participant_id])
 
     visible_participants.sort(
         key=lambda item: (-total_scores[item.id], completion_time[item.id], item.id))
@@ -352,6 +355,7 @@ def qctf_scoreboard(request):
         'tasks_visible': tasks_visible,  # TODO: Use and check it
         'total_scores': total_scores,
     })
+
     return render(request, 'contests/qctf_scoreboard.html', data)
 
 
