@@ -296,11 +296,10 @@ def qctf_scoreboard(request):
     completion_time = defaultdict(int)
     for attempt in successful_attempts:
         p_id, t_id = attempt.participant_id, attempt.task_id
-        cur_success_time = attempt.created_at - contest.start_time_for(attempt.participant)
         if t_id not in first_success_time[p_id]:
-            first_success_time[p_id][t_id] = cur_success_time
+            first_success_time[p_id][t_id] = attempt.created_at
             total_scores[p_id] += attempt.task.max_score
-            completion_time[p_id] = cur_success_time
+            completion_time[p_id] = attempt.created_at - contest.start_time_for(attempt.participant)
 
     visible_participants.sort(
         key=lambda item: (-total_scores[item.id], completion_time[item.id], item.id))
