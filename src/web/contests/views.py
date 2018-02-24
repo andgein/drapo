@@ -230,9 +230,8 @@ def qctf_tasks(request):
     tasks = contest.tasks
     return render(request, 'contests/qctf_tasks.html', {
         'current_contest': contest,
-
-        'contest': contest,
         'participant': participant,
+
         'tasks': tasks,
         'statements': statements,
         'solved_tasks_ids': solved_tasks_ids,

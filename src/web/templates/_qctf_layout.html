@@ -25,15 +25,13 @@
       <header class="blog-header py-3">
         <div class="row flex-nowrap justify-content-between align-items-center">
           <div class="col-3 pt-1">
-            {% if user.is_authenticated and current_contest %}
-              {% with participant=current_contest|get_participant_for:user %}
-                {% if current_contest|is_finished_for:participant %}
-                  <span class="text-muted">Соревнование окончено</span>
-                {% endif %}
-                {% if current_contest|is_running_for:participant %}
-                  <span class="text-muted">Осталось: {{ current_contest|finish_time_for:participant }}</span>
-                {% endif %}
-              {% endwith %}
+            {% if user.is_authenticated and current_contest and participant %}
+              {% if current_contest|is_finished_for:participant %}
+                <span class="text-muted">Соревнование окончено</span>
+              {% endif %}
+              {% if current_contest|is_running_for:participant %}
+                <span class="text-muted">Осталось: {{ current_contest|finish_time_for:participant }}</span>
+              {% endif %}
             {% endif %}
           </div>
           <div class="col-6 text-center">
@@ -41,8 +39,8 @@
           </div>
           <div class="col-3 d-flex justify-content-end align-items-center">
             {% if user.is_authenticated %}
-              {% if current_contest %}
-                <div class="text-muted mr-4">N баллов</div>
+              {% if participant %}
+                <div class="text-muted mr-4">{{ participant.get_current_score|default_if_none:"0" }} баллов</div>
               {% endif %}
 
               <form id="logout-form" method="POST" action="{% url 'users:logout' %}">
