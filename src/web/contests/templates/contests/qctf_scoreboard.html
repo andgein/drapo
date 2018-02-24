@@ -62,7 +62,7 @@
             {% for task_id in task_ids %}
                 {% with task=task_by_id|item:task_id %}
                 {% if team.id in task_solved_by|item:task_id %}
-                    <td class="accepted">
+                    <td class="accepted {% if forloop.last %}cat-end{% endif %}">
                         <div>&#9679;</div>
                         <div class="time" title="Время сдачи флага (от начала соревнования)">
                             {% with attempt_time=first_success_time|item:team.id|item:task_id %}
@@ -71,7 +71,7 @@
                         </div>
                     </td>
                 {% else %}
-                    <td></td>
+                    <td class="{% if forloop.last %}cat-end{% endif %}"></td>
                 {% endif %}
                 {% endwith %}
             {% endfor %}

@@ -244,9 +244,9 @@ QCTF_CARD_LAYOUT = [
 
 # Place tasks ordered by cost. They will be shown in the QCTF scoreboard in the same order.
 QCTF_TASK_CATEGORIES = {
-    'Forensics': ['bank'],
-    'Web': ['auth-system', 'make-some-noise', 'permanent-302'],
-    'PPC': ['cats-vs-dogs'],
-    'Reverse': ['getflagchar', 'python-vm'],
-    'Crypto': ['cipher'],
+    'Crypto': ['minecrypt', 'cipher'],
+    'Forensics': ['weird-video', 'bank'],
+    'PPC': ['cats-vs-dogs', 'browser-mining'],  # TODO: bulls-and-cows
+    'Reverse': ['getflagchar', 'unpack-reverse', 'passengers-1', 'obscure-archive', 'python-vm', 'passengers-2'],
+    'Web': ['storage', 'notemaster', 'auth-system', 'make-some-noise', 'permanent-302'],
 }
