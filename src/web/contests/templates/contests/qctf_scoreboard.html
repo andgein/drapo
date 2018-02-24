@@ -7,12 +7,14 @@
 {% block title %}The QCTF Times - Рейтинг{% endblock %}
 
 {% block content %}
+{% if participant %}
 <div class="row d-flex justify-content-end px-4 pb-2 scoreboard-toggle-row">
     <div class="scoreboard-toggle custom-control custom-checkbox">
-        <input type="checkbox" class="custom-control-input" id="customCheck1">
-        <label class="custom-control-label" for="customCheck1">Скрыть другие площадки</label>
+        <input type="checkbox" class="custom-control-input" id="hide-other-regions">
+        <label class="custom-control-label" for="hide-other-regions">Скрыть другие площадки</label>
     </div>
 </div>
+{% endif %}
 
 <div class="table-component">
     <table class="table table-hover" id="scoreboard">
@@ -45,12 +47,14 @@
         </thead>
         <tbody>
         {% for team in visible_participants %}
-        <tr class="{% if team.id == participant.id %}my-team{% endif %}">
+        <tr class="{% if participant and team.id == participant.id %}my-team{% endif %}
+                   {% if participant and team.region.id == participant.region.id %}my-region{% endif %}
+                   {% cycle 'even' 'odd' %}">
             <td class="cat-adjacent">{{ forloop.counter }}</td>
             <td class="team cat-end">
                 <div>{{ team.name }}</div>
                 <div class="region">
-                    {{ team.region.name }}
+                    {{ team.region.name|remove_after_comma }}
                     <span class="middot mx-1">&middot;</span>
                     <span class="elapsed-time" title="Время от начала соревнования на этой площадке">
                         {{ current_contest|start_time_for:team|timesince_hhmm }}

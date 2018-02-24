@@ -271,12 +271,12 @@ th.category {
   text-decoration: none;
 }
 
-tr:nth-child(even) {
-  background-color: #f8f8f8;
+tr.even {
+  background-color: #fcfcfc;
 }
 
-tr:nth-child(odd) {
-  background-color: #fcfcfc;
+tr.odd {
+  background-color: #f8f8f8;
 }
 
 tr:hover {

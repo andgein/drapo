@@ -36,4 +36,14 @@ $(function () {
     
     update_unread_notifications_count();
     setInterval(update_unread_notifications_count, 3*60*1000);
+
+    $('#hide-other-regions').change(function () {
+        $('tbody tr:not(.my-region)').toggle();
+        $('tbody tr:visible').each(function (i, el) {
+            if (i % 2 === 0)
+                $(el).removeClass('odd').addClass('even');
+            else
+                $(el).removeClass('even').addClass('odd');
+        });
+    });
 });

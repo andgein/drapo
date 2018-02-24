@@ -57,3 +57,8 @@ def timesince_hhmm(d, now=None, reversed=False):
     since = max(delta.days * 24 * 60 * 60 + delta.seconds, 0)
     hours, minutes = divmod(since // 60, 60)
     return '{:02d}:{:02d}'.format(hours, minutes)
+
+
+@register.filter
+def remove_after_comma(s):
+    return s.split(',')[0]
