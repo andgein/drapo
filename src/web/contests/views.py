@@ -468,6 +468,53 @@ def is_task_open_for_all(contest, task):
     return is_task_open(contest, task, None)
 
 
+@require_POST
+def qctf_submit_flag(request, task_id):
+    contest = get_object_or_404(models.TaskBasedContest, pk=settings.QCTF_CONTEST_ID)
+    participant = contest.get_participant_for_user(request.user)
+    task = get_object_or_404(tasks_models.Task, pk=task_id)
+    if (not contest.is_visible_in_list and not request.user.is_staff) or \
+            not contest.has_task(task):
+        return HttpResponseNotFound()
+
+    form = tasks_forms.AttemptForm(data=request.POST)
+    status = 'fail'
+    if participant is None:
+        message = 'Вы не зарегистрированы на это соревнование'
+    elif participant.is_disqualified:
+        message = 'Вы дисквалифицированы с этого соревнования'
+    elif contest.is_finished_for(participant):
+        message = 'К сожалению, соревнование уже закончилось'
+    elif get_count_attempts_in_last_minute(contest, participant) >= settings.DRAPO_MAX_TRIES_IN_MINUTE:
+        message = 'Вы отправляете слишком много флагов. Подождите некоторое время.'
+    elif not form.is_valid():
+        message = 'Форма некорректна'
+    else:
+        answer = form.cleaned_data['answer']
+        attempt = tasks_models.Attempt(
+            contest=contest,
+            task=task,
+            participant=contest.get_participant_for_user(request.user),
+            author=request.user,
+            answer=answer
+        )
+        attempt.save()
+        attempt.try_to_check()
+
+        if not attempt.is_checked:
+            message = 'Проверяющая система не может проверить ваш флаг в данный момент'
+        elif not attempt.is_correct:
+            message = 'Эта строка не является правильным ответом на задание. ' \
+                      'Попробуйте найти что&#8209;нибудь ещё. Обратите внимание, что ' \
+                      'правильный ответ начинается с символов <code>QCTF</code>.'
+        else:
+            status = 'success'
+            message = 'Спасибо за интересные данные!' \
+                      'Вознаграждение перечислено на ваш счёт.'
+
+    return JsonResponse({'status': status, 'message': message})
+
+
 def task(request, contest_id, task_id):
     contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
     if not contest.is_visible_in_list and not request.user.is_staff:
