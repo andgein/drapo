@@ -509,7 +509,7 @@ def qctf_submit_flag(request, task_id):
                       'правильный ответ начинается с символов <code>QCTF</code>.'
         else:
             status = 'success'
-            message = 'Спасибо за интересные данные!' \
+            message = 'Спасибо за интересные данные! ' \
                       'Вознаграждение перечислено на ваш счёт.'
 
     return JsonResponse({'status': status, 'message': message})

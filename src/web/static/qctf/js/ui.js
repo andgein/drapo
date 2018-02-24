@@ -4,6 +4,7 @@ function showModal(task_id) {
 
 function hideModal() {
     $('.modal-task').css('display', 'none');
+    $('.modal-task .alert').hide();
 }
 
 function update_unread_notifications_count() {
@@ -44,6 +45,40 @@ $(function () {
                 $(el).removeClass('odd').addClass('even');
             else
                 $(el).removeClass('even').addClass('odd');
+        });
+    });
+
+    $('.modal-task').each(function (_, el) {
+        var task_id = $(this).data('id');
+        var form = $(el).find('.submit-flag-form');
+        form.submit(function (event) {
+            var alert = $(el).find('.alert');
+            alert.removeClass('alert-danger').removeClass('alert-success').addClass('alert-dismissible')
+                 .html('Проверка...')
+                 .show();
+            var button = $(el).find('button');
+            button.attr('disabled', true);
+
+            $.post("/api/submit_flag/" + task_id + "/", form.serialize())
+                .done(function (response) {
+                    if (response.status === 'success')
+                        alert.removeClass('alert-dismissible').removeClass('alert-danger').addClass('alert-success');
+                    else
+                        alert.removeClass('alert-dismissible').removeClass('alert-success').addClass('alert-danger');
+
+                    alert.html(response.message)
+                         .show();
+                })
+                .fail(function () {
+                    alert.removeClass('alert-dismissible').removeClass('alert-success').addClass('alert-danger')
+                         .html('Не удалось подключиться к серверу. Попробуйте ещё раз через некоторое время.')
+                         .show();
+                })
+                .always(function () {
+                    button.removeAttr('disabled');
+                });
+
+            event.preventDefault();
         });
     });
 });

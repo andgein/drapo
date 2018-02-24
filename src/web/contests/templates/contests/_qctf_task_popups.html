@@ -38,7 +38,7 @@
 
                     <div class="content">{{ stmt.statement|markdown }}</div>
 
-                    <form method="POST" action="{% url 'qctf_submit_flag' task_id %}">
+                    <form class="submit-flag-form">
                         {% csrf_token %}
                         <div class="card flag-submit-card">
                             <div class="card-body">
