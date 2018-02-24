@@ -41,6 +41,7 @@
                                         <strong>{{ task.max_score }}</strong>
                                     </small>
                                 </a>
+                                <i>Решило: {{task_solved_by|item:task.id|length}}</i>
                             </td>
                         {% endfor %}
                     {% endfor %}

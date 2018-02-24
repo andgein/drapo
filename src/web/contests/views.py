@@ -211,6 +211,7 @@ def scoreboard(request, contest_id):
     successful_attempts = contest.attempts.filter(is_correct=True)
 
     scores_by_task = defaultdict(lambda: defaultdict(int))
+    task_solved_by = defaultdict(set)
     last_success_time = defaultdict(int)
     for attempt in successful_attempts:
         p_id, t_id = attempt.participant_id, attempt.task_id
@@ -218,6 +219,7 @@ def scoreboard(request, contest_id):
         if attempt.score > scores[t_id]:
             scores[t_id] = attempt.score
             last_success_time[p_id] = attempt.created_at.timestamp()
+        task_solved_by[t_id].add(p_id)
 
     participant_score = {p_id : sum(scores.values())
                            for (p_id, scores) in scores_by_task.items()}
@@ -268,6 +270,7 @@ def scoreboard(request, contest_id):
         'participants': ordered_participants,
         'participant_score': participant_score,
         'scores_by_task' : scores_by_task,
+        'task_solved_by' : task_solved_by,
         'plagiarized_tasks': plagiarized_tasks,
         'plagiarized_from': plagiarized_from,
         'form': form,
