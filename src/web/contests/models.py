@@ -3,6 +3,7 @@ import polymorphic.models
 from cached_property import cached_property
 from django.core import urlresolvers
 from django.db import models
+from django.db.models import Max, Sum
 from django.utils import timezone
 
 import drapo.models
@@ -213,6 +214,12 @@ class AbstractParticipant(polymorphic.models.PolymorphicModel, drapo.models.Mode
 
     def get_absolute_url(self):
         return self.get_real_instance().get_absolute_url()
+
+    def get_current_score(self):
+        correct_attempts = self.attempts.filter(is_correct=True)
+        scores_by_task = correct_attempts.values('task_id').annotate(score_for_task=Max('score'))
+        result = scores_by_task.aggregate(sum=Sum('score_for_task'))
+        return result['sum']
 
     def __str__(self):
         return self.name
