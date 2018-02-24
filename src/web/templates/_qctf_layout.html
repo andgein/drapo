@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load contest %}
 <!doctype html>
 <html lang="en">
   <head>
@@ -24,8 +25,15 @@
       <header class="blog-header py-3">
         <div class="row flex-nowrap justify-content-between align-items-center">
           <div class="col-3 pt-1">
-            {% if user.is_authenticated %}
-            <span class="text-muted">Осталось: 05:32:20</span>
+            {% if user.is_authenticated and current_contest %}
+              {% with participant=current_contest|get_participant_for:user %}
+                {% if contest|is_finished_for:participant %}
+                  <span class="text-muted">Соревнование окончено</span>
+                {% endif %}
+                {% if contest|is_running_for:participant %}
+                  <span class="text-muted">Осталось: {{ contest|finish_time_for:participant }}</span>
+                {% endif %}
+              {% endwith %}
             {% endif %}
           </div>
           <div class="col-6 text-center">
@@ -33,14 +41,16 @@
           </div>
           <div class="col-3 d-flex justify-content-end align-items-center">
             {% if user.is_authenticated %}
-            <div class="text-muted mr-4">300 баллов</div>
+              {% if current_contest %}
+                <div class="text-muted mr-4">N баллов</div>
+              {% endif %}
 
-            <form id="logout-form" method="POST" action="{% url 'users:logout' %}">
-              {% csrf_token %}
-              <input type="hidden" name="next" value="{{ request.path }}">
-            </form>
-            <a class="btn btn-sm btn-outline-secondary" href="#"
-               onclick="$('#logout-form').submit(); return false">Выйти</a>
+              <form id="logout-form" method="POST" action="{% url 'users:logout' %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.path }}">
+              </form>
+              <a class="btn btn-sm btn-outline-secondary" href="#"
+                 onclick="$('#logout-form').submit(); return false">Выйти</a>
             {% endif %}
           </div>
         </div>
