@@ -1,5 +1,6 @@
 {% load staticfiles %}
 {% load markdown_deux_tags %}
+{% load dict_filters %}
 
 {% for task, statement in statements %}
 <div class="modal task flex-column justify-content-center modal-task"
@@ -24,7 +25,7 @@
                         <span class="middot mx-2">&middot;</span>
                         <span title="Количество решивших команд">
                             <img src="{% static 'qctf/img/profile.svg' %}" class="stats-icon">
-                            stats
+                            {{ task_solved_by|item:task.id|length }}
                         </span>
 
                         {% if task.id in solved_tasks_ids %}

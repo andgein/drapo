@@ -227,6 +227,14 @@ def qctf_tasks(request):
         except Exception as e:
             logging.getLogger(__name__).exception(e)
 
+    # FIXME: Process it in database more effectively
+    # FIXME: (we can have up to 40k attempts)
+    successful_attempts = contest.attempts.filter(is_correct=True)
+    task_solved_by = defaultdict(set)
+    for attempt in successful_attempts:
+        p_id, t_id = attempt.participant_id, attempt.task_id
+        task_solved_by[t_id].add(p_id)
+
     tasks = contest.tasks
     return render(request, 'contests/qctf_tasks.html', {
         'current_contest': contest,
@@ -235,7 +243,7 @@ def qctf_tasks(request):
         'tasks': tasks,
         'statements': statements,
         'solved_tasks_ids': solved_tasks_ids,
-        # 'opened_tasks_ids': opened_tasks_ids,
+        'task_solved_by': task_solved_by,
     })
 
 

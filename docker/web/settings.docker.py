@@ -232,3 +232,12 @@ MARKDOWN_DEUX_STYLES = {
 
 
 QCTF_CONTEST_ID = 2
+
+QCTF_CARD_LAYOUT = [
+    [
+        ('bank', 'http://crlaw.com/news/wp-content/uploads/2017/05/brandon-k-jones-profile-image-180x198.jpg'),
+        ('auth-system', 'http://crlaw.com/news/wp-content/uploads/2017/05/brandon-k-jones-profile-image-180x198.jpg'),
+    ],
+    [('cats-vs-dogs', None), ('make-some-noise', None), ('permanent-302', None)],
+    [('getflagchar', None), ('cipher', None), ('python-vm', None)],
+]
