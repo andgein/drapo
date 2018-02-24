@@ -6,14 +6,20 @@
 {% block title %}The QCTF Times - Главная{% endblock %}
 
 {% block content %}
-{% for task, statement in statements %}
+{% for row in layout %}
 <div class="row">
-    <div class="col-md-6">
-        <div class="card flex-md-row mb-4 box-shadow article-with-image {% if task.id in solved_tasks_ids %}solved{% endif %}"
+    {% for task_name, img_src in row %}
+    {% with task=task_by_name|item:task_name %}
+    {% if task.id in statements %}
+    <div class="{% if img_src %}col-md-6{% else %}col-lg-4{% endif %}">
+        <div class="card flex-md-row mb-4
+                    {% if img_src %}article-with-image box-shadow{% else %}article{% endif %}
+                    {% if task.id in solved_tasks_ids %}solved{% endif %}"
              data-id="{{ task.id }}">
             <div class="card-body d-flex flex-column align-items-start">
+                {% with stmt=statements|item:task.id %}
                 <div class="d-inline-block mb-2 text-primary task-info">
-                    <span>categ</span>
+                    <span>{{ category_by_task_name|item:task.name }}</span>
 
                     <span class="middot mx-2">&middot;</span>
                     <span title="Вознаграждение за решение">
@@ -33,13 +39,18 @@
                     {% endif %}
                 </div>
                 <h3 class="mb-0">
-                    <a class="text-dark" href="#">{{ statement.title }}</a>
+                    <a class="text-dark" href="#">{{ stmt.title }}</a>
                 </h3>
+                {% endwith %}
             </div>
-            <img class="card-img-right flex-auto d-none d-md-block" data-src="holder.js/180x198?theme=thumb"
-                 alt="Card image cap">
+            {% if img_src %}
+            <img class="card-img-right flex-auto d-none d-md-block" src="{{ img_src }}">
+            {% endif %}
         </div>
     </div>
+    {% endif %}
+    {% endwith %}
+    {% endfor %}
 </div>
 {% endfor %}
 

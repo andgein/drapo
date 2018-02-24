@@ -222,3 +222,12 @@ QCTF_CARD_LAYOUT = [
     [('cats-vs-dogs', None), ('make-some-noise', None), ('permanent-302', None)],
     [('getflagchar', None), ('cipher', None), ('python-vm', None)],
 ]
+
+# Place tasks ordered by cost. They will be shown in the QCTF scoreboard in the same order.
+QCTF_TASK_CATEGORIES = {
+    'Forensics': ['bank'],
+    'Web': ['auth-system', 'make-some-noise', 'permanent-302'],
+    'PPC': ['cats-vs-dogs'],
+    'Reverse': ['getflagchar', 'python-vm'],
+    'Crypto': ['cipher'],
+}

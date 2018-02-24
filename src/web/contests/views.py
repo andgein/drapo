@@ -212,9 +212,14 @@ def qctf_tasks(request):
         )
     )
 
-    statements = []
+    task_by_id = {}
+    task_by_name = {}
+    for task in tasks_models.Task.objects.all():
+        task_by_id[task.id] = task_by_name[task.name] = task
+
+    statements = {}
     for task_id in opened_tasks_ids:
-        task = tasks_models.Task.objects.get(id=task_id)
+        task = task_by_id[task_id]
         statement_generator = task.statement_generator
         try:
             statement = statement_generator.generate({
@@ -223,9 +228,14 @@ def qctf_tasks(request):
                 'participant': participant,
                 'locale': get_language()
             })
-            statements.append((task, statement))
+            statements[task.id] = statement
         except Exception as e:
             logging.getLogger(__name__).exception(e)
+
+    category_by_task_name = defaultdict(lambda: 'Без категории')
+    for category, names in settings.QCTF_TASK_CATEGORIES.items():
+        for name in names:
+            category_by_task_name[name] = category
 
     # FIXME: Process it in database more effectively
     # FIXME: (we can have up to 40k attempts)
@@ -240,9 +250,14 @@ def qctf_tasks(request):
         'current_contest': contest,
         'participant': participant,
 
+        'task_by_id': task_by_id,
+        'task_by_name': task_by_name,
+        'layout': settings.QCTF_CARD_LAYOUT,
         'tasks': tasks,
         'statements': statements,
         'solved_tasks_ids': solved_tasks_ids,
+        'opened_tasks_ids': opened_tasks_ids,
+        'category_by_task_name': category_by_task_name,
         'task_solved_by': task_solved_by,
     })
 

@@ -2,7 +2,8 @@
 {% load markdown_deux_tags %}
 {% load dict_filters %}
 
-{% for task, statement in statements %}
+{% for task_id, stmt in statements.items %}
+{% with task=task_by_id|item:task_id %}
 <div class="modal task flex-column justify-content-center modal-task"
      data-id="{{ task.id }}" style="display: none;">
     <div class="modal-dialog" role="document">
@@ -14,7 +15,7 @@
 
                 <div class="modal-task-content">
                     <div class="d-inline-block mb-2 text-primary task-info">
-                        <span>categ</span>
+                        <span>{{ category_by_task_name|item:task.name }}</span>
 
                         <span class="middot mx-2">&middot;</span>
                         <span title="Вознаграждение за решение">
@@ -33,9 +34,9 @@
                             <span>Решено</span>
                         {% endif %}
                     </div>
-                    <h3>{{ statement.title }}</h3>
+                    <h3>{{ stmt.title }}</h3>
 
-                    <div class="content">{{ statement.statement|markdown }}</div>
+                    <div class="content">{{ stmt.statement|markdown }}</div>
 
                     <div class="card flag-submit-card">
                         <div class="card-body">
@@ -64,4 +65,5 @@
         </div>
     </div>
 </div>
+{% endwith %}
 {% endfor %}
