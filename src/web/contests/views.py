@@ -170,6 +170,48 @@ def tasks(request, contest_id):
         )
     )
 
+    if contest.tasks_grouping == models.TasksGroping.OneByOne:
+        tasks = contest.tasks
+        return render(request, 'contests/tasks_one_by_one.html', {
+            'current_contest': contest,
+
+            'contest': contest,
+            'participant': participant,
+            'tasks': tasks,
+            'solved_tasks_ids': solved_tasks_ids,
+            'opened_tasks_ids': opened_tasks_ids,
+        })
+    if contest.tasks_grouping == models.TasksGroping.ByCategories:
+        categories = contest.categories
+        return render(request, 'contests/tasks_by_categories.html', {
+            'current_contest': contest,
+
+            'contest': contest,
+            'participant': participant,
+            'categories': categories,
+            'solved_tasks_ids': solved_tasks_ids,
+            'opened_tasks_ids': opened_tasks_ids,
+        })
+
+
+def qctf_tasks(request):
+    contest = get_object_or_404(models.TaskBasedContest, pk=settings.QCTF_CONTEST_ID)
+    participant = contest.get_participant_for_user(request.user)
+    if not contest.is_started_for(participant) and not request.user.is_staff:
+        messages.error(request, '%s is not started yet' % contest.name)
+        return redirect(contest)
+
+    solved_tasks_ids = {}
+    if participant is not None:
+        solved_tasks_ids = contest.get_tasks_solved_by_participant(participant)
+
+    # Iterate all policies, collect opened tasks
+    opened_tasks_ids = set(
+        itertools.chain.from_iterable(
+            policy.get_open_tasks(participant) for policy in contest.tasks_opening_policies.all()
+        )
+    )
+
     statements = []
     for task_id in opened_tasks_ids:
         task = tasks_models.Task.objects.get(id=task_id)
@@ -185,30 +227,26 @@ def tasks(request, contest_id):
         except Exception as e:
             logging.getLogger(__name__).exception(e)
 
-    if contest.tasks_grouping == models.TasksGroping.OneByOne:
-        tasks = contest.tasks
-        return render(request, 'contests/tasks_one_by_one.html', {
-            'current_contest': contest,
+    tasks = contest.tasks
+    return render(request, 'contests/qctf_tasks.html', {
+        'current_contest': contest,
 
-            'contest': contest,
-            'participant': participant,
-            'tasks': tasks,
-            'statements': statements,
-            'solved_tasks_ids': solved_tasks_ids,
-            # 'opened_tasks_ids': opened_tasks_ids,
-        })
-    if contest.tasks_grouping == models.TasksGroping.ByCategories:
-        raise NotImplementedError
-        # categories = contest.categories
-        # return render(request, 'contests/tasks_by_categories.html', {
-        #     'current_contest': contest,
-        #
-        #     'contest': contest,
-        #     'participant': participant,
-        #     'categories': categories,
-        #     'solved_tasks_ids': solved_tasks_ids,
-        #     'opened_tasks_ids': opened_tasks_ids,
-        # })
+        'contest': contest,
+        'participant': participant,
+        'tasks': tasks,
+        'statements': statements,
+        'solved_tasks_ids': solved_tasks_ids,
+        # 'opened_tasks_ids': opened_tasks_ids,
+    })
+
+
+def qctf_rules(request):
+    contest = get_object_or_404(models.TaskBasedContest, pk=settings.QCTF_CONTEST_ID)
+    participant = contest.get_participant_for_user(request.user)
+    return render(request, 'contests/qctf_rules.html', {
+        'current_contest': contest,
+        'participant': participant,
+    })
 
 
 def scoreboard(request, contest_id):
@@ -1085,7 +1123,3 @@ def open_task(request, contest_id, task_id, participant_id):
         messages.success(request, 'Task is opened for %s' % for_whom)
 
     return JsonResponse({'done': 'ok'})
-
-
-def rules(request):
-    return render(request, 'contests/rules.html')

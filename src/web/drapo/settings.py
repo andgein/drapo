@@ -210,3 +210,6 @@ LANGUAGES = [
     ('ru', 'Russian'),
     ('en', 'English'),
 ]
+
+
+QCTF_CONTEST_ID = 2

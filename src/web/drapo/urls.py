@@ -19,7 +19,11 @@ from django.contrib import admin
 import contests.views
 
 urlpatterns = [
-    url(r'^$', contests.views.contests_list, name='home'),
+    url(r'^$', contests.views.qctf_tasks, name='home'),
+    url(r'^rules/$', contests.views.qctf_rules, name='qctf_rules'),
+
+    # Non-QCTF URLs
+
     url(r'^contests/', include('contests.urls', namespace='contests')),
     url(r'^users/', include('users.urls', namespace='users')),
     url(r'^teams/', include('teams.urls', namespace='teams')),
@@ -28,6 +32,4 @@ urlpatterns = [
     url(r'^hijack/', include('hijack.urls')),
 
     url(r'^i18n/', include('django.conf.urls.i18n')),
-
-    url(r'^rules/$', contests.views.rules, name='rules'),
 ]

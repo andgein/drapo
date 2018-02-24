@@ -27,17 +27,17 @@
           <div class="col-3 pt-1">
             {% if user.is_authenticated and current_contest %}
               {% with participant=current_contest|get_participant_for:user %}
-                {% if contest|is_finished_for:participant %}
+                {% if current_contest|is_finished_for:participant %}
                   <span class="text-muted">Соревнование окончено</span>
                 {% endif %}
-                {% if contest|is_running_for:participant %}
-                  <span class="text-muted">Осталось: {{ contest|finish_time_for:participant }}</span>
+                {% if current_contest|is_running_for:participant %}
+                  <span class="text-muted">Осталось: {{ current_contest|finish_time_for:participant }}</span>
                 {% endif %}
               {% endwith %}
             {% endif %}
           </div>
           <div class="col-6 text-center">
-            <a class="blog-header-logo text-dark" href="index.html">The Qctf Times</a>
+            <a class="blog-header-logo text-dark" href="{% url 'home' %}">The Qctf Times</a>
           </div>
           <div class="col-3 d-flex justify-content-end align-items-center">
             {% if user.is_authenticated %}
@@ -59,12 +59,12 @@
       <div class="nav-scroller py-1 mb-3">
         <nav class="nav d-flex justify-content-center p-2">
           {% if user.is_authenticated %}
-          <a class="px-4 text-muted" href="#">Новости</a>
+          <a class="px-4 text-muted" href="{% url 'home' %}">Новости</a>
           <a class="px-4 text-muted" href="#">Рейтинг</a>
           <a class="px-4 text-muted" href="#">
             Оповещения <span class="unread-count">(1)</span>
           </a>
-          <a class="px-4 text-muted" href="{% url 'rules' %}">Правила</a>
+          <a class="px-4 text-muted" href="{% url 'qctf_rules' %}">Правила</a>
           {% else %}
           <a class="px-4 text-muted" href="{% url 'users:login' %}">Вход</a>
           <a class="px-4 text-muted" href="#">Рейтинг</a>

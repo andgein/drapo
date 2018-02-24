@@ -1,46 +1,24 @@
-{% extends '_qctf_layout.html' %}
+{% extends '_layout.html' %}
 
-{% load staticfiles %}
-
-{% block title %}The QCTF Times - Главная{% endblock %}
+{% block title %}{{ contest.name }}{% endblock %}
 
 {% block content %}
-{% for task, statement in statements %}
-<div class="row">
-    <div class="col-md-6">
-        <div class="card flex-md-row mb-4 box-shadow article-with-image {% if task.id in solved_tasks_ids %}solved{% endif %}"
-             data-id="{{ task.id }}">
-            <div class="card-body d-flex flex-column align-items-start">
-                <div class="d-inline-block mb-2 text-primary task-info">
-                    <span>categ</span>
+    <div class="page contest-page">
+        {% include 'contests/_contest_header.html' with contest=contest %}
 
-                    <span class="middot mx-2">&middot;</span>
-                    <span title="Вознаграждение за решение">
-                        <img src="{% static 'qctf/img/money-bag.svg' %}" class="price-icon">
-                        {{ task.max_score }}
-                    </span>
+        <h1 class="page__header">Tasks</h1>
 
-                    <span class="middot mx-2">&middot;</span>
-                    <span title="Количество решивших команд">
-                        <img src="{% static 'qctf/img/profile.svg' %}" class="stats-icon">
-                        stats
-                    </span>
-
-                    {% if task.id in solved_tasks_ids %}
-                        <span class="middot mx-2">&middot;</span>
-                        <span>Решено</span>
-                    {% endif %}
-                </div>
-                <h3 class="mb-0">
-                    <a class="text-dark" href="#">{{ statement.title }}</a>
-                </h3>
+        {% for task in tasks %}
+            <div class="task {% if task.id in solved_tasks_ids %}solved{% endif %}">
+                {% include 'contests/_task_list__task.html' %}
             </div>
-            <img class="card-img-right flex-auto d-none d-md-block" data-src="holder.js/180x198?theme=thumb"
-                 alt="Card image cap">
-        </div>
-    </div>
-</div>
-{% endfor %}
+        {% endfor %}
 
-{% include 'contests/_modal_tasks.html' %}
+        {% if user.is_staff %}
+            <a href="{% url 'contests:add_task' contest.id %}" class="add-task">
+                + Add task
+            </a>
+        {% endif %}
+
+    </div>
 {% endblock %}

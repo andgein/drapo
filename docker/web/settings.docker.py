@@ -229,3 +229,6 @@ MARKDOWN_DEUX_STYLES = {
         'safe_mode': False if env.get('MARKDOWN_DISABLE_SAFE_MODE') == 'True' else 'escape',
     }
 }
+
+
+QCTF_CONTEST_ID = 2
