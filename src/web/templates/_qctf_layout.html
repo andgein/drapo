@@ -29,7 +29,8 @@
               {% if current_contest|is_finished_for:participant %}
                 <span class="text-muted">Соревнование окончено</span>
               {% elif current_contest|is_running_for:participant %}
-                <span class="text-muted">Осталось: {{ current_contest|finish_time_for:participant }}</span>
+                <span class="text-muted" id="remaining-time"></span>
+                <span class="d-none" id="contest-finish-time">{{ current_contest|finish_time_for:participant|date:"U" }}</span>
               {% endif %}
             {% endif %}
           </div>

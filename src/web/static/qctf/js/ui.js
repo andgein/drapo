@@ -17,6 +17,61 @@ function update_unread_notifications_count() {
     });
 }
 
+function submitFlag(modal_task, task_id, form) {
+    var alert = $(modal_task).find('.alert');
+    alert.removeClass('alert-danger').removeClass('alert-success').addClass('alert-dismissible')
+         .html('Проверка...')
+         .show();
+    var button = $(modal_task).find('button');
+    button.attr('disabled', true);
+
+    $.post("/api/submit_flag/" + task_id + "/", form.serialize())
+        .done(function (response) {
+            if (response.status === 'success')
+                alert.removeClass('alert-dismissible').removeClass('alert-danger').addClass('alert-success');
+            else
+                alert.removeClass('alert-dismissible').removeClass('alert-success').addClass('alert-danger');
+
+            alert.html(response.message)
+                 .show();
+        })
+        .fail(function () {
+            alert.removeClass('alert-dismissible').removeClass('alert-success').addClass('alert-danger')
+                 .html('Не удалось подключиться к серверу. Попробуйте ещё раз через некоторое время.')
+                 .show();
+        })
+        .always(function () {
+            button.removeAttr('disabled');
+        });
+}
+
+function padLeft(number, length) {
+    number = number.toString();
+    for (var i = number.length; i < length; i++)
+        number = '0' + number;
+    return number;
+}
+
+function updateRemainingTime() {
+    var finishTime = parseInt($('#contest-finish-time').text());
+    var now = Math.round(new Date().getTime() / 1000);
+    var remainingTimeSpan = $('#remaining-time');
+
+    if (finishTime <= now) {
+        remainingTimeSpan.text('Соревнование закончено');
+        return;
+    }
+    var totalSeconds = finishTime - now;
+
+    var seconds = totalSeconds % 60;
+    var totalMinutes = Math.floor(totalSeconds / 60);
+    var minutes = totalMinutes % 60;
+    var hours = Math.floor(totalMinutes / 60);
+
+    var timeRepr = padLeft(hours, 2) + ':' + padLeft(minutes, 2) + ':' + padLeft(seconds, 2);
+    remainingTimeSpan.text('Осталось: ' + timeRepr);
+}
+
 $(function () {
     $('.article, .article-with-image').each(function (_, article) {
         var task_id = $(article).data('id');
@@ -52,33 +107,11 @@ $(function () {
         var task_id = $(this).data('id');
         var form = $(el).find('.submit-flag-form');
         form.submit(function (event) {
-            var alert = $(el).find('.alert');
-            alert.removeClass('alert-danger').removeClass('alert-success').addClass('alert-dismissible')
-                 .html('Проверка...')
-                 .show();
-            var button = $(el).find('button');
-            button.attr('disabled', true);
-
-            $.post("/api/submit_flag/" + task_id + "/", form.serialize())
-                .done(function (response) {
-                    if (response.status === 'success')
-                        alert.removeClass('alert-dismissible').removeClass('alert-danger').addClass('alert-success');
-                    else
-                        alert.removeClass('alert-dismissible').removeClass('alert-success').addClass('alert-danger');
-
-                    alert.html(response.message)
-                         .show();
-                })
-                .fail(function () {
-                    alert.removeClass('alert-dismissible').removeClass('alert-success').addClass('alert-danger')
-                         .html('Не удалось подключиться к серверу. Попробуйте ещё раз через некоторое время.')
-                         .show();
-                })
-                .always(function () {
-                    button.removeAttr('disabled');
-                });
-
+            submitFlag(el, task_id, form);
             event.preventDefault();
         });
     });
+
+    updateRemainingTime();
+    setInterval(updateRemainingTime, 1000);
 });
