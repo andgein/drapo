@@ -2,11 +2,13 @@ version: '2'
 
 services:
   db:
-    image: postgres
+    image: bitnami/postgresql
     env_file: ./production.env
+    ports:
+      - "5432:5432"
     restart: always
     volumes:
-     - ./volumes/pgdata:/var/lib/postgresql/data
+     - ./volumes/pgdata:/bitnami
   web:
     build:
       context: ../
