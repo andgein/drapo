@@ -32,5 +32,6 @@ services:
     restart: always
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./volumes/certificates:/certificates:ro
       - ./volumes/static:/var/www/static:ro
       - ./volumes/task-resources:/var/www/static-files:ro
