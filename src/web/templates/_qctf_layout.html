@@ -59,15 +59,15 @@
       <div class="nav-scroller py-1 mb-3">
         <nav class="nav d-flex justify-content-center p-2">
           {% if user.is_authenticated %}
-          <a class="px-4 text-muted" href="index.html">Новости</a>
-          <a class="px-4 text-muted" href="scoreboard.html">Рейтинг</a>
-          <a class="px-4 text-muted" href="notifications.html">
+          <a class="px-4 text-muted" href="#">Новости</a>
+          <a class="px-4 text-muted" href="#">Рейтинг</a>
+          <a class="px-4 text-muted" href="#">
             Оповещения <span class="unread-count">(1)</span>
           </a>
-          <a class="px-4 text-muted" href="rules.html">Правила</a>
+          <a class="px-4 text-muted" href="{% url 'rules' %}">Правила</a>
           {% else %}
-          <a class="px-4 text-muted" href="login.html">Вход</a>
-          <a class="px-4 text-muted" href="scoreboard.html">Рейтинг</a>
+          <a class="px-4 text-muted" href="{% url 'users:login' %}">Вход</a>
+          <a class="px-4 text-muted" href="#">Рейтинг</a>
           {% endif %}
         </nav>
       </div>

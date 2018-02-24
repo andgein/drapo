@@ -28,4 +28,6 @@ urlpatterns = [
     url(r'^hijack/', include('hijack.urls')),
 
     url(r'^i18n/', include('django.conf.urls.i18n')),
+
+    url(r'^rules/$', contests.views.rules, name='rules'),
 ]

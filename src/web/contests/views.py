@@ -1068,3 +1068,7 @@ def open_task(request, contest_id, task_id, participant_id):
         messages.success(request, 'Task is opened for %s' % for_whom)
 
     return JsonResponse({'done': 'ok'})
+
+
+def rules(request):
+    return render(request, 'contests/rules.html')

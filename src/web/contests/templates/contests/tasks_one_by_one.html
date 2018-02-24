@@ -6,37 +6,42 @@
 
 {% block content %}
 {% for task in tasks %}
-    {% if task.id in opened_tasks_ids %}
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card flex-md-row mb-4 box-shadow article-with-image">
-                    <div class="card-body d-flex flex-column align-items-start">
-                        <div class="d-inline-block mb-2 text-primary task-info">
-                            <span>categ</span>
+{% if task.id in opened_tasks_ids %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card flex-md-row mb-4 box-shadow article-with-image {% if task.id in solved_tasks_ids %}solved{% endif %}">
+            <div class="card-body d-flex flex-column align-items-start">
+                <div class="d-inline-block mb-2 text-primary task-info">
+                    <span>categ</span>
 
-                            <span class="middot mx-2">&middot;</span>
-                            <span title="Вознаграждение за решение">
-                          <img src="{% static 'qctf/img/money-bag.svg' %}" class="price-icon">
-                          {{ task.max_score }}
-                        </span>
+                    <span class="middot mx-2">&middot;</span>
+                    <span title="Вознаграждение за решение">
+                        <img src="{% static 'qctf/img/money-bag.svg' %}" class="price-icon">
+                        {{ task.max_score }}
+                    </span>
 
-                            <span class="middot mx-2">&middot;</span>
-                            <span title="Количество решивших команд">
-                          <img src="{% static 'qctf/img/profile.svg' %}" class="stats-icon">
-                          stats
-                        </span>
-                        </div>
-                        <h3 class="mb-0">
-                            <a class="text-dark" href="#">
-                                {{ task.name }}
-                            </a>
-                        </h3>
-                    </div>
-                    <img class="card-img-right flex-auto d-none d-md-block" data-src="holder.js/180x198?theme=thumb"
-                         alt="Card image cap">
+                    <span class="middot mx-2">&middot;</span>
+                    <span title="Количество решивших команд">
+                        <img src="{% static 'qctf/img/profile.svg' %}" class="stats-icon">
+                        stats
+                    </span>
+
+                    {% if task.id in solved_tasks_ids %}
+                        <span class="middot mx-2">&middot;</span>
+                        <span>Решено</span>
+                    {% endif %}
                 </div>
+                <h3 class="mb-0">
+                    <a class="text-dark" href="#">
+                        {{ task.name }}
+                    </a>
+                </h3>
             </div>
+            <img class="card-img-right flex-auto d-none d-md-block" data-src="holder.js/180x198?theme=thumb"
+                 alt="Card image cap">
         </div>
-    {% endif %}
+    </div>
+</div>
+{% endif %}
 {% endfor %}
 {% endblock %}
