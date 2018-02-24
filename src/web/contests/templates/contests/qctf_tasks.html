@@ -10,7 +10,7 @@
 <div class="row">
     {% for task_name, img_src in row %}
     {% with task=task_by_name|item:task_name %}
-    {% if task.id in statements %}
+    {% if task.id in statements and task.id in opened_tasks_ids %}
     <div class="{% if img_src %}col-md-6{% else %}col-lg-4{% endif %}">
         <div class="card flex-md-row mb-4
                     {% if img_src %}article-with-image box-shadow{% else %}article{% endif %}

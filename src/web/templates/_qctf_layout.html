@@ -49,6 +49,8 @@
               </form>
               <a class="btn btn-sm btn-outline-secondary" href="#"
                  onclick="$('#logout-form').submit(); return false">Выйти</a>
+            {% else %}
+              <a class="btn btn-sm btn-outline-secondary" href="{% url 'users:login' %}">Войти</a>
             {% endif %}
           </div>
         </div>
@@ -58,14 +60,14 @@
         <nav class="nav d-flex justify-content-center p-2">
           {% if user.is_authenticated %}
           <a class="px-4 text-muted" href="{% url 'home' %}">Новости</a>
-          <a class="px-4 text-muted" href="#">Рейтинг</a>
+          <a class="px-4 text-muted" href="{% url 'qctf_scoreboard' %}">Рейтинг</a>
           <a class="px-4 text-muted" href="#">
             Оповещения <span class="unread-count">(1)</span>
           </a>
           <a class="px-4 text-muted" href="{% url 'qctf_rules' %}">Правила</a>
           {% else %}
           <a class="px-4 text-muted" href="{% url 'users:login' %}">Вход</a>
-          <a class="px-4 text-muted" href="#">Рейтинг</a>
+          <a class="px-4 text-muted" href="{% url 'qctf_scoreboard' %}">Рейтинг</a>
           {% endif %}
         </nav>
       </div>

@@ -195,15 +195,17 @@ def tasks(request, contest_id):
 
 
 def qctf_tasks(request):
+    # TODO: Check non-auth users and users the contest didn't start for
+    if not request.user.is_authenticated:
+        return redirect(urlresolvers.reverse('users:login'))
+
     contest = get_object_or_404(models.TaskBasedContest, pk=settings.QCTF_CONTEST_ID)
     participant = contest.get_participant_for_user(request.user)
     if not contest.is_started_for(participant) and not request.user.is_staff:
         messages.error(request, '%s is not started yet' % contest.name)
         return redirect(contest)
 
-    solved_tasks_ids = {}
-    if participant is not None:
-        solved_tasks_ids = contest.get_tasks_solved_by_participant(participant)
+    data = prepare_task_popups(request, contest, participant)
 
     # Iterate all policies, collect opened tasks
     opened_tasks_ids = set(
@@ -212,14 +214,29 @@ def qctf_tasks(request):
         )
     )
 
+    data.update({
+        'current_contest': contest,
+        'participant': participant,
+
+        'layout': settings.QCTF_CARD_LAYOUT,
+        'opened_tasks_ids': opened_tasks_ids,
+    })
+    return render(request, 'contests/qctf_tasks.html', data)
+
+
+def prepare_task_popups(request, contest, participant):
+    solved_tasks_ids = {}
+    if participant is not None:
+        solved_tasks_ids = contest.get_tasks_solved_by_participant(participant)
+
     task_by_id = {}
     task_by_name = {}
+    # TODO: Only tasks from the current contest
     for task in tasks_models.Task.objects.all():
         task_by_id[task.id] = task_by_name[task.name] = task
 
     statements = {}
-    for task_id in opened_tasks_ids:
-        task = task_by_id[task_id]
+    for task in contest.tasks:
         statement_generator = task.statement_generator
         try:
             statement = statement_generator.generate({
@@ -237,29 +254,68 @@ def qctf_tasks(request):
         for name in names:
             category_by_task_name[name] = category
 
-    # FIXME: Process it in database more effectively
-    # FIXME: (we can have up to 40k attempts)
     successful_attempts = contest.attempts.filter(is_correct=True)
     task_solved_by = defaultdict(set)
     for attempt in successful_attempts:
         p_id, t_id = attempt.participant_id, attempt.task_id
         task_solved_by[t_id].add(p_id)
 
-    tasks = contest.tasks
-    return render(request, 'contests/qctf_tasks.html', {
+    return {
+        'category_by_task_name': category_by_task_name,
+        'solved_tasks_ids': solved_tasks_ids,
+        'statements': statements,
+        'task_by_id': task_by_id,
+        'task_by_name': task_by_name,
+        'task_solved_by': task_solved_by,
+    }
+
+
+def qctf_scoreboard(request):
+    # TODO: Ask someone to review the scoreboard
+
+    contest = get_object_or_404(models.TaskBasedContest, pk=settings.QCTF_CONTEST_ID)
+    participant = contest.get_participant_for_user(request.user)
+    tasks_visible = request.user.is_authenticated and \
+                    (contest.is_started_for(participant) or request.user.is_staff)
+
+    data = prepare_task_popups(request, contest, participant)
+    task_by_name = data['task_by_name']
+
+    task_columns = []
+    for category, names in sorted(settings.QCTF_TASK_CATEGORIES.items()):
+        ids = []
+        for name in names:
+            ids.append(task_by_name[name].id)
+        task_columns.append((category, ids))
+
+    visible_participants = list(contest.participants.filter(is_visible_in_scoreboard=True))
+    successful_attempts = contest.attempts.filter(is_correct=True).order_by('created_at')
+
+    first_success_time = defaultdict(dict)
+    total_scores = defaultdict(int)
+    completion_time = defaultdict(int)
+    for attempt in successful_attempts:
+        p_id, t_id = attempt.participant_id, attempt.task_id
+        cur_success_time = attempt.created_at - contest.start_time_for(attempt.participant)
+        if t_id not in first_success_time[p_id]:
+            first_success_time[p_id][t_id] = cur_success_time
+            total_scores[p_id] += attempt.task.max_score
+            completion_time[p_id] = cur_success_time
+
+    visible_participants.sort(
+        key=lambda item: (-total_scores[item.id], completion_time[item.id], item.id))
+
+    data.update({
         'current_contest': contest,
         'participant': participant,
 
-        'task_by_id': task_by_id,
-        'task_by_name': task_by_name,
-        'layout': settings.QCTF_CARD_LAYOUT,
-        'tasks': tasks,
-        'statements': statements,
-        'solved_tasks_ids': solved_tasks_ids,
-        'opened_tasks_ids': opened_tasks_ids,
-        'category_by_task_name': category_by_task_name,
-        'task_solved_by': task_solved_by,
+        'first_success_time': first_success_time,
+        'visible_participants': visible_participants,
+        'task_columns': task_columns,
+        'tasks_visible': tasks_visible,  # TODO: Use and check it
+        'total_scores': total_scores,
     })
+    return render(request, 'contests/qctf_scoreboard.html', data)
 
 
 def qctf_rules(request):
