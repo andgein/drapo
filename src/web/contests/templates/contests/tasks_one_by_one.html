@@ -5,11 +5,11 @@
 {% block title %}The QCTF Times - Главная{% endblock %}
 
 {% block content %}
-{% for task in tasks %}
-{% if task.id in opened_tasks_ids %}
+{% for task, statement in statements %}
 <div class="row">
     <div class="col-md-6">
-        <div class="card flex-md-row mb-4 box-shadow article-with-image {% if task.id in solved_tasks_ids %}solved{% endif %}">
+        <div class="card flex-md-row mb-4 box-shadow article-with-image {% if task.id in solved_tasks_ids %}solved{% endif %}"
+             data-id="{{ task.id }}">
             <div class="card-body d-flex flex-column align-items-start">
                 <div class="d-inline-block mb-2 text-primary task-info">
                     <span>categ</span>
@@ -32,9 +32,7 @@
                     {% endif %}
                 </div>
                 <h3 class="mb-0">
-                    <a class="text-dark" href="#">
-                        {{ task.name }}
-                    </a>
+                    <a class="text-dark" href="#">{{ statement.title }}</a>
                 </h3>
             </div>
             <img class="card-img-right flex-auto d-none d-md-block" data-src="holder.js/180x198?theme=thumb"
@@ -42,6 +40,7 @@
         </div>
     </div>
 </div>
-{% endif %}
 {% endfor %}
+
+{% include 'contests/_modal_tasks.html' %}
 {% endblock %}

@@ -170,6 +170,21 @@ def tasks(request, contest_id):
         )
     )
 
+    statements = []
+    for task_id in opened_tasks_ids:
+        task = tasks_models.Task.objects.get(id=task_id)
+        statement_generator = task.statement_generator
+        try:
+            statement = statement_generator.generate({
+                'task': task,
+                'user': request.user,
+                'participant': participant,
+                'locale': get_language()
+            })
+            statements.append((task, statement))
+        except Exception as e:
+            logging.getLogger(__name__).exception(e)
+
     if contest.tasks_grouping == models.TasksGroping.OneByOne:
         tasks = contest.tasks
         return render(request, 'contests/tasks_one_by_one.html', {
@@ -178,20 +193,22 @@ def tasks(request, contest_id):
             'contest': contest,
             'participant': participant,
             'tasks': tasks,
+            'statements': statements,
             'solved_tasks_ids': solved_tasks_ids,
-            'opened_tasks_ids': opened_tasks_ids,
+            # 'opened_tasks_ids': opened_tasks_ids,
         })
     if contest.tasks_grouping == models.TasksGroping.ByCategories:
-        categories = contest.categories
-        return render(request, 'contests/tasks_by_categories.html', {
-            'current_contest': contest,
-
-            'contest': contest,
-            'participant': participant,
-            'categories': categories,
-            'solved_tasks_ids': solved_tasks_ids,
-            'opened_tasks_ids': opened_tasks_ids,
-        })
+        raise NotImplementedError
+        # categories = contest.categories
+        # return render(request, 'contests/tasks_by_categories.html', {
+        #     'current_contest': contest,
+        #
+        #     'contest': contest,
+        #     'participant': participant,
+        #     'categories': categories,
+        #     'solved_tasks_ids': solved_tasks_ids,
+        #     'opened_tasks_ids': opened_tasks_ids,
+        # })
 
 
 def scoreboard(request, contest_id):
