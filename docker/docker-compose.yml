@@ -18,10 +18,15 @@ services:
     command: web
     depends_on:
       - db
+      - memcached
     volumes:
       - ./volumes/upload:/upload
       - ./volumes/static:/static
       - ./volumes/contest_import:/contest_import
+  memcached:
+    image: memcached
+    command: memcached -m 8192 -I 8388608
+    restart: always
   nginx:
     image: nginx
     depends_on:

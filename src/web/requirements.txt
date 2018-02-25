@@ -13,6 +13,7 @@ django-relativefilepathfield
 django-sortedm2m
 django-bootstrap3-datetimepicker-2
 django-bootstrap-form
+python-memcached
 
 # Other python stuff
 requests >= 2.7.0
