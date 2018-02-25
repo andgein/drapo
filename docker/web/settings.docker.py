@@ -235,12 +235,8 @@ QCTF_CONTEST_ID = 1
 
 QCTF_CARD_LAYOUT = [
     [
-        ('permanent-302', '/static/statement_img/podifruxx.jpg'),
-        ('storage', '/static/statement_img/babushka.png'),
-    ],
-    [
-        ('getflagchar', '/static/statement_img/gohdjhr.jpg'),
-        ('minecrypt', '/static/statement_img/msslrrijc.png'),
+        ('permanent-302', 'static/podifruxx.png'),
+        ('storage', '/static/smvcnid.png'),
     ],
     [
         ('make-some-noise', None),
@@ -248,30 +244,35 @@ QCTF_CARD_LAYOUT = [
         ('weird-video', None),
     ],
     [
+        ('getflagchar', '/static/gohdjhr.png'),
+        ('minecrypt', '/static/msslrrijc.png'),
+    ],
+    [
         ('unpack-reverse', None),
         ('cats-vs-dogs', None),
         ('notemaster', None),
     ],
     [
-        ('browser-mining', None),
-        ('bank', None),
-        ('passengers-1', None),
+        ('bank', '/static/blfpowdm.png'),
+        ('passengers-1', '/static/psgrttry.png'),
     ],
     [
+        ('browser-mining', None),
         ('auth-system', None),
         ('obscure-archive', None),
-        ('passengers-2', None),
     ],
     [
+        ('passengers-2', None),
         ('python-vm', None),
     ],
 ]
 
 # Place tasks ordered by cost. They will be shown in the QCTF scoreboard in the same order.
 QCTF_TASK_CATEGORIES = {
-    'Crypto': ['minecrypt', 'cipher'],
+    'Crypto': ['cipher', 'minecrypt'],
     'Forensics': ['weird-video', 'bank'],
-    'PPC': ['cats-vs-dogs', 'browser-mining'],  # TODO: bulls-and-cows
-    'Reverse': ['getflagchar', 'unpack-reverse', 'passengers-1', 'obscure-archive', 'python-vm', 'passengers-2'],
-    'Web': ['storage', 'notemaster', 'auth-system', 'make-some-noise', 'permanent-302'],
+    'PPC': ['bulls-and-cows', 'browser-mining', 'cats-vs-dogs'],
+    'PWN': ['passenges-1', 'passenges-2'],
+    'Reverse': ['getflagchar', 'obscure-archive', 'unpack-reverse', 'python-vm'],
+    'Web': ['notemaster', 'permanent-302', 'make-some-noise', 'storage', 'auth-system'],
 }
