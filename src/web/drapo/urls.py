@@ -19,7 +19,17 @@ from django.contrib import admin
 import contests.views
 
 urlpatterns = [
-    url(r'^$', contests.views.contests_list, name='home'),
+    url(r'^$', contests.views.qctf_tasks, name='home'),
+    url(r'^rules/$', contests.views.qctf_rules, name='qctf_rules'),
+    url(r'^scoreboard/$', contests.views.qctf_scoreboard, name='qctf_scoreboard'),
+    url(r'^notifications/$', contests.views.qctf_notifications, name='qctf_notifications'),
+    url(r'^api/unread_notifications_count/$',
+        contests.views.qctf_unread_notifications_count, name='qctf_unread_notifications_count'),
+    url(r'^api/submit_flag/(?P<task_id>\d+)/$',
+        contests.views.qctf_submit_flag, name='qctf_submit_flag'),
+
+    # Non-QCTF URLs
+
     url(r'^contests/', include('contests.urls', namespace='contests')),
     url(r'^users/', include('users.urls', namespace='users')),
     url(r'^teams/', include('teams.urls', namespace='teams')),

@@ -1,0 +1,100 @@
+{% extends '_qctf_layout.html' %}
+
+{% load staticfiles %}
+{% load dict_filters %}
+{% load contest %}
+
+{% block title %}The QCTF Times - Рейтинг{% endblock %}
+
+{% block content %}
+{% if participant %}
+<div class="row d-flex justify-content-end px-4 pb-2 scoreboard-toggle-row">
+    <div class="scoreboard-toggle custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" id="hide-other-regions">
+        <label class="custom-control-label" for="hide-other-regions">Скрыть другие площадки</label>
+    </div>
+</div>
+{% endif %}
+
+<div class="table-component">
+    <table class="table table-hover" id="scoreboard">
+        <thead>
+        <tr class="task-categories">
+            <th rowspan="2" colspan="2" class="cat-end">Команды</th>
+            {% for category, task_ids in task_columns %}
+            <th colspan="{{ task_ids|length }}" class="category cat-end">{{ category }}</th>
+            {% endfor %}
+            <th rowspan="2">Баллы</th>
+        </tr>
+        <tr class="task-prices">
+            {% for _, task_ids in task_columns %}
+            {% for task_id in task_ids %}
+            {% with task=task_by_id|item:task_id %}
+            {% with stmt=statements|get:task_id %}
+            <th title="{{ stmt.title }}" data-id="{{ task_id }}"
+                class="{% if forloop.last %}cat-end{% endif %}">
+                <div class="price">{{ task.max_score }}</div>
+                <div class="stats">
+                    <img src="{% static 'qctf/img/profile.svg' %}" class="icon">
+                    {{ task_solved_by|item:task.id|length }}
+                </div>
+            </th>
+            {% endwith %}
+            {% endwith %}
+            {% endfor %}
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for team in visible_participants %}
+        <tr class="{% if participant and team.id == participant.id %}my-team{% endif %}
+                   {% if participant and team.region.id == participant.region.id %}my-region{% endif %}
+                   {% cycle 'even' 'odd' %}">
+            <td class="cat-adjacent">{{ forloop.counter }}</td>
+            <td class="team cat-end">
+                <div>{{ team.name }}</div>
+                <div class="region">
+                    {{ team.region.name|remove_after_comma }}
+                    <span class="middot mx-1">&middot;</span>
+                    <span class="elapsed-time" title="Время от начала соревнования на этой площадке">
+                        {% if current_contest|is_running_for:team %}
+                            {{ current_contest|start_time_for:team|timesince_hhmm }}
+                        {% else %}
+                            {% with finish_time=current_contest|finish_time_for:team %}
+                            {{ current_contest|start_time_for:team|timesince_hhmm:finish_time }}
+                            {% endwith %}
+                        {% endif %}
+                    </span>
+                </div>
+            </td>
+
+            {% for _, task_ids in task_columns %}
+            {% for task_id in task_ids %}
+                {% with task=task_by_id|item:task_id %}
+                {% if team.id in task_solved_by|item:task_id %}
+                    <td class="accepted {% if forloop.last %}cat-end{% endif %}">
+                        <div>&#9679;</div>
+                        <div class="time" title="Время сдачи флага (от начала соревнования)">
+                            {% with attempt_time=first_success_time|item:team.id|item:task_id %}
+                            {{ current_contest|start_time_for:participant|timesince_hhmm:attempt_time }}
+                            {% endwith %}
+                        </div>
+                    </td>
+                {% else %}
+                    <td class="{% if forloop.last %}cat-end{% endif %}"></td>
+                {% endif %}
+                {% endwith %}
+            {% endfor %}
+            {% endfor %}
+
+            <td class="cat-adjacent">{{ total_scores|item:team.id }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if tasks_visible %}
+{% include 'contests/_qctf_task_popups.html' %}
+{% endif %}
+{% endblock %}

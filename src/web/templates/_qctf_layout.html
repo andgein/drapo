@@ -1,0 +1,110 @@
+{% load staticfiles %}
+{% load contest %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
+
+    <title>{% block title %}The QCTF Times{% endblock %}</title>
+
+    <link href="{% static 'qctf/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400" rel="stylesheet">
+    <link href="{% static 'qctf/css/style.css' %}" rel="stylesheet">
+
+    <script src="{% static 'qctf/js/jquery-3.3.1.min.js' %}"></script>
+  </head>
+
+  <body>
+
+    <div class="container px-5">
+      <header class="blog-header py-3">
+        <div class="row flex-nowrap justify-content-between align-items-center">
+          <div class="col-3 pt-1">
+            {% if user.is_authenticated and current_contest and participant %}
+              {% if current_contest|is_finished_for:participant %}
+                <span class="text-muted">Соревнование окончено</span>
+              {% elif current_contest|is_running_for:participant %}
+                <span class="text-muted" id="remaining-time"></span>
+                <span class="d-none" id="contest-finish-time">{{ current_contest|finish_time_for:participant|date:"U" }}</span>
+              {% endif %}
+            {% endif %}
+          </div>
+          <div class="col-6 text-center">
+            <a class="blog-header-logo text-dark" href="{% url 'home' %}">The Qctf Times</a>
+          </div>
+          <div class="col-3 d-flex justify-content-end align-items-center">
+            {% if user.is_authenticated %}
+              {% if participant %}
+                <div class="text-muted mr-4">{{ participant.get_current_score|default_if_none:"0" }} баллов</div>
+              {% endif %}
+
+              <form id="logout-form" method="POST" action="{% url 'users:logout' %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.path }}">
+              </form>
+              <a class="btn btn-sm btn-outline-secondary" href="#"
+                 onclick="$('#logout-form').submit(); return false">Выйти</a>
+            {% else %}
+              <a class="btn btn-sm btn-outline-secondary" href="{% url 'users:login' %}">Войти</a>
+            {% endif %}
+          </div>
+        </div>
+      </header>
+
+      <div class="nav-scroller py-1 mb-3">
+        <nav class="nav d-flex justify-content-center p-2">
+          {% if user.is_authenticated %}
+          <a class="px-4 text-muted" href="{% url 'home' %}">Новости</a>
+          <a class="px-4 text-muted" href="{% url 'qctf_scoreboard' %}">Рейтинг</a>
+          <a class="px-4 text-muted" href="{% url 'qctf_notifications' %}">
+            Оповещения <span class="unread-count"></span>
+          </a>
+          <a class="px-4 text-muted" href="{% url 'qctf_rules' %}">Правила</a>
+          {% else %}
+          <a class="px-4 text-muted" href="{% url 'users:login' %}">Вход</a>
+          <a class="px-4 text-muted" href="{% url 'qctf_scoreboard' %}">Рейтинг</a>
+          {% endif %}
+        </nav>
+      </div>
+
+      {% block content %}{% endblock %}
+
+      <footer class="blog-footer row">
+        <div class="col-lg-2"></div>
+        <div class="col-lg-8">
+          <p>Все события и герои вымышлены. Любые совпадения с реальными личностями случайны.</p>
+          <p>
+            Проверяющая система Drapo разработана <a href="http://vk.com/andgein">Андреем Гейном</a>.
+            Соревнование QCTF Starter 2018 подготовлено командами Destructive Voice, VoidHack и Хакердом из УрФУ.
+          </p>
+        </div>
+      </footer>
+    </div>
+
+    <script src="{% static 'qctf/js/jquery.floatThead.min.js' %}"></script>
+    <script src="{% static 'qctf/js/popper.min.js' %}"></script>
+    <script src="{% static 'qctf/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'qctf/js/holder.min.js' %}"></script>
+    <script src="{% static 'qctf/js/ui.js' %}"></script>
+    <script>
+      Holder.addTheme('thumb', {
+        bg: '#55595c',
+        fg: '#eceeef',
+        text: 'Thumbnail'
+      });
+
+      $.ajaxSetup({
+          beforeSend: function(xhr, settings) {
+              xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
+          }
+      });
+
+      $('#scoreboard').floatThead();
+    </script>
+  </body>
+</html>

@@ -229,3 +229,49 @@ MARKDOWN_DEUX_STYLES = {
         'safe_mode': False if env.get('MARKDOWN_DISABLE_SAFE_MODE') == 'True' else 'escape',
     }
 }
+
+
+QCTF_CONTEST_ID = 1
+
+QCTF_CARD_LAYOUT = [
+    [
+        ('permanent-302', '/static/statement_img/podifruxx.jpg'),
+        ('storage', '/static/statement_img/babushka.png'),
+    ],
+    [
+        ('getflagchar', '/static/statement_img/gohdjhr.jpg'),
+        ('minecrypt', '/static/statement_img/msslrrijc.png'),
+    ],
+    [
+        ('make-some-noise', None),
+        ('cipher', None),
+        ('weird-video', None),
+    ],
+    [
+        ('unpack-reverse', None),
+        ('cats-vs-dogs', None),
+        ('notemaster', None),
+    ],
+    [
+        ('browser-mining', None),
+        ('bank', None),
+        ('passengers-1', None),
+    ],
+    [
+        ('auth-system', None),
+        ('obscure-archive', None),
+        ('passengers-2', None),
+    ],
+    [
+        ('python-vm', None),
+    ],
+]
+
+# Place tasks ordered by cost. They will be shown in the QCTF scoreboard in the same order.
+QCTF_TASK_CATEGORIES = {
+    'Crypto': ['minecrypt', 'cipher'],
+    'Forensics': ['weird-video', 'bank'],
+    'PPC': ['cats-vs-dogs', 'browser-mining'],  # TODO: bulls-and-cows
+    'Reverse': ['getflagchar', 'unpack-reverse', 'passengers-1', 'obscure-archive', 'python-vm', 'passengers-2'],
+    'Web': ['storage', 'notemaster', 'auth-system', 'make-some-noise', 'permanent-302'],
+}

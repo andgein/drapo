@@ -1,18 +1,34 @@
-{% extends '_layout.html' %}
+{% extends '_qctf_layout.html' %}
 
-{% load bootstrap %}
-{% load i18n %}
+{% block title %}The QCTF Times - Вход в систему{% endblock %}
 
 {% block content %}
-    <div class="page">
-        <h1 class="page__header">
-            {% trans 'Login' %}
-        </h1>
-        <form action="" method="POST" class="form form-horizontal">
+<main class="login-form d-flex justify-content-center">
+    <div class="flex-column">
+        <h2 class="text-center mb-4">Вход в систему</h2>
+
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                Неправильные логин и пароль. Попробуйте ещё раз.
+            </div>
+        {% endif %}
+
+        <form action="" method="POST">
             {% csrf_token %}
-            {{ form|bootstrap_horizontal }}
-            <button class="btn btn-success btn-lg  col-sm-offset-2">{% trans 'Login' %}</button>
-            {# <a href="{% url 'users:register' %}" class="btn btn-link">{% trans 'Registration' %} &rarr;</a>  #}
+            <fieldset>
+                <div class="form-group">
+                    <label for="login">Логин</label>
+                    <input type="text" class="form-control" id="login" name="email_or_login" autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" class="form-control" id="password" name="password">
+                </div>
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary">Войти</button>
+                </div>
+            </fieldset>
         </form>
     </div>
+</main>
 {% endblock %}

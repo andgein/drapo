@@ -210,3 +210,24 @@ LANGUAGES = [
     ('ru', 'Russian'),
     ('en', 'English'),
 ]
+
+
+QCTF_CONTEST_ID = 1
+
+QCTF_CARD_LAYOUT = [
+    [
+        ('bank', 'http://crlaw.com/news/wp-content/uploads/2017/05/brandon-k-jones-profile-image-180x198.jpg'),
+        ('auth-system', 'http://crlaw.com/news/wp-content/uploads/2017/05/brandon-k-jones-profile-image-180x198.jpg'),
+    ],
+    [('cats-vs-dogs', None), ('make-some-noise', None), ('permanent-302', None)],
+    [('getflagchar', None), ('cipher', None), ('python-vm', None)],
+]
+
+# Place tasks ordered by cost. They will be shown in the QCTF scoreboard in the same order.
+QCTF_TASK_CATEGORIES = {
+    'Forensics': ['bank'],
+    'Web': ['auth-system', 'make-some-noise', 'permanent-302'],
+    'PPC': ['cats-vs-dogs'],
+    'Reverse': ['getflagchar', 'python-vm'],
+    'Crypto': ['cipher'],
+}
