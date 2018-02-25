@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'serialization',
 ]
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -64,6 +64,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
+    'drapo.middleware.log_requests_middleware',
     'drapo.middleware.LocaleMiddleware',
 ]
 
@@ -91,13 +92,6 @@ WSGI_APPLICATION = 'drapo.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
 
 DATABASES = {
     'default': {
@@ -187,16 +181,24 @@ DRAPO_ONLY_STAFF_CAN_EDIT_TEAM_NAME = False
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
     'loggers': {
-        'django': {
-            'handlers': ['console'],
+        'drapo.requests': {
+            'handlers': ['drapo.requests'],
             'level': 'INFO',
         },
+    },
+    'handlers': {
+        'drapo.requests': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'drapo.requests',
+        },
+    },
+    'formatters': {
+        'drapo.requests': {
+            '()': 'django.utils.log.ServerFormatter',
+            'format': '[%(server_time)s] %(message)s',
+        }
     },
 }
 
