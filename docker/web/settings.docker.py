@@ -273,7 +273,7 @@ QCTF_TASK_CATEGORIES = {
     'Crypto': ['cipher', 'minecrypt'],
     'Forensics': ['weird-video', 'bank'],
     'PPC': ['quirky-casino', 'browser-mining', 'cats-vs-dogs'],
-    'PWN': ['passenges-1', 'passenges-2'],
+    'PWN': ['passengers-1', 'passengers-2'],
     'Reverse': ['getflagchar', 'obscure-archive', 'unpack-reverse', 'python-vm'],
     'Web': ['notemaster', 'permanent-302', 'make-some-noise', 'storage', 'auth-system'],
 }
