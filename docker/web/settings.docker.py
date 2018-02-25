@@ -235,8 +235,8 @@ QCTF_CONTEST_ID = 1
 
 QCTF_CARD_LAYOUT = [
     [
-        ('permanent-302', 'static/podifruxx.png'),
-        ('storage', '/static/smvcnid.png'),
+        ('permanent-302', '/static/statement_img/podifruxx.png'),
+        ('storage', '/static/statement_img/smvcnid.png'),
     ],
     [
         ('make-some-noise', None),
@@ -244,8 +244,8 @@ QCTF_CARD_LAYOUT = [
         ('weird-video', None),
     ],
     [
-        ('getflagchar', '/static/gohdjhr.png'),
-        ('minecrypt', '/static/msslrrijc.png'),
+        ('getflagchar', '/static/statement_img/gohdjhr.png'),
+        ('minecrypt', '/static/statement_img/msslrrijc.png'),
     ],
     [
         ('unpack-reverse', None),
@@ -253,8 +253,8 @@ QCTF_CARD_LAYOUT = [
         ('notemaster', None),
     ],
     [
-        ('bank', '/static/blfpowdm.png'),
-        ('passengers-1', '/static/psgrttry.png'),
+        ('bank', '/static/statement_img/blfpowdm.png'),
+        ('passengers-1', '/static/statement_img/psgrttry.png'),
     ],
     [
         ('browser-mining', None),
@@ -264,6 +264,7 @@ QCTF_CARD_LAYOUT = [
     [
         ('passengers-2', None),
         ('python-vm', None),
+        ('quirky-casino', None),
     ],
 ]
 
@@ -271,7 +272,7 @@ QCTF_CARD_LAYOUT = [
 QCTF_TASK_CATEGORIES = {
     'Crypto': ['cipher', 'minecrypt'],
     'Forensics': ['weird-video', 'bank'],
-    'PPC': ['bulls-and-cows', 'browser-mining', 'cats-vs-dogs'],
+    'PPC': ['quirky-casino', 'browser-mining', 'cats-vs-dogs'],
     'PWN': ['passenges-1', 'passenges-2'],
     'Reverse': ['getflagchar', 'obscure-archive', 'unpack-reverse', 'python-vm'],
     'Web': ['notemaster', 'permanent-302', 'make-some-noise', 'storage', 'auth-system'],
