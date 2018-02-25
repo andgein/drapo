@@ -78,6 +78,18 @@ function updateRemainingTime() {
     remainingTimeSpan.text('Осталось: ' + timeRepr);
 }
 
+function toggleHideOtherRegions() {
+    $('tbody tr:not(.my-region)').toggle();
+    $('tbody tr:visible').each(function (i, el) {
+        if (i % 2 === 0)
+            $(el).removeClass('odd').addClass('even');
+        else
+            $(el).removeClass('even').addClass('odd');
+    });
+
+    localStorage['hide-other-regions'] = $('#hide-other-regions').is(':checked');
+}
+
 $(function () {
     $('.article, .article-with-image').each(function (_, article) {
         var task_id = $(article).data('id');
@@ -100,15 +112,12 @@ $(function () {
     update_unread_notifications_count();
     setInterval(update_unread_notifications_count, 3*60*1000);
 
-    $('#hide-other-regions').change(function () {
-        $('tbody tr:not(.my-region)').toggle();
-        $('tbody tr:visible').each(function (i, el) {
-            if (i % 2 === 0)
-                $(el).removeClass('odd').addClass('even');
-            else
-                $(el).removeClass('even').addClass('odd');
-        });
-    });
+    var toggle = $('#hide-other-regions');
+    if (localStorage['hide-other-regions'] === "true") {
+        toggle.attr('checked', true);
+        toggleHideOtherRegions();
+    }
+    toggle.change(toggleHideOtherRegions);
 
     $('.modal-task').each(function (_, el) {
         var task_id = $(this).data('id');
