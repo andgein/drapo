@@ -289,8 +289,7 @@ td {
 
 td.team {
   line-height: 1.35;
-  padding-top: 8px;
-  padding-bottom: 8px;
+  padding: 8px 4px;
   text-align: left;
   max-width: 200px;
 }
