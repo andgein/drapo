@@ -46,6 +46,7 @@ def is_manual_task_opening_available_in_contest(contest):
     return contest.tasks_opening_policies.instance_of(tasks_models.ManualTasksOpeningPolicy).exists()
 
 
+@staff_required
 def contests_list(request):
     contests = models.Contest.objects.filter(is_visible_in_list=True).order_by('-start_time')
 
@@ -123,6 +124,7 @@ def join(request, contest_id):
     return redirect(contest)
 
 
+@staff_required
 def contest(request, contest_id):
     contest = get_object_or_404(models.Contest, pk=contest_id)
     participant = contest.get_participant_for_user(request.user)
@@ -188,6 +190,7 @@ def qctf_notifications(request):
     })
 
 
+@staff_required
 def tasks(request, contest_id):
     contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
 
@@ -375,6 +378,7 @@ def qctf_rules(request):
     })
 
 
+@staff_required
 def scoreboard(request, contest_id):
     contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
     participant = contest.get_participant_for_user(request.user)
@@ -526,6 +530,7 @@ def qctf_submit_flag(request, task_id):
     return JsonResponse({'status': status, 'message': message})
 
 
+@staff_required
 def task(request, contest_id, task_id):
     contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
     if not contest.is_visible_in_list and not request.user.is_staff:
@@ -917,6 +922,7 @@ def change_participant_status(request, contest_id, participant_id):
     return redirect(urlresolvers.reverse('contests:participants', args=[contest.id]))
 
 
+@staff_required
 def add_task_to_contest(contest, category, task):
     if category is not None:
         category.tasks.add(task)
@@ -926,6 +932,7 @@ def add_task_to_contest(contest, category, task):
         contest.tasks_list.save()
 
 
+@staff_required
 def add_task_to_contest_view(request, contest, category=None):
     if request.method == 'POST':
         form = forms.CreateTaskForm(data=request.POST, files=request.FILES)
@@ -1087,6 +1094,7 @@ def edit(request, contest_id):
     })
 
 
+@staff_required
 def task_file(request, contest_id, file_id):
     contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
     if not contest.is_visible_in_list and not request.user.is_staff:
@@ -1127,6 +1135,7 @@ def delete_task(request, contest_id, task_id):
     return redirect(urlresolvers.reverse('contests:tasks', args=[contest.id]))
 
 
+@staff_required
 def news(request, contest_id, news_id):
     contest = get_object_or_404(models.Contest, pk=contest_id)
     news = get_object_or_404(models.News, pk=news_id)
