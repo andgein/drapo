@@ -394,7 +394,7 @@ def scoreboard(request, contest_id):
     participants = contest.participants.filter(is_visible_in_scoreboard=True)
     if region:
         participants = participants.filter(region=region)
-    successful_attempts = contest.attempts.filter(is_correct=True)
+    successful_attempts = contest.attempts.filter(is_correct=True).order_by('created_at')
 
     scores_by_task = defaultdict(lambda: defaultdict(int))
     task_solved_by = defaultdict(set)
@@ -402,8 +402,8 @@ def scoreboard(request, contest_id):
     for attempt in successful_attempts:
         p_id, t_id = attempt.participant_id, attempt.task_id
         scores = scores_by_task[p_id]
-        if attempt.score > scores[t_id]:
-            scores[t_id] = attempt.score
+        if t_id not in scores:
+            scores[t_id] = attempt.task.max_score
             last_success_time[p_id] = attempt.created_at.timestamp()
         task_solved_by[t_id].add(p_id)
 
