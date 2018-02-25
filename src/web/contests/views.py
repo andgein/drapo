@@ -296,7 +296,8 @@ def prepare_task_popups(request, contest, participant):
         for name in names:
             category_by_task_name[name] = category
 
-    successful_attempts = contest.attempts.filter(is_correct=True)
+    successful_attempts = contest.attempts.filter(
+        is_correct=True, participant__is_visible_in_scoreboard=True)
     task_solved_by = defaultdict(set)
     for attempt in successful_attempts:
         p_id, t_id = attempt.participant_id, attempt.task_id

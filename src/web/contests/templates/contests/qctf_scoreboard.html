@@ -79,7 +79,7 @@
                         <div>&#9679;</div>
                         <div class="time" title="Время сдачи флага (от начала соревнования)">
                             {% with attempt_time=first_success_time|item:team.id|item:task_id %}
-                            {{ current_contest|start_time_for:participant|timesince_hhmm:attempt_time }}
+                            {{ current_contest|start_time_for:team|timesince_hhmm:attempt_time }}
                             {% endwith %}
                         </div>
                     </td>
