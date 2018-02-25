@@ -3,10 +3,13 @@
 {% load staticfiles %}
 {% load dict_filters %}
 {% load contest %}
+{% load cache %}
 
 {% block title %}The QCTF Times - Рейтинг{% endblock %}
 
 {% block content %}
+{% cache 60 scoreboard request.user.id %}
+
 {% if participant %}
 <div class="row d-flex justify-content-end px-4 pb-2 scoreboard-toggle-row">
     <div class="scoreboard-toggle custom-control custom-checkbox">
@@ -93,6 +96,7 @@
         </tbody>
     </table>
 </div>
+{% endcache%}
 
 {% if tasks_visible %}
 {% include 'contests/_qctf_task_popups.html' %}

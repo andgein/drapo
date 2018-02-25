@@ -16,6 +16,8 @@ from django.utils.translation import get_language
 from django.views.decorators.http import require_POST
 from django.conf import settings
 from django.utils import timezone
+from django.core.cache.utils import make_template_fragment_key
+from django.core.cache import cache
 
 from drapo.common import respond_as_attachment
 from drapo.uploads import save_uploaded_file
@@ -315,7 +317,11 @@ def qctf_scoreboard(request):
     tasks_visible = request.user.is_authenticated and \
                     (contest.is_started_for(participant) or request.user.is_staff)
 
+    scoreboard_key = make_template_fragment_key('scoreboard', [request.user.id])
+    tasks_key = make_template_fragment_key('tasks', [request.user.id])
+
     data = prepare_task_popups(request, contest, participant)
+
     task_by_name = data['task_by_name']
     task_by_id = data['task_by_id']
 
@@ -512,6 +518,10 @@ def qctf_submit_flag(request, task_id):
             status = 'success'
             message = 'Спасибо за интересные данные! ' \
                       'Вознаграждение перечислено на ваш счёт.'
+            #invalidate cache
+            k1 = make_template_fragment_key('scoreboard', [request.user.id])
+            k2 = make_template_fragment_key('tasks', [request.user.id])
+            cache.delete_many([k1, k2])
 
     return JsonResponse({'status': status, 'message': message})
 

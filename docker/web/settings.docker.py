@@ -232,6 +232,16 @@ MARKDOWN_DEUX_STYLES = {
     }
 }
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': 'memcached:11211',
+        'OPTIONS': {
+            'server_max_value_length': 1024 * 1024 * 8,
+        }
+    }
+}
+
 
 QCTF_CONTEST_ID = 1
 

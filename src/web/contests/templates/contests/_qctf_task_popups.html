@@ -1,6 +1,9 @@
 {% load staticfiles %}
 {% load markdown_deux_tags %}
 {% load dict_filters %}
+{% load cache %}
+
+{% cache 30 tasks request.user.id %}
 
 {% for task_id, stmt in statements.items %}
 {% with task=task_by_id|item:task_id %}
@@ -63,3 +66,5 @@
 </div>
 {% endwith %}
 {% endfor %}
+
+{% endcache %}
