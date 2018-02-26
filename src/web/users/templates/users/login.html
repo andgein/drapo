@@ -9,6 +9,11 @@
     <div class="flex-column">
         <h2 class="text-center mb-4">Вход в систему</h2>
 
+        <div class="alert alert-info">
+            Если вы участвовали в соревновании очно, но не записали выданные вам логин и пароль,
+            вы можете <a href="{% url 'password_reset' %}">сбросить пароль</a>, указав e-mail капитана команды
+        </div>
+
         {% for message in messages %}
             <div class="alert {{ message.tags }}">{{ message }}</div>
         {% endfor %}

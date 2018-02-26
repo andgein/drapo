@@ -1,4 +1,6 @@
 from django import forms
+from django.contrib.auth.forms import PasswordResetForm, \
+    default_token_generator, get_current_site, force_bytes, urlsafe_base64_encode
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -137,3 +139,12 @@ class ChangePasswordForm(FormWithRepeatedPassword):
         if 'field_order' in kwargs:
             del kwargs['field_order']
         super().__init__(field_order=['old_password', 'password', 'password_repeat'], *args, **kwargs)
+
+
+class VerbosePasswordResetForm(PasswordResetForm):
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if not list(self.get_users(email)):
+            raise forms.ValidationError('Команды, где капитан имеет такой e-mail, не существует')
+
+        return email

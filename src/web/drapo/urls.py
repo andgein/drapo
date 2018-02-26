@@ -15,8 +15,10 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 
 import contests.views
+import users.forms
 
 urlpatterns = [
     url(r'^$', contests.views.qctf_tasks, name='home'),
@@ -33,6 +35,21 @@ urlpatterns = [
     url(r'^contests/', include('contests.urls', namespace='contests')),
     url(r'^users/', include('users.urls', namespace='users')),
     url(r'^teams/', include('teams.urls', namespace='teams')),
+
+    url(r'^users/', include([
+        url(r'^password_reset/$',
+            auth_views.PasswordResetView.as_view(form_class=users.forms.VerbosePasswordResetForm),
+            name='password_reset'),
+        url(r'^password_reset/done/$',
+            auth_views.PasswordResetDoneView.as_view(),
+            name='password_reset_done'),
+        url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+            auth_views.PasswordResetConfirmView.as_view(),
+            name='password_reset_confirm'),
+        url(r'^reset/done/$',
+            auth_views.PasswordResetCompleteView.as_view(),
+            name='password_reset_complete'),
+    ])),
 
     url(r'^admin/', admin.site.urls),
     url(r'^hijack/', include('hijack.urls')),
