@@ -1,16 +1,27 @@
-{% extends '_layout.html' %}
+{% extends '_qctf_layout.html' %}
 
 {% load bootstrap %}
-{% load i18n %}
+
+{% block title %}The QCTF Times - Регистрация{% endblock %}
 
 {% block content %}
-    <div class="page">
-        <h1 class="page__header">{% trans 'Register account' %}</h1>
-        <form action="" method="POST" class="form form-horizontal">
+<main class="login-form d-flex justify-content-center">
+    <div class="flex-column">
+        <h2 class="text-center mb-4">Регистрация</h2>
+
+        {% for message in messages %}
+            <div class="alert {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+
+        <form action="" method="POST">
             {% csrf_token %}
-            {{ form|bootstrap_horizontal }}
-            <button class="btn btn-success btn-lg  col-sm-offset-2">{% trans 'Join' %}</button>
-            <a href="{% url 'users:login' %}" class="btn btn-link">{% trans 'Login' %} &rarr;</a>
+            <fieldset>
+                {{ form|bootstrap }}
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+                </div>
+            </fieldset>
         </form>
     </div>
+</main>
 {% endblock %}

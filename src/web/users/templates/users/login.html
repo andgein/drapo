@@ -1,5 +1,7 @@
 {% extends '_qctf_layout.html' %}
 
+{% load bootstrap %}
+
 {% block title %}The QCTF Times - Вход в систему{% endblock %}
 
 {% block content %}
@@ -7,23 +9,14 @@
     <div class="flex-column">
         <h2 class="text-center mb-4">Вход в систему</h2>
 
-        {% if form.errors %}
-            <div class="alert alert-danger">
-                Неправильные логин и пароль. Попробуйте ещё раз.
-            </div>
-        {% endif %}
+        {% for message in messages %}
+            <div class="alert {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
 
         <form action="" method="POST">
             {% csrf_token %}
             <fieldset>
-                <div class="form-group">
-                    <label for="login">Логин</label>
-                    <input type="text" class="form-control" id="login" name="email_or_login" autofocus>
-                </div>
-                <div class="form-group">
-                    <label for="password">Пароль</label>
-                    <input type="password" class="form-control" id="password" name="password">
-                </div>
+                {{ form|bootstrap }}
                 <div class="d-flex justify-content-center">
                     <button type="submit" class="btn btn-primary">Войти</button>
                 </div>

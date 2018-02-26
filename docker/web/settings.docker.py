@@ -182,12 +182,20 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'loggers': {
+        'django': {
+            'handlers': ['django'],
+            'level': 'INFO',
+        },
         'drapo.requests': {
             'handlers': ['drapo.requests'],
             'level': 'INFO',
         },
     },
     'handlers': {
+        'django': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+        },
         'drapo.requests': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',

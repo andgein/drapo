@@ -29,8 +29,11 @@
               {% if current_contest|is_finished_for:participant %}
                 <span class="text-muted">Соревнование окончено</span>
               {% elif current_contest|is_running_for:participant %}
+                {% comment %}
                 <span class="text-muted" id="remaining-time"></span>
                 <span class="d-none" id="contest-finish-time">{{ current_contest|finish_time_for:participant|date:"U" }}</span>
+                {% endcomment %}
+                <span class="text-muted">Дорешивание</span>
               {% endif %}
             {% endif %}
           </div>
@@ -67,6 +70,7 @@
           <a class="px-4 text-muted" href="{% url 'qctf_rules' %}">Правила</a>
           {% else %}
           <a class="px-4 text-muted" href="{% url 'users:login' %}">Вход</a>
+          <a class="px-4 text-muted" href="{% url 'users:register' %}">Регистрация</a>
           <a class="px-4 text-muted" href="{% url 'qctf_scoreboard' %}">Рейтинг</a>
           {% endif %}
         </nav>

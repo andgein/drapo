@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
@@ -9,6 +10,7 @@ from django.views.decorators.http import require_POST
 
 from . import forms
 from . import models
+from contests.models import Contest, IndividualParticipant
 
 
 def profile(request, user_id):
@@ -58,10 +60,7 @@ def register(request):
             username = form.cleaned_data['username']
             email = form.cleaned_data['email'].lower()
             password = form.cleaned_data['password']
-            first_name = form.cleaned_data['first_name']
-            last_name = form.cleaned_data['last_name']
-
-            confirmation = None
+            team_name = form.cleaned_data['team_name']
 
             with transaction.atomic():
                 if models.User.objects.filter(username=username).exists():
@@ -72,20 +71,19 @@ def register(request):
                     user = models.User.objects.create_user(
                         username=username,
                         email=email,
-                        first_name=first_name,
-                        last_name=last_name,
+                        first_name=team_name,
                         password=password
                     )
 
                     confirmation = models.EmailConfirmation(user=user, is_confirmed=True)
                     confirmation.save()
 
-                #if confirmation is not None:
-                #    confirmation.send(request)
-                return redirect_to_login(request.build_absolute_uri())
-                #return render(request, 'message.html', {
-                #    'message': 'We have sent you an email with confirmation link. Please follow it.'
-                #})
+                    IndividualParticipant(
+                        contest=Contest.objects.get(id=settings.QCTF_CONTEST_ID),
+                        user=user
+                    ).save()
+
+                    return redirect_to_login(request.build_absolute_uri())
 
     else:
         form = forms.RegisterForm()

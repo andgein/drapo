@@ -500,3 +500,9 @@ html {
   position: relative;
   min-height: 100%;
 }
+
+
+.help-block {
+  color: darkred;
+  font-size: 0.8rem;
+}

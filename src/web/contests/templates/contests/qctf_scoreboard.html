@@ -19,6 +19,8 @@
 </div>
 {% endif %}
 
+<h2 class="text-center mb-4">Рейтинг команд (дорешивание)</h2>
+
 <div class="table-component">
     <table class="table table-hover" id="scoreboard">
         <thead>
@@ -57,7 +59,12 @@
             <td class="team cat-end">
                 <div>{{ team.name }}</div>
                 <div class="region">
-                    {{ team.region.name|remove_after_comma }}
+                    {% if team.region.name %}
+                        {{ team.region.name|remove_after_comma }}
+                    {% else %}
+                        Онлайн-регистрация
+                    {% endif %}
+                    {% comment %}
                     <span class="middot">&middot;</span>
                     <span class="elapsed-time" title="Время от начала соревнования на этой площадке">
                         {% if current_contest|is_running_for:team %}
@@ -68,6 +75,7 @@
                             {% endwith %}
                         {% endif %}
                     </span>
+                    {% endcomment %}
                 </div>
             </td>
 
