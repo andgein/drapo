@@ -4,6 +4,7 @@ import operator
 import re
 import collections
 import datetime
+import logging
 
 from django.contrib import messages
 from django.core import urlresolvers
@@ -11,8 +12,12 @@ from django.db import transaction
 from django.db.models.query_utils import Q
 from django.http.response import Http404, HttpResponseNotFound, HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.utils.translation import get_language
 from django.views.decorators.http import require_POST
 from django.conf import settings
+from django.utils import timezone
+from django.core.cache.utils import make_template_fragment_key
+from django.core.cache import cache
 
 from drapo.common import respond_as_attachment
 from drapo.uploads import save_uploaded_file
@@ -25,6 +30,8 @@ import taskbased.categories.models as categories_models
 import taskbased.tasks.models as tasks_models
 import taskbased.tasks.forms as tasks_forms
 
+
+from collections import defaultdict
 
 def _groupby(iterable, keyfunc):
     result = collections.defaultdict(list)
@@ -39,12 +46,13 @@ def is_manual_task_opening_available_in_contest(contest):
     return contest.tasks_opening_policies.instance_of(tasks_models.ManualTasksOpeningPolicy).exists()
 
 
+@staff_required
 def contests_list(request):
     contests = models.Contest.objects.filter(is_visible_in_list=True).order_by('-start_time')
 
-    if request.user.is_authenticated():
-        for contest in contests:
-            contest.is_current_user_participating = contest.is_user_participating(request.user)
+    for contest in contests:
+        contest.is_current_user_participating = contest.is_user_participating(request.user)
+        contest.participant = contest.get_participant_for_user(request.user)
 
     return render(request, 'contests/list.html', {
         'contests': contests
@@ -55,6 +63,7 @@ def contests_list(request):
 @transaction.atomic
 def join(request, contest_id):
     contest = get_object_or_404(models.Contest, pk=contest_id, is_visible_in_list=True)
+
 
     form = None
     if request.method == 'POST':
@@ -104,6 +113,7 @@ def join(request, contest_id):
             'current_contest': contest,
 
             'contest': contest,
+            'participant': None,
             'form': form,
             'user_teams': user_teams,
             'invite_hash_form': invite_hash_form
@@ -114,8 +124,10 @@ def join(request, contest_id):
     return redirect(contest)
 
 
+@staff_required
 def contest(request, contest_id):
     contest = get_object_or_404(models.Contest, pk=contest_id)
+    participant = contest.get_participant_for_user(request.user)
 
     if not contest.is_visible_in_list:
         has_access = (request.user.is_authenticated() and
@@ -133,26 +145,67 @@ def contest(request, contest_id):
         'current_contest': contest,
 
         'contest': contest,
+        'participant' : participant,
         'news': news,
         'participants': participants,
     })
 
 
+def qctf_unread_notifications_count(request):
+    contest = get_object_or_404(models.TaskBasedContest, pk=settings.QCTF_CONTEST_ID)
+    last_read_timestamp = request.session.get('notifications_last_read_timestamp')
+    if last_read_timestamp:
+        last_read = datetime.datetime.fromtimestamp(last_read_timestamp, tz=timezone.utc)
+        count = contest.news.filter(is_published=True, publish_time__gt=last_read).count()
+    else:
+        count = contest.news.filter(is_published=True).count()
+
+    return JsonResponse({'unread_count': count})
+
+
+def qctf_notifications(request):
+    if not request.user.is_authenticated:
+        return redirect(urlresolvers.reverse('users:login'))
+
+    contest = get_object_or_404(models.TaskBasedContest, pk=settings.QCTF_CONTEST_ID)
+    participant = contest.get_participant_for_user(request.user)
+    tasks_visible = contest.is_started_for(participant) or request.user.is_staff
+
+    # Update last read time
+    last_read_timestamp = request.session.get('notifications_last_read_timestamp')
+    last_read = datetime.datetime.fromtimestamp(last_read_timestamp, tz=timezone.utc) if last_read_timestamp else None
+    request.session['notifications_last_read_timestamp'] = timezone.now().timestamp()
+
+    notifications = list(contest.news.filter(is_published=True).order_by('-publish_time'))
+    for notification in notifications:
+        notification.is_unread = (notification.publish_time > last_read) if last_read else True
+
+    return render(request, 'contests/qctf_notifications.html', {
+        'current_contest': contest,
+
+        'contest': contest,
+        'participant' : participant,
+        'notifications': notifications,
+        'tasks_visible': tasks_visible,
+    })
+
+
+@staff_required
 def tasks(request, contest_id):
     contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
+
     if not contest.is_visible_in_list and not request.user.is_staff:
         return HttpResponseNotFound()
 
-    if not contest.is_started() and not request.user.is_staff:
+    participant = contest.get_participant_for_user(request.user)
+
+    if not contest.is_started_for(participant) and not request.user.is_staff:
         messages.error(request, '%s is not started yet' % contest.name)
         return redirect(contest)
 
     solved_tasks_ids = {}
-    if request.user.is_authenticated():
-        participant = contest.get_participant_for_user(request.user)
+    if participant is not None:
         solved_tasks_ids = contest.get_tasks_solved_by_participant(participant)
-    else:
-        participant = None
 
     # Iterate all policies, collect opened tasks
     opened_tasks_ids = set(
@@ -167,6 +220,7 @@ def tasks(request, contest_id):
             'current_contest': contest,
 
             'contest': contest,
+            'participant': participant,
             'tasks': tasks,
             'solved_tasks_ids': solved_tasks_ids,
             'opened_tasks_ids': opened_tasks_ids,
@@ -177,84 +231,214 @@ def tasks(request, contest_id):
             'current_contest': contest,
 
             'contest': contest,
+            'participant': participant,
             'categories': categories,
             'solved_tasks_ids': solved_tasks_ids,
             'opened_tasks_ids': opened_tasks_ids,
         })
 
 
+def qctf_tasks(request):
+    if not request.user.is_authenticated:
+        return redirect(urlresolvers.reverse('users:login'))
+
+    contest = get_object_or_404(models.TaskBasedContest, pk=settings.QCTF_CONTEST_ID)
+    participant = contest.get_participant_for_user(request.user)
+    tasks_visible = contest.is_started_for(participant) or request.user.is_staff
+
+    data = prepare_task_popups(request, contest, participant)
+
+    # Iterate all policies, collect opened tasks
+    opened_tasks_ids = set(
+        itertools.chain.from_iterable(
+            policy.get_open_tasks(participant) for policy in contest.tasks_opening_policies.all()
+        )
+    )
+
+    data.update({
+        'current_contest': contest,
+        'participant': participant,
+
+        'layout': settings.QCTF_CARD_LAYOUT,
+        'opened_tasks_ids': opened_tasks_ids,
+        'tasks_visible': tasks_visible,
+    })
+    return render(request, 'contests/qctf_tasks.html', data)
+
+
+def prepare_task_popups(request, contest, participant):
+    solved_tasks_ids = {}
+    if participant is not None:
+        solved_tasks_ids = contest.get_tasks_solved_by_participant(participant)
+
+    task_by_id = {}
+    task_by_name = {}
+    # TODO: Only tasks from the current contest
+    for task in tasks_models.Task.objects.all():
+        task_by_id[task.id] = task_by_name[task.name] = task
+
+    statements = {}
+    for task in contest.tasks:
+        statement_generator = task.statement_generator
+        try:
+            statement = statement_generator.generate({
+                'task': task,
+                'user': request.user,
+                'participant': participant,
+                'locale': get_language()
+            })
+            statements[task.id] = statement
+        except Exception as e:
+            logging.getLogger(__name__).exception(e)
+
+    category_by_task_name = defaultdict(lambda: 'Без категории')
+    for category, names in settings.QCTF_TASK_CATEGORIES.items():
+        for name in names:
+            category_by_task_name[name] = category
+
+    successful_attempts = contest.attempts.filter(
+        is_correct=True, participant__is_visible_in_scoreboard=True)
+    task_solved_by = defaultdict(set)
+    for attempt in successful_attempts:
+        p_id, t_id = attempt.participant_id, attempt.task_id
+        task_solved_by[t_id].add(p_id)
+
+    return {
+        'category_by_task_name': category_by_task_name,
+        'solved_tasks_ids': solved_tasks_ids,
+        'statements': statements,
+        'task_by_id': task_by_id,
+        'task_by_name': task_by_name,
+        'task_solved_by': task_solved_by,
+    }
+
+
+def qctf_scoreboard(request):
+    # TODO: Ask someone to review the scoreboard
+
+    contest = get_object_or_404(models.TaskBasedContest, pk=settings.QCTF_CONTEST_ID)
+    participant = contest.get_participant_for_user(request.user)
+    tasks_visible = request.user.is_authenticated and \
+                    (contest.is_started_for(participant) or request.user.is_staff)
+
+    scoreboard_key = make_template_fragment_key('scoreboard', [request.user.id])
+    tasks_key = make_template_fragment_key('tasks', [request.user.id])
+
+    data = prepare_task_popups(request, contest, participant)
+
+    task_by_name = data['task_by_name']
+    task_by_id = data['task_by_id']
+
+    task_columns = []
+    for category, names in sorted(settings.QCTF_TASK_CATEGORIES.items()):
+        ids = [task_by_name[name].id for name in names]
+        task_columns.append((category, ids))
+
+    visible_participants = list(models.IndividualParticipant.objects.select_related('user', 'region')
+                                .filter(contest_id=contest.id, is_visible_in_scoreboard=True))
+    participant_by_id = {p.id : p for p in visible_participants}
+    successful_attempts = contest.attempts.filter(is_correct=True).order_by('created_at')
+
+    first_success_time = defaultdict(dict)
+    total_scores = defaultdict(int)
+    completion_time = defaultdict(int)
+    for attempt in successful_attempts:
+        p_id, t_id = attempt.participant_id, attempt.task_id
+        if p_id not in participant_by_id:
+            continue
+        if t_id not in first_success_time[p_id]:
+            first_success_time[p_id][t_id] = attempt.created_at
+            total_scores[p_id] += task_by_id[attempt.task_id].max_score
+            completion_time[p_id] = attempt.created_at - contest.start_time_for(participant_by_id[attempt.participant_id])
+
+    visible_participants.sort(
+        key=lambda item: (-total_scores[item.id], completion_time[item.id], item.id))
+    visible_participants = [item for item in visible_participants
+                            if contest.is_started_for(item)]
+
+    data.update({
+        'current_contest': contest,
+        'participant': participant,
+
+        'first_success_time': first_success_time,
+        'visible_participants': visible_participants,
+        'task_columns': task_columns,
+        'tasks_visible': tasks_visible,
+        'total_scores': total_scores,
+    })
+
+    return render(request, 'contests/qctf_scoreboard.html', data)
+
+
+def qctf_rules(request):
+    contest = get_object_or_404(models.TaskBasedContest, pk=settings.QCTF_CONTEST_ID)
+    participant = contest.get_participant_for_user(request.user)
+    return render(request, 'contests/qctf_rules.html', {
+        'current_contest': contest,
+        'participant': participant,
+    })
+
+
+@staff_required
 def scoreboard(request, contest_id):
     contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
+    participant = contest.get_participant_for_user(request.user)
     if not contest.is_visible_in_list and not request.user.is_staff:
         return HttpResponseNotFound()
 
-    participants = list(contest.participants.filter(is_visible_in_scoreboard=True))
+    region = None
+    form = forms.ScoreboardFilterForm(contest, data=request.GET)
+    if form.is_valid():
+        region = form.cleaned_data['region']
 
+    participants = contest.participants.filter(is_visible_in_scoreboard=True)
+    if region:
+        participants = participants.filter(region=region)
+    successful_attempts = contest.attempts.filter(is_correct=True).order_by('created_at')
 
-    attempts_by_participant = _groupby(contest.attempts.all(), operator.attrgetter('participant_id'))
-    attempts_by_participant = collections.defaultdict(list, attempts_by_participant)
+    scores_by_task = defaultdict(lambda: defaultdict(int))
+    task_solved_by = defaultdict(set)
+    last_success_time = defaultdict(int)
+    for attempt in successful_attempts:
+        p_id, t_id = attempt.participant_id, attempt.task_id
+        scores = scores_by_task[p_id]
+        if t_id not in scores:
+            scores[t_id] = attempt.task.max_score
+            last_success_time[p_id] = attempt.created_at.timestamp()
+        task_solved_by[t_id].add(p_id)
 
-    attempts_by_participant_and_task = {
-        p.id: collections.defaultdict(
-            list,
-            _groupby(attempts_by_participant[p.id], operator.attrgetter('task_id'))
-        )
-        for p in participants
-        }
+    participant_score = {p_id : sum(scores.values())
+                           for (p_id, scores) in scores_by_task.items()}
 
-    # Stores first success attempt for each pair (participant, task) or None if there is no success tries
-    first_success_attempt_by_participant_and_task = {
-        p.id: collections.defaultdict(
-            lambda: None,
-            {
-                # For each task_id filter only correct attempts and select first created
-                task_id: min(
-                    filter(operator.attrgetter('is_correct'), attempts),
-                    key=lambda a: a.created_at,
-                    default=None
-                )
-                for task_id, attempts in attempts_by_participant_and_task[p.id].items()
-                }
-        )
-        for p in participants
-        }
-
-    max_scored_attempt_by_participant_and_task = {
-        p.id: collections.defaultdict(
-            None,
-            {
-                # For each task_id filter only checked attempts and select one with max score
-                task_id: max(
-                    filter(operator.attrgetter('is_checked'), attempts),
-                    key=lambda a: a.score,
-                    default=None
-                )
-                for task_id, attempts in attempts_by_participant_and_task[p.id].items()
-                }
-        )
-        for p in participants
-        }
-
-    scores_by_participant = {
-        p.id: sum(a.score for a in max_scored_attempt_by_participant_and_task[p.id].values() if a is not None)
-        for p in participants
-        }
-
-    last_success_time_by_participant = {
-        p.id: max((a.created_at for a in attempts_by_participant[p.id] if a.is_correct), default=0)
-        for p in participants
-        }
 
     ordered_participants = sorted(participants,
                                   key=lambda p: (
                                       p.is_disqualified,  # First, show not-disqualified participants
-                                      -scores_by_participant[p.id],  # ordered by scores
-                                      last_success_time_by_participant[p.id]  # and by last success time
+                                      -participant_score.get(p.id, 0),  # ordered by scores
+                                      last_success_time.get(p.id, 0),  # and by last success time
+                                      p.id, # and lastly just order somewhat consistent
                                   ))
 
-    tasks = categories = None
+    if request.user.is_staff:
+        plagiarized_attempts = contest.attempts.filter(is_plagiarized=True)
+        plagiarized_tasks = defaultdict(set)
+        plagiarized_from = set()
+        for attempt in plagiarized_attempts:
+            plagiarized_tasks[attempt.participant_id].add(attempt.task_id)
+            if attempt.plagiarized_from:
+                plagiarized_from.add(attempt.plagiarized_from.id)
+    else:
+        plagiarized_tasks = {}
+        plagiarized_from = set()
+
     if contest.tasks_grouping == models.TasksGroping.OneByOne:
-        tasks = contest.tasks
+        categories = [{
+            'name': 'Tasks',
+            'tasks': {
+                'all': contest.tasks,
+                'count': len(contest.tasks),
+            },
+            'description': ''}]
         with_categories = False
     elif contest.tasks_grouping == models.TasksGroping.ByCategories:
         categories = contest.categories
@@ -266,13 +450,16 @@ def scoreboard(request, contest_id):
         'current_contest': contest,
 
         'contest': contest,
+        'participant': participant,
         'with_categories': with_categories,
-        'tasks': tasks,
         'categories': categories,
         'participants': ordered_participants,
-        'scores_by_participant': scores_by_participant,
-        'max_scored_attempt_by_participant_and_task': max_scored_attempt_by_participant_and_task,
-        'first_success_attempt_by_participant_and_task': first_success_attempt_by_participant_and_task
+        'participant_score': participant_score,
+        'scores_by_task' : scores_by_task,
+        'task_solved_by' : task_solved_by,
+        'plagiarized_tasks': plagiarized_tasks,
+        'plagiarized_from': plagiarized_from,
+        'form': form,
     })
 
 
@@ -289,6 +476,62 @@ def is_task_open(contest, task, participant):
     return any(task.id in policy.get_open_tasks(participant) for policy in contest.tasks_opening_policies.all())
 
 
+def is_task_open_for_all(contest, task):
+    return is_task_open(contest, task, None)
+
+
+@require_POST
+def qctf_submit_flag(request, task_id):
+    contest = get_object_or_404(models.TaskBasedContest, pk=settings.QCTF_CONTEST_ID)
+    participant = contest.get_participant_for_user(request.user)
+    task = get_object_or_404(tasks_models.Task, pk=task_id)
+    if (not contest.is_visible_in_list and not request.user.is_staff) or \
+            not contest.has_task(task):
+        return HttpResponseNotFound()
+
+    form = tasks_forms.AttemptForm(data=request.POST)
+    status = 'fail'
+    if participant is None:
+        message = 'Вы не зарегистрированы на это соревнование'
+    elif participant.is_disqualified:
+        message = 'Вы дисквалифицированы с этого соревнования'
+    elif contest.is_finished_for(participant):
+        message = 'К сожалению, соревнование уже закончилось'
+    elif get_count_attempts_in_last_minute(contest, participant) >= settings.DRAPO_MAX_TRIES_IN_MINUTE:
+        message = 'Вы отправляете слишком много флагов. Подождите некоторое время.'
+    elif not form.is_valid():
+        message = 'Форма некорректна'
+    else:
+        answer = form.cleaned_data['answer']
+        attempt = tasks_models.Attempt(
+            contest=contest,
+            task=task,
+            participant=contest.get_participant_for_user(request.user),
+            author=request.user,
+            answer=answer
+        )
+        attempt.save()
+        attempt.try_to_check()
+
+        if not attempt.is_checked:
+            message = 'Проверяющая система не может проверить ваш флаг в данный момент'
+        elif not attempt.is_correct:
+            message = 'Эта строка не является правильным ответом на задание. ' \
+                      'Попробуйте найти что&#8209;нибудь ещё. Обратите внимание, что ' \
+                      'правильный ответ начинается с символов <code>QCTF</code>.'
+        else:
+            status = 'success'
+            message = 'Спасибо за интересные данные! ' \
+                      'Вознаграждение перечислено на ваш счёт.'
+            #invalidate cache
+            k1 = make_template_fragment_key('scoreboard', [request.user.id])
+            k2 = make_template_fragment_key('tasks', [request.user.id])
+            cache.delete_many([k1, k2])
+
+    return JsonResponse({'status': status, 'message': message})
+
+
+@staff_required
 def task(request, contest_id, task_id):
     contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
     if not contest.is_visible_in_list and not request.user.is_staff:
@@ -298,10 +541,10 @@ def task(request, contest_id, task_id):
     if not contest.has_task(task):
         return HttpResponseNotFound()
 
-    if not contest.is_started() and not request.user.is_staff:
-        return HttpResponseForbidden('Contest is not started')
-
     participant = contest.get_participant_for_user(request.user)
+
+    if not contest.is_started_for(participant) and not request.user.is_staff:
+        return HttpResponseForbidden('Contest is not started')
 
     if not is_task_open(contest, task, participant) and not request.user.is_staff:
         return HttpResponseForbidden('Task is closed')
@@ -313,6 +556,8 @@ def task(request, contest_id, task_id):
             messages.warning(request, 'You are not registered to the contest')
         elif participant.is_disqualified:
             messages.error(request, 'You are disqualified from the contest')
+        elif contest.is_finished_for(participant):
+            messages.error(request, 'Contest is finished! You are too late, sorry')
         elif get_count_attempts_in_last_minute(contest, participant) >= settings.DRAPO_MAX_TRIES_IN_MINUTE:
             messages.error(request, 'Too fast, try later')
         elif contest.is_finished():
@@ -346,13 +591,20 @@ def task(request, contest_id, task_id):
         messages.error(request, 'This task is not available for guests. Please sign in')
         return redirect(urlresolvers.reverse('contests:tasks', args=[contest.id]))
 
-    statement = statement_generator.generate({
-        'user': request.user,
-        'participant': participant
-    })
+    try:
+        statement = statement_generator.generate({
+            'task': task,
+            'user': request.user,
+            'participant': participant,
+            'locale': get_language()
+        })
+    except Exception as e:
+        logging.getLogger(__name__).exception(e)
+        messages.error(request, 'This task cannot be displayed')
+        return redirect(urlresolvers.reverse('contests:tasks', args=[contest.id]))
 
     # Files can be in statement or in task for this participant
-    files = statement.files + list(task.files.filter(Q(participant__isnull=True) | Q(participant=participant)))
+    files = list(task.files.filter(Q(is_private=False) & (Q(participant__isnull=True) | Q(participant=participant))))
 
     participant_score = max(task.attempts
                             .filter(contest=contest_id, participant=participant, is_checked=True)
@@ -376,6 +628,7 @@ def task(request, contest_id, task_id):
 @staff_required
 def add_category(request, contest_id):
     contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
+    participant = contest.get_participant_for_user(request.user)
     if contest.tasks_grouping != models.TasksGroping.ByCategories:
         return HttpResponseNotFound()
 
@@ -399,6 +652,7 @@ def add_category(request, contest_id):
         'current_contest': contest,
 
         'contest': contest,
+        'participant': participant,
         'form': form,
     })
 
@@ -406,6 +660,8 @@ def add_category(request, contest_id):
 @staff_required
 def edit_category(request, contest_id, category_id):
     contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
+    participant = contest.get_participant_for_user(request.user)
+
     if contest.tasks_grouping != models.TasksGroping.ByCategories:
         return HttpResponseNotFound()
     category = get_object_or_404(categories_models.Category, pk=category_id)
@@ -429,6 +685,7 @@ def edit_category(request, contest_id, category_id):
         'current_contest': contest,
 
         'contest': contest,
+        'participant': participant,
         'category': category,
         'form': form,
     })
@@ -453,6 +710,7 @@ def delete_category(request, contest_id, category_id):
 @staff_required
 def attempts(request, contest_id):
     contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
+    participant = contest.get_participant_for_user(request.user)
 
     attempts = contest.attempts.order_by('-created_at').select_related(
         'task', 'participant', 'participant__teamparticipant', 'participant__individualparticipant', 'author'
@@ -473,6 +731,7 @@ def attempts(request, contest_id):
         'current_contest': contest,
 
         'contest': contest,
+        'participant': participant,
         'pattern': pattern,
         'attempts': attempts,
         'form': form,
@@ -482,6 +741,7 @@ def attempts(request, contest_id):
 @staff_required
 def attempt(request, contest_id, attempt_id):
     contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
+    participant = contest.get_participant_for_user(request.user)
     attempt = get_object_or_404(tasks_models.Attempt, pk=attempt_id)
 
     if attempt.contest_id != contest.id:
@@ -511,6 +771,7 @@ def attempt(request, contest_id, attempt_id):
         'current_contest': contest,
 
         'contest': contest,
+        'participant': participant,
         'attempt': attempt,
         'form': form,
     })
@@ -558,6 +819,7 @@ def create(request):
 @staff_required
 def participants(request, contest_id):
     contest = get_object_or_404(models.Contest, pk=contest_id)
+    participant = contest.get_participant_for_user(request.user)
 
     participants = contest.participants.all()
 
@@ -567,6 +829,7 @@ def participants(request, contest_id):
         'current_contest': contest,
 
         'contest': contest,
+        'participant': participant,
         'participants': participants,
         'manual_register_participant_form': manual_register_participant_form,
     })
@@ -662,6 +925,7 @@ def change_participant_status(request, contest_id, participant_id):
     return redirect(urlresolvers.reverse('contests:participants', args=[contest.id]))
 
 
+@staff_required
 def add_task_to_contest(contest, category, task):
     if category is not None:
         category.tasks.add(task)
@@ -671,17 +935,21 @@ def add_task_to_contest(contest, category, task):
         contest.tasks_list.save()
 
 
+@staff_required
 def add_task_to_contest_view(request, contest, category=None):
     if request.method == 'POST':
         form = forms.CreateTaskForm(data=request.POST, files=request.FILES)
         create_text_checker_form = forms.CreateTextCheckerForm(data=request.POST)
         create_regexp_checker_form = forms.CreateRegExpCheckerForm(data=request.POST)
+        create_simple_py_checker_form = forms.SimplePyCheckerForm(data=request.POST)
         if form.is_valid():
             checker_type = form.cleaned_data['checker_type']
             if checker_type == 'text':
                 checker_form = create_text_checker_form
             elif checker_type == 'regexp':
                 checker_form = create_regexp_checker_form
+            elif checker_type == 'simple_py':
+                checker_form = create_simple_py_checker_form
             else:
                 checker_form = None
 
@@ -724,15 +992,19 @@ def add_task_to_contest_view(request, contest, category=None):
         form = forms.CreateTaskForm()
         create_text_checker_form = forms.CreateTextCheckerForm()
         create_regexp_checker_form = forms.CreateRegExpCheckerForm()
+        create_simple_py_checker_form = forms.SimplePyCheckerForm()
 
+    participant = contest.get_participant_for_user(request.user)
     return render(request, 'contests/create_task.html', {
         'current_contest': contest,
 
         'contest': contest,
+        'participant': participant,
         'category': category,
         'form': form,
         'create_text_checker_form': create_text_checker_form,
         'create_regexp_checker_form': create_regexp_checker_form,
+        'create_simple_py_checker_form': create_simple_py_checker_form,
     })
 
 
@@ -808,7 +1080,7 @@ def edit(request, contest_id):
         contest_data = copy.copy(contest.__dict__)
 
         by_categories = contest.tasks_opening_policies.instance_of(tasks_models.ByCategoriesTasksOpeningPolicy).first()
-        contest_data['by_categories_tasks_opening_policy'] =\
+        contest_data['by_categories_tasks_opening_policy'] = \
             '-' if by_categories is None else ['T', 'E'][by_categories.opens_for_all_participants]
 
         manual = contest.tasks_opening_policies.instance_of(tasks_models.ManualTasksOpeningPolicy).first()
@@ -816,13 +1088,16 @@ def edit(request, contest_id):
 
         form = forms.TaskBasedContestForm(initial=contest_data)
 
+    participant = contest.get_participant_for_user(request.user)
     return render(request, 'contests/edit.html', {
         'current_contest': contest,
+        'participant': participant,
 
         'form': form
     })
 
 
+@staff_required
 def task_file(request, contest_id, file_id):
     contest = get_object_or_404(models.TaskBasedContest, pk=contest_id)
     if not contest.is_visible_in_list and not request.user.is_staff:
@@ -832,10 +1107,14 @@ def task_file(request, contest_id, file_id):
     if not contest.has_task(file.task):
         return HttpResponseNotFound()
 
-    if not contest.is_started() and not request.user.is_staff:
-        return HttpResponseForbidden('Contest is not started')
+    if file.is_private:
+        return HttpResponseForbidden()
 
     participant = contest.get_participant_for_user(request.user)
+
+    if not contest.is_started_for(participant) and not request.user.is_staff:
+        return HttpResponseForbidden('Contest is not started')
+
     if not is_task_open(contest, file.task, participant) and not request.user.is_staff:
         return HttpResponseForbidden('Task is closed')
 
@@ -859,6 +1138,7 @@ def delete_task(request, contest_id, task_id):
     return redirect(urlresolvers.reverse('contests:tasks', args=[contest.id]))
 
 
+@staff_required
 def news(request, contest_id, news_id):
     contest = get_object_or_404(models.Contest, pk=contest_id)
     news = get_object_or_404(models.News, pk=news_id)
@@ -870,10 +1150,12 @@ def news(request, contest_id, news_id):
     if not news.is_published and not request.user.is_staff:
         return HttpResponseNotFound()
 
+    participant = contest.get_participant_for_user(request.user)
     return render(request, 'contests/news.html', {
         'current_contest': contest,
 
         'contest': contest,
+        'participant': participant,
         'news': news
     })
 
@@ -894,10 +1176,12 @@ def add_news(request, contest_id):
     else:
         form = forms.NewsForm(initial={'publish_time': datetime.datetime.now()})
 
+    participant = contest.get_participant_for_user(request.user)
     return render(request, 'contests/add_news.html', {
         'current_contest': contest,
 
         'contest': contest,
+        'participant': participant,
         'form': form,
     })
 
@@ -929,10 +1213,12 @@ def edit_news(request, contest_id, news_id):
     else:
         form = forms.NewsForm(initial=news.__dict__)
 
+    participant = contest.get_participant_for_user(request.user)
     return render(request, 'contests/edit_news.html', {
         'current_contest': contest,
 
         'contest': contest,
+        'participant': participant,
         'news': news,
         'form': form,
     })
@@ -944,6 +1230,7 @@ def task_opens(request, contest_id, task_id):
     task = get_object_or_404(tasks_models.Task, pk=task_id)
     if not contest.has_task(task):
         return HttpResponseNotFound()
+    task.is_task_open_for_all = is_task_open_for_all(contest, task)
 
     participants = sorted(contest.participants.all(), key=operator.attrgetter('name'))
     for participant in participants:
@@ -951,14 +1238,22 @@ def task_opens(request, contest_id, task_id):
 
     is_manual_task_opening_available = is_manual_task_opening_available_in_contest(contest)
 
+    participant = contest.get_participant_for_user(request.user)
     return render(request, 'contests/task_opens.html', {
         'current_contest': contest,
 
         'contest': contest,
+        'participant': participant,
         'task': task,
         'participants': participants,
         'is_manual_task_opening_available': is_manual_task_opening_available,
     })
+
+
+@staff_required
+@require_POST
+def open_task_for_all(request, contest_id, task_id):
+    return open_task(request, contest_id, task_id, None)
 
 
 @staff_required
@@ -973,9 +1268,11 @@ def open_task(request, contest_id, task_id, participant_id):
         messages.error(request, 'Manual task opening is forbidden for this contest')
         return redirect(urlresolvers.reverse('contests:task_opens', args=[contest.id, task.id]))
 
-    participant = get_object_or_404(models.AbstractParticipant, pk=participant_id)
-    if participant.contest_id != contest.id:
-        return HttpResponseNotFound()
+    participant = None
+    if participant_id is not None:
+        participant = get_object_or_404(models.AbstractParticipant, pk=participant_id)
+        if participant.contest_id != contest.id:
+            return HttpResponseNotFound()
 
     qs = tasks_models.ManualOpenedTask.objects.filter(
         contest=contest,
@@ -988,13 +1285,15 @@ def open_task(request, contest_id, task_id, participant_id):
         if is_task_open(contest, task, participant):
             messages.warning(request, 'Task is opened for this participant not manually, you can\'t close it')
         else:
-            messages.success(request, 'Task is closed for %s' % participant.name)
+            for_whom = participant.name if participant is not None else 'everyone'
+            messages.success(request, 'Task is closed for %s' % for_whom)
     else:
         tasks_models.ManualOpenedTask(
             contest=contest,
             task=task,
             participant=participant
         ).save()
-        messages.success(request, 'Task is opened for %s' % participant.name)
+        for_whom = participant.name if participant is not None else 'everyone'
+        messages.success(request, 'Task is opened for %s' % for_whom)
 
     return JsonResponse({'done': 'ok'})

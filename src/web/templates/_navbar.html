@@ -1,5 +1,6 @@
 {% load staticfiles %}
 {% load i18n %}
+{% load contest %}
 
 <nav class="navbar navbar-default">
     <div class="container-fluid">
@@ -10,22 +11,22 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand hidden-sm" href="{% url 'home' %}">
-                <img src="{% static 'images/kaspersky.png' %}">
-            </a>
+            <a class="navbar-brand hidden-sm" href="{% url 'home' %}">RuCTF-2017</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li><a href="{% url 'contests:list' %}">{% trans 'Contests' %}</a></li>
-                <li><a href="{% url 'teams:list' %}">{% trans 'Teams' %}</a></li>
+                {#<li><a href="{% url 'teams:list' %}">{% trans 'Teams' %}</a></li>#}
                 {% if current_contest %}
-                    {% if current_contest.show_menu_on_top or user.is_staff %}
+                    {% if current_contest|is_started_for:participant or user.is_staff %}
                         <li class="divider-vertical"></li>
                         <li class="nav-divider"></li>
                         <li class="active"><a href="{% url 'contests:contest' current_contest.id %}">{{ current_contest.name|truncatechars:30 }}<span class="hidden-sm hidden-md hidden-lg">:</span></a></li>
                         <li><a href="{% url 'contests:tasks' current_contest.id %}">{% trans 'Tasks' %}</a></li>
-                        <li><a href="{% url 'contests:scoreboard' current_contest.id %}">{% trans 'Scoreboard' %}</a></li>
-                        {% if user.is_staff and current_contest.is_started %}
+                        {% if user.is_staff %}
+                            <li><a href="{% url 'contests:scoreboard' current_contest.id %}"><span class="text-danger">{% trans 'Scoreboard' %}</span></a></li>
+                        {% endif %}
+                        {% if user.is_staff and current_contest|is_started_for:participant %}
                             <li><a href="{% url 'contests:attempts' current_contest.id %}"><span class="text-danger">{% trans 'Attempts' %}</span></a></li>
                         {% endif %}
                         {% if user.is_staff %}
@@ -42,7 +43,7 @@
                         <ul class="dropdown-menu">
                             <li><a href="{% url 'users:profile' user.id %}">{% trans 'Profile' %}</a></li>
                             <li><a href="{% url 'users:edit' %}">{% trans 'Edit settings' %}</a></li>
-                            <li><a href="{% url 'teams:create' %}">{% trans 'Create team' %}</a></li>
+                            {# <li><a href="{% url 'teams:create' %}">{% trans 'Create team' %}</a></li> #}
                             {% if user.is_staff %}
                                 <li><a href="{% url 'contests:create' %}" class="text-danger">{% trans 'Create contest' %}</a></li>
                             {% endif %}
@@ -54,6 +55,25 @@
                     <li><a href="{% url 'users:login' %}?next={{ request.path }}">{% trans 'Login' %}</a></li>
                     <li><a href="{% url 'users:register' %}">{% trans 'Register' %}</a></li>
                 {% endif %}
+
+                <li class="nav-divider"></li>
+                <li>
+                    <a>
+                        <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+                            <input name="next" type="hidden" value="{{ redirect_to }}" />
+                            <select name="language" onchange="this.form.submit()">
+                                {% get_current_language as LANGUAGE_CODE %}
+                                {% get_available_languages as LANGUAGES %}
+                                {% get_language_info_list for LANGUAGES as languages %}
+                                {% for language in languages %}
+                                    <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                                        {{ language.name_local }} ({{ language.code }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>

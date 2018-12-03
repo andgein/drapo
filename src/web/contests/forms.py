@@ -199,6 +199,7 @@ class ManualRegisterParticipant(forms.Form):
             'style': 'width: 500px; height: 30px;'
         })
     )
+    #TODO: add fields to overwrite start_date/finish_date
 
 
 class CreateTaskForm(forms.Form):
@@ -319,6 +320,21 @@ class CreateRegExpCheckerForm(AbstractCheckerForm):
         )
 
 
+class SimplePyCheckerForm(AbstractCheckerForm):
+    source = forms.CharField(
+        label=_('Checker source'),
+        help_text=_('Must contain function check(attempt, context) returning bool.'
+                    'Answer to check is in attempt.answer'),
+        required=False,
+        widget=forms.Textarea()
+    )
+
+    def get_checker(self):
+        return tasks_models.SimplePyChecker(
+            source=self.cleaned_data['source']
+        )
+
+
 class AttemptsSearchForm(forms.Form):
     pattern = forms.CharField(
         label=_('Search'),
@@ -329,6 +345,22 @@ class AttemptsSearchForm(forms.Form):
             'class': 'form-control-short form-control-small'
         })
     )
+
+
+class ScoreboardFilterForm(forms.Form):
+    region = forms.ModelChoiceField(
+        label=_('Region'),
+        queryset=None,
+        empty_label='All',
+        required=False,
+        widget=forms.Select(attrs={
+            'class': 'form-control-short'
+        })
+    )
+
+    def __init__(self, contest, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['region'].queryset = contest.regions
 
 
 class NewsForm(forms.Form):

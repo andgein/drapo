@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-03 17:36+0500\n"
+"POT-Creation-Date: 2017-03-06 08:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,127 +18,127 @@ msgstr ""
 "10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%"
 "100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: .\contests\forms.py:12
+#: contests/forms.py:12
 msgid "Select team"
 msgstr "Выбрать команду"
 
-#: .\contests\forms.py:28
+#: contests/forms.py:28
 msgid "Invite hash"
 msgstr "Хеш приглашения"
 
-#: .\contests\forms.py:39
+#: contests/forms.py:39
 msgid "Category name"
 msgstr "Название категории"
 
-#: .\contests\forms.py:48 .\contests\forms.py:74
+#: contests/forms.py:48 contests/forms.py:74
 msgid "Description"
 msgstr "Описание"
 
-#: .\contests\forms.py:57 .\contests\forms.py:206
+#: contests/forms.py:57 contests/forms.py:206
 msgid "Name"
 msgstr "Название"
 
-#: .\contests\forms.py:67
+#: contests/forms.py:67
 msgid "Short description"
 msgstr "Короткое описание"
 
-#: .\contests\forms.py:68
+#: contests/forms.py:68
 msgid "Shows on main page"
 msgstr "Показывается на главной странице"
 
-#: .\contests\forms.py:75
+#: contests/forms.py:75
 msgid "Full description. Supports MarkDown"
 msgstr "Полное описание. Поддерживается MarkDown"
 
-#: .\contests\forms.py:81
+#: contests/forms.py:81
 msgid "Visible in list?"
 msgstr "Виден в списке"
 
-#: .\contests\forms.py:98
+#: contests/forms.py:98
 msgid "Participation mode"
 msgstr "Режим участия"
 
-#: .\contests\forms.py:109
+#: contests/forms.py:109
 msgid "Start"
 msgstr "Начало"
 
-#: .\contests\forms.py:111
+#: contests/forms.py:111
 msgid "Contest start time"
 msgstr "Время начала соревнования"
 
-#: .\contests\forms.py:121
+#: contests/forms.py:121
 msgid "Finish"
 msgstr "Конец"
 
-#: .\contests\forms.py:123
+#: contests/forms.py:123
 msgid "Contest finish time"
 msgstr "Время окончания соревнования"
 
-#: .\contests\forms.py:133
+#: contests/forms.py:133
 msgid "Registration start"
 msgstr "Начало регистрации"
 
-#: .\contests\forms.py:134
+#: contests/forms.py:134
 msgid ""
 "Contest registration start time, only for open and moderated registrations"
 msgstr ""
 "Время начала регистрации на соревновование. Только для открытой и "
 "модерируемой регистрации"
 
-#: .\contests\forms.py:145
+#: contests/forms.py:145
 msgid "Registration finish"
 msgstr "Конец регистрации"
 
-#: .\contests\forms.py:146
+#: contests/forms.py:146
 msgid ""
 "Contest registration finish time, only for open and moderated registrations"
 msgstr ""
 "Время окончания регистрации на соревнование. Только для открытой и "
 "модерируемой регистрации"
 
-#: .\contests\forms.py:157
+#: contests/forms.py:157
 msgid "Task grouping"
 msgstr "Группировка заданий"
 
-#: .\contests\forms.py:158
+#: contests/forms.py:158
 msgid "Enable categories or list all tasks one by one"
 msgstr "Включить категории или перечислить задания одно за другим"
 
-#: .\contests\forms.py:169
+#: contests/forms.py:169
 msgid "Tasks opening policy: next task opening"
 msgstr "Политика открытия заданий: открывается следующее"
 
-#: .\contests\forms.py:172 .\contests\forms.py:184
+#: contests/forms.py:172 contests/forms.py:184
 msgid "No"
 msgstr "Нет"
 
-#: .\contests\forms.py:172
+#: contests/forms.py:172
 msgid "Only for team who solved the task"
 msgstr "Только для команды, которая решила задание"
 
-#: .\contests\forms.py:172
+#: contests/forms.py:172
 msgid "Task will be open for everyone"
 msgstr "Задание откроется для всех"
 
-#: .\contests\forms.py:180
+#: contests/forms.py:180
 msgid "Tasks opening policy: manual"
 msgstr "Политика открытия заданий: вручную"
 
-#: .\contests\forms.py:182
+#: contests/forms.py:182
 msgid "Can admins open tasks manually for everyone or one participant"
 msgstr ""
 "Могут ли администраторы открывать задания вручную для всех или конкретного "
 "участника"
 
-#: .\contests\forms.py:184
+#: contests/forms.py:184
 msgid "Yes"
 msgstr "Да"
 
-#: .\contests\forms.py:194
+#: contests/forms.py:194
 msgid "Link"
 msgstr "Ссылка"
 
-#: .\contests\forms.py:197
+#: contests/forms.py:197
 msgid ""
 "Link to user or team for registering to the contest. I.e. http://drapo.io/"
 "users/1"
@@ -146,124 +146,128 @@ msgstr ""
 "Ссылка на пользователя или команду для регистрации в соревновании. Например, "
 "http://drapo.io/users/1"
 
-#: .\contests\forms.py:207
+#: contests/forms.py:207
 msgid "Shows on tasks page"
 msgstr "Показывается на странице с заданиями"
 
-#: .\contests\forms.py:215
+#: contests/forms.py:215
 msgid "Max score"
 msgstr "Максимальный балл"
 
-#: .\contests\forms.py:224 .\contests\forms.py:334
+#: contests/forms.py:224 contests/forms.py:350
 msgid "Title"
 msgstr "Заголовок"
 
-#: .\contests\forms.py:225
+#: contests/forms.py:225
 msgid "Statement title. Supports markdown and substitutes"
 msgstr "Заголовок условия. Поддерживается markdown и подстановки"
 
-#: .\contests\forms.py:229
+#: contests/forms.py:229
 msgid "Template"
 msgstr "Шаблон"
 
-#: .\contests\forms.py:230
+#: contests/forms.py:230
 msgid "Statement template. Supports markdown and substitutes"
 msgstr "Шаблон условия. Поддерживается markdown и подстановки"
 
-#: .\contests\forms.py:235
+#: contests/forms.py:235
 msgid "Files"
 msgstr "Файлы"
 
-#: .\contests\forms.py:236
+#: contests/forms.py:236
 msgid "Files will be attached to the statement. Up to 10 files"
 msgstr "Файлы будут прикреплены к условию. До 10 файлов"
 
-#: .\contests\forms.py:259 .\contests\templates\contests\attempts.html:24
-#: .\taskbased\tasks\forms.py:8 .\taskbased\tasks\forms.py:20
+#: contests/forms.py:259 contests/templates/contests/attempts.html:24
+#: taskbased/tasks/forms.py:8 taskbased/tasks/forms.py:20
 msgid "Answer"
 msgstr "Ответ"
 
-#: .\contests\forms.py:266
+#: contests/forms.py:267
 msgid "Is case sensitive"
 msgstr "Регистрозависимый"
 
-#: .\contests\forms.py:279
+#: contests/forms.py:280
 msgid "Pattern"
 msgstr "Шаблон"
 
-#: .\contests\forms.py:280
+#: contests/forms.py:282
 msgid "Regular expression for matching, don't need ^ and $"
 msgstr "Регулярное выражение, без ^ и $"
 
-#: .\contests\forms.py:287
+#: contests/forms.py:289
 msgid "Ignore case"
 msgstr "Игнорировать регистр"
 
-#: .\contests\forms.py:288
+#: contests/forms.py:290
 msgid "Python's re.IGNORECASE (re.I)"
 msgstr ""
 
-#: .\contests\forms.py:293
+#: contests/forms.py:295
 msgid "Multiline"
 msgstr "Многострочный"
 
-#: .\contests\forms.py:294
+#: contests/forms.py:296
 msgid "Python's re.MULTILINE (re.M)"
 msgstr ""
 
-#: .\contests\forms.py:299
+#: contests/forms.py:301
 msgid "Dot (.) includes newline character"
 msgstr "Точка включает символ перевода строки"
 
-#: .\contests\forms.py:300
+#: contests/forms.py:302
 msgid "Python's re.DOTALL (re.S)"
 msgstr ""
 
-#: .\contests\forms.py:305
+#: contests/forms.py:307
 msgid "Verbose"
 msgstr "Режим verbose"
 
-#: .\contests\forms.py:306
+#: contests/forms.py:308
 msgid "Python's re.VERBOSE (re.X)"
 msgstr ""
 
-#: .\contests\forms.py:322 .\contests\templates\contests\attempts.html:16
+#: contests/forms.py:324
+msgid "Checker source"
+msgstr "Исходный код чекера"
+
+#: contests/forms.py:338 contests/templates/contests/attempts.html:16
 msgid "Search"
 msgstr "Искать"
 
-#: .\contests\forms.py:342
+#: contests/forms.py:358
 msgid "Text"
 msgstr "Текст"
 
-#: .\contests\forms.py:343
+#: contests/forms.py:359
 msgid "Supports markdown"
 msgstr "Поддерживает markdown"
 
-#: .\contests\forms.py:348
+#: contests/forms.py:364
 msgid "Is published"
 msgstr "Опубликовано"
 
-#: .\contests\forms.py:353
+#: contests/forms.py:369
 msgid "Publish time"
 msgstr "Время публикации"
 
-#: .\contests\templates\contests\_contest_header.html:16
+#: contests/templates/contests/_contest_header.html:16
 msgid "Finished"
 msgstr "Закончено"
 
-#: .\contests\templates\contests\_contest_header.html:19
+#: contests/templates/contests/_contest_header.html:19
 msgid "Running"
 msgstr "Идёт"
 
-#: .\contests\templates\contests\_contest_header.html:35
+#: contests/templates/contests/_contest_header.html:35
 msgid "You are registered to the contest"
 msgstr "Вы зарегистрированы на соревнование"
 
-#: .\contests\templates\contests\_contest_header.html:37
+#: contests/templates/contests/_contest_header.html:37
 msgid "You are waiting for approving by organizers"
 msgstr "Ваша регистрация ожидает подтверждения"
 
-#: .\contests\templates\contests\_contest_header.html:41
+#: contests/templates/contests/_contest_header.html:41
 #, python-format
 msgid ""
 "\n"
@@ -272,164 +276,167 @@ msgid ""
 "                    "
 msgstr ""
 "\n"
-"                        <nobr>как участник команды <a href=\"%(participant."
-"get_absolute_url)s\">%(participant.name)s</a></nobr>\n"
+"                        <nobr>как участник команды <a href="
+"\"%(participant.get_absolute_url)s\">%(participant.name)s</a></nobr>\n"
 "                    "
 
-#: .\contests\templates\contests\_contest_header.html:49
-#: .\templates\_navbar.html:54 .\users\templates\users\login.html:9
-#: .\users\templates\users\login.html:14
-#: .\users\templates\users\register.html:13
+#: contests/templates/contests/_contest_header.html:49
+#: templates/_navbar.html:54 users/templates/users/login.html:9
+#: users/templates/users/login.html:14 users/templates/users/register.html:13
 msgid "Login"
 msgstr "Войти"
 
-#: .\contests\templates\contests\_contest_header.html:50
-#: .\contests\templates\contests\_contest_header.html:55
+#: contests/templates/contests/_contest_header.html:50
+#: contests/templates/contests/_contest_header.html:55
 msgid "or"
 msgstr "или"
 
-#: .\contests\templates\contests\_contest_header.html:51
+#: contests/templates/contests/_contest_header.html:51
 msgid "register"
 msgstr "зарегистрироваться"
 
-#: .\contests\templates\contests\_contest_header.html:52
+#: contests/templates/contests/_contest_header.html:52
 msgid "to join the contest"
 msgstr "чтобы присоединиться к соревнованию"
 
-#: .\contests\templates\contests\_contest_header.html:54
+#: contests/templates/contests/_contest_header.html:54
 msgid "You can"
 msgstr "Вы можете"
 
-#: .\contests\templates\contests\_contest_header.html:54
+#: contests/templates/contests/_contest_header.html:54
 msgid "register your team"
 msgstr "зарегистрировать команду"
 
-#: .\contests\templates\contests\_contest_header.html:56
+#: contests/templates/contests/_contest_header.html:56
 msgid "join some one"
 msgstr "присоединиться к существущей"
 
-#: .\contests\templates\contests\_contest_header.html:61
+#: contests/templates/contests/_contest_header.html:61
 msgid "Register to the contest"
 msgstr "Зарегистрироваться"
 
-#: .\contests\templates\contests\_contest_header.html:65
+#: contests/templates/contests/_contest_header.html:65
 msgid "Registration will open"
 msgstr "Регистрация откроется"
 
-#: .\contests\templates\contests\_contest_header.html:67
+#: contests/templates/contests/_contest_header.html:67
 msgid "Sorry, registration to the contest is closed already."
 msgstr "К сожалению, регистрация завершена"
 
-#: .\contests\templates\contests\attempts.html:12 .\templates\_navbar.html:29
+#: contests/templates/contests/attempts.html:12 templates/_navbar.html:29
 msgid "Attempts"
 msgstr "Попытки"
 
-#: .\contests\templates\contests\attempts.html:22
+#: contests/templates/contests/attempts.html:22
 msgid "Participant"
 msgstr "Участник"
 
-#: .\contests\templates\contests\attempts.html:23
+#: contests/templates/contests/attempts.html:23
 msgid "Task"
 msgstr "Задание"
 
-#: .\contests\templates\contests\attempts.html:25
+#: contests/templates/contests/attempts.html:25
 msgid "Status"
 msgstr "Статус"
 
-#: .\contests\templates\contests\attempts.html:30
+#: contests/templates/contests/attempts.html:30
 msgid "No attempts found by this pattern."
 msgstr "Попыток не найдено"
 
-#: .\contests\templates\contests\attempts.html:30
+#: contests/templates/contests/attempts.html:30
 msgid "Clear filter?"
 msgstr "Очистить поиск?"
 
-#: .\contests\templates\contests\attempts.html:32
+#: contests/templates/contests/attempts.html:32
 msgid "No attempts a while... Wait for answers by participants"
 msgstr "Попыток пока нет. Ожидает ответов от участников"
 
-#: .\contests\templates\contests\attempts.html:39
+#: contests/templates/contests/attempts.html:39
 msgid "Attempt id"
 msgstr "ID попытки"
 
-#: .\contests\templates\contests\attempts.html:62
+#: contests/templates/contests/attempts.html:62
 msgid "Correct"
 msgstr "Верно"
 
-#: .\contests\templates\contests\attempts.html:70
+#: contests/templates/contests/attempts.html:70
 msgid "Wrong"
 msgstr "Неверно"
 
-#: .\contests\templates\contests\attempts.html:77
+#: contests/templates/contests/attempts.html:77
 msgid "Not checked"
 msgstr "Непроверено"
 
-#: .\contests\templates\contests\contest.html:40
+#: contests/templates/contests/contest.html:41
 msgid "+ Add news"
 msgstr "+ Добавить новость"
 
-#: .\contests\templates\contests\contest.html:50
+#: contests/templates/contests/contest.html:51
 msgid "Registered teams"
 msgstr "Зарегистрированные команды"
 
-#: .\contests\templates\contests\contest.html:57
+#: contests/templates/contests/contest.html:58
 msgid "No teams"
 msgstr "Никто не зарегистрировался"
 
-#: .\contests\templates\contests\contest.html:60
-#: .\contests\templates\contests\contest.html:76
+#: contests/templates/contests/contest.html:61
+#: contests/templates/contests/contest.html:77
 #, python-format
 msgid "a while, <a href=\"%(join_url)s\">be the first</a>!"
 msgstr "<a href=\"%(join_url)s\">будьте первым</a>!"
 
-#: .\contests\templates\contests\contest.html:65 .\templates\_navbar.html:32
+#: contests/templates/contests/contest.html:66 templates/_navbar.html:32
 msgid "Participants"
 msgstr "Участники"
 
-#: .\contests\templates\contests\contest.html:73
+#: contests/templates/contests/contest.html:74
 msgid "No participants"
 msgstr "Пока никто не зарегистрировался"
 
-#: .\contests\templates\contests\create.html:5
-#: .\contests\templates\contests\create.html:7 .\templates\_navbar.html:47
+#: contests/templates/contests/create.html:5
+#: contests/templates/contests/create.html:7 templates/_navbar.html:47
 msgid "Create contest"
 msgstr "Добавить соревнование"
 
-#: .\contests\templates\contests\create_category.html:8
-#: .\contests\templates\contests\create_category.html:13
+#: contests/templates/contests/create_category.html:8
+#: contests/templates/contests/create_category.html:13
 msgid "Create category"
 msgstr "Создать категорию"
 
-#: .\contests\templates\contests\create_task.html:8
+#: contests/templates/contests/create_task.html:8
 msgid "Add task"
 msgstr "Добавить задание"
 
-#: .\contests\templates\contests\create_task.html:17
+#: contests/templates/contests/create_task.html:17
 msgid "Text checker"
 msgstr "Сравнение со строкой"
 
-#: .\contests\templates\contests\create_task.html:20
+#: contests/templates/contests/create_task.html:20
 msgid "RegExp checker"
 msgstr "Сравнению с регвыром"
 
-#: .\contests\templates\contests\create_task.html:35
+#: contests/templates/contests/create_task.html:23
+msgid "SimplePy checker"
+msgstr "Простой скриптовый чекер"
+
+#: contests/templates/contests/create_task.html:41
 msgid "Create task"
 msgstr "Добавить задание"
 
-#: .\contests\templates\contests\edit.html:5
+#: contests/templates/contests/edit.html:5
 msgid "Edit contest"
 msgstr "Редактировать соревнование"
 
-#: .\contests\templates\contests\edit.html:7
-#: .\contests\templates\contests\edit_category.html:13
+#: contests/templates/contests/edit.html:7
+#: contests/templates/contests/edit_category.html:13
 msgid "Save"
 msgstr "Сохранить"
 
-#: .\contests\templates\contests\edit_attempt.html:6
+#: contests/templates/contests/edit_attempt.html:6
 msgid "Edit attempt"
 msgstr "Редактировать попытку"
 
-#: .\contests\templates\contests\edit_attempt.html:13
+#: contests/templates/contests/edit_attempt.html:13
 #, python-format
 msgid ""
 "\n"
@@ -437,8 +444,8 @@ msgid ""
 "                <a href=\"%(attempt.participant.get_absolute_url)s\"><strong>"
 "%(attempt.participant.name)s</strong></a>\n"
 "                for\n"
-"                <a href=\"%(attempt.task.name.get_absolute_url)s\"><strong>%"
-"(attempt.task.name)s</strong></a>\n"
+"                <a href=\"%(attempt.task.name.get_absolute_url)s\"><strong>"
+"%(attempt.task.name)s</strong></a>\n"
 "            "
 msgstr ""
 "\n"
@@ -446,352 +453,352 @@ msgstr ""
 "                <a href=\"%(attempt.participant.get_absolute_url)s\"><strong>"
 "%(attempt.participant.name)s</strong></a>\n"
 "                для\n"
-"                <a href=\"%(attempt.task.name.get_absolute_url)s\"><strong>%"
-"(attempt.task.name)s</strong></a>\n"
+"                <a href=\"%(attempt.task.name.get_absolute_url)s\"><strong>"
+"%(attempt.task.name)s</strong></a>\n"
 "            "
 
-#: .\contests\templates\contests\edit_attempt.html:24
+#: contests/templates/contests/edit_attempt.html:24
 msgid "Save (and mark as checked)"
 msgstr "Сохранить (и пометить проверенным)"
 
-#: .\contests\templates\contests\edit_attempt.html:25
+#: contests/templates/contests/edit_attempt.html:25
 msgid "Just save"
 msgstr "Просто сохранить"
 
-#: .\contests\templates\contests\edit_category.html:8
+#: contests/templates/contests/edit_category.html:8
 msgid "Edit category"
 msgstr "Редактировать категорию"
 
-#: .\contests\templates\contests\edit_category.html:17
+#: contests/templates/contests/edit_category.html:17
 msgid "Delete category"
 msgstr "Удалить категорию"
 
-#: .\contests\templates\contests\list.html:18
+#: contests/templates/contests/list.html:18
 msgid "Enter"
 msgstr "Войти"
 
-#: .\contests\templates\contests\list.html:21 .\templates\_navbar.html:27
+#: contests/templates/contests/list.html:21 templates/_navbar.html:27
 msgid "Scoreboard"
 msgstr "Результаты"
 
-#: .\contests\templates\contests\list.html:27
+#: contests/templates/contests/list.html:27
 msgid "You are participating"
 msgstr "Вы участвуете"
 
-#: .\contests\templates\contests\list.html:29
+#: contests/templates/contests/list.html:29
 msgid "Register for participation"
 msgstr "Зарегистрируйтесь для участия"
 
-#: .\contests\templates\contests\list.html:43
+#: contests/templates/contests/list.html:43
 msgid "No contests now, come later"
 msgstr "Пока нет контестов, зайдите позже"
 
-#: .\taskbased\tasks\forms.py:29
+#: taskbased/tasks/forms.py:29
 msgid "Checked?"
 msgstr "Проверено?"
 
-#: .\taskbased\tasks\forms.py:34
+#: taskbased/tasks/forms.py:34
 msgid "Score"
 msgstr "Балл"
 
-#: .\taskbased\tasks\forms.py:42
+#: taskbased/tasks/forms.py:42
 msgid "Public comment"
 msgstr "Публичный комментарий"
 
-#: .\taskbased\tasks\forms.py:43
+#: taskbased/tasks/forms.py:43
 msgid "Visible to participant"
 msgstr "Виден для участника"
 
-#: .\taskbased\tasks\forms.py:49
+#: taskbased/tasks/forms.py:49
 msgid "Private comment"
 msgstr "Приватный комментарий"
 
-#: .\taskbased\tasks\forms.py:50
+#: taskbased/tasks/forms.py:50
 msgid "Visible only to admins"
 msgstr "Виден только администраторам"
 
-#: .\taskbased\tasks\models.py:69 .\taskbased\tasks\models.py:71
+#: taskbased/tasks/models.py:78 taskbased/tasks/models.py:80
 msgid "Markdown with substitutes"
 msgstr "Markdown с подстановками"
 
-#: .\taskbased\tasks\models.py:95
+#: taskbased/tasks/models.py:104
 msgid "Correct answer"
 msgstr "Правильный ответ"
 
-#: .\taskbased\tasks\models.py:97
+#: taskbased/tasks/models.py:106
 msgid "Is answer case sensitive"
 msgstr "Является ли ответ регистрозависимым"
 
-#: .\teams\forms.py:8
+#: teams/forms.py:8
 msgid "Team name"
 msgstr "Название команды"
 
-#: .\teams\templates\teams\team.html:12
+#: teams/templates/teams/team.html:12
 msgid "Your team"
 msgstr "Ваша команда"
 
-#: .\teams\templates\teams\team.html:17
+#: teams/templates/teams/team.html:17
 msgid "Edit team"
 msgstr "Редактировать команду"
 
-#: .\teams\templates\teams\team.html:25
+#: teams/templates/teams/team.html:25
 msgid "Invite users to your team, send them the link"
 msgstr "Пригласите участников в вашу команду, отправив им ссылку"
 
-#: .\teams\templates\teams\team.html:27
+#: teams/templates/teams/team.html:27
 msgid "or give them invite hash"
 msgstr "или дайте им хеш приглашения"
 
-#: .\teams\templates\teams\team.html:30
+#: teams/templates/teams/team.html:30
 msgid "Captain can't leave the team."
 msgstr "Капитан не может покинуть команду"
 
-#: .\teams\templates\teams\team.html:32
+#: teams/templates/teams/team.html:32
 msgid "You can also"
 msgstr "Вы также можете"
 
-#: .\teams\templates\teams\team.html:32
+#: teams/templates/teams/team.html:32
 msgid "leave the team"
 msgstr "покинуть команду"
 
-#: .\teams\templates\teams\team.html:39
+#: teams/templates/teams/team.html:39
 msgid "Members"
 msgstr "Участники"
 
-#: .\teams\templates\teams\team.html:44
+#: teams/templates/teams/team.html:44
 msgid "Captain"
 msgstr "Капитан"
 
-#: .\teams\templates\teams\team.html:52
+#: teams/templates/teams/team.html:52
 msgid "Leave team"
 msgstr "Покинуть команду"
 
-#: .\teams\templates\teams\team.html:58
+#: teams/templates/teams/team.html:58
 msgid "Remove member"
 msgstr "Убрать участника"
 
-#: .\teams\templates\teams\team.html:67
+#: teams/templates/teams/team.html:67
 msgid "Participated in"
 msgstr "Участвовала в"
 
-#: .\teams\templates\teams\team.html:74
+#: teams/templates/teams/team.html:74
 msgid "Team has not been participated in contests yet"
 msgstr "Команда ещё не участвовала в соревнованиях"
 
-#: .\templates\_navbar.html:19
+#: templates/_navbar.html:19
 msgid "Contests"
 msgstr "Соревнования"
 
-#: .\templates\_navbar.html:20 .\users\templates\users\profile.html:19
+#: templates/_navbar.html:20 users/templates/users/profile.html:19
 msgid "Teams"
 msgstr "Команды"
 
-#: .\templates\_navbar.html:26
+#: templates/_navbar.html:26
 msgid "Tasks"
 msgstr "Задания"
 
-#: .\templates\_navbar.html:43
+#: templates/_navbar.html:43
 msgid "Profile"
 msgstr "Профиль"
 
-#: .\templates\_navbar.html:44
+#: templates/_navbar.html:44
 msgid "Edit settings"
 msgstr "Настройки"
 
-#: .\templates\_navbar.html:45
+#: templates/_navbar.html:45
 msgid "Create team"
 msgstr "Создать команду"
 
-#: .\templates\_navbar.html:50
+#: templates/_navbar.html:50
 msgid "Logout"
 msgstr "Выйти"
 
-#: .\templates\_navbar.html:55
+#: templates/_navbar.html:55
 msgid "Register"
 msgstr "Зарегистрироваться"
 
-#: .\users\forms.py:8 .\users\forms.py:70
+#: users/forms.py:8 users/forms.py:70
 msgid "Email"
 msgstr "Эл. почта"
 
-#: .\users\forms.py:11
+#: users/forms.py:11
 msgid "Your email"
 msgstr "Эл. почта"
 
-#: .\users\forms.py:19 .\users\forms.py:31
+#: users/forms.py:19 users/forms.py:31
 msgid "Password"
 msgstr "Пароль"
 
-#: .\users\forms.py:22 .\users\forms.py:34
+#: users/forms.py:22 users/forms.py:34
 msgid "Enter password"
 msgstr "Введите пароль"
 
-#: .\users\forms.py:41
+#: users/forms.py:41
 msgid "Password again"
 msgstr "Ещё раз"
 
-#: .\users\forms.py:44
+#: users/forms.py:44
 msgid "Repeat password"
 msgstr "Повторите пароль"
 
-#: .\users\forms.py:59 .\users\forms.py:106
+#: users/forms.py:59 users/forms.py:106
 msgid "Username"
 msgstr "Имя пользователя"
 
-#: .\users\forms.py:62
+#: users/forms.py:62
 msgid "Enter username"
 msgstr "Введите имя пользователя"
 
-#: .\users\forms.py:73
+#: users/forms.py:73
 msgid "Enter email"
 msgstr "Почта"
 
-#: .\users\forms.py:79 .\users\forms.py:116
+#: users/forms.py:79 users/forms.py:116
 msgid "First name"
 msgstr "Имя"
 
-#: .\users\forms.py:82 .\users\forms.py:119
+#: users/forms.py:82 users/forms.py:119
 msgid "Your first name"
 msgstr "Ваше имя"
 
-#: .\users\forms.py:88 .\users\forms.py:125
+#: users/forms.py:88 users/forms.py:125
 msgid "Last name"
 msgstr "Фамилия"
 
-#: .\users\forms.py:91 .\users\forms.py:128
+#: users/forms.py:91 users/forms.py:128
 msgid "Your last name"
 msgstr "Ваша фамилия"
 
-#: .\users\forms.py:109
+#: users/forms.py:109
 msgid "Your username"
 msgstr "Ваше имя пользователя"
 
-#: .\users\forms.py:145
+#: users/forms.py:145
 msgid "Old password"
 msgstr "Старый пароль"
 
-#: .\users\models.py:21
+#: users/models.py:21
 msgid "username"
 msgstr ""
 
-#: .\users\models.py:24
+#: users/models.py:24
 msgid "Required. 100 characters or fewer. Letters, digits and @/./+/-/_ only."
 msgstr ""
 
-#: .\users\models.py:28
+#: users/models.py:28
 msgid ""
 "Enter a valid username. This value may contain only letters, numbers and @/./"
 "+/-/_ characters."
 msgstr ""
 
-#: .\users\models.py:33
+#: users/models.py:33
 msgid "A user with that username already exists."
 msgstr ""
 
-#: .\users\models.py:36
+#: users/models.py:36
 msgid "first name"
 msgstr ""
 
-#: .\users\models.py:37
+#: users/models.py:37
 msgid "last name"
 msgstr ""
 
-#: .\users\models.py:38
+#: users/models.py:38
 msgid "email address"
 msgstr ""
 
-#: .\users\models.py:40
+#: users/models.py:40
 msgid "staff status"
 msgstr ""
 
-#: .\users\models.py:42
+#: users/models.py:42
 msgid "Designates whether the user can log into this admin site."
 msgstr ""
 
-#: .\users\models.py:45
+#: users/models.py:45
 msgid "active"
 msgstr ""
 
-#: .\users\models.py:48
+#: users/models.py:48
 msgid ""
 "Designates whether this user should be treated as active. Unselect this "
 "instead of deleting accounts."
 msgstr ""
 
-#: .\users\models.py:52
+#: users/models.py:52
 msgid "date joined"
 msgstr ""
 
-#: .\users\models.py:60
+#: users/models.py:60
 msgid "user"
 msgstr ""
 
-#: .\users\models.py:61
+#: users/models.py:61
 msgid "users"
 msgstr ""
 
-#: .\users\templates\_footer.html:11
+#: users/templates/_footer.html:11
 msgid "Drapo is a CTF checksystem"
 msgstr "Drapo — платформа для CTF-соревнований"
 
-#: .\users\templates\_footer.html:14
+#: users/templates/_footer.html:14
 msgid ""
 "Developed and hosted by <a href=\"http://kaspersky.com\">Kaspersky Lab</a>"
 msgstr "Разработано в <a href=\"http://kaspersky.com\">Kaspersky Lab</a>"
 
-#: .\users\templates\_footer.html:18
+#: users/templates/_footer.html:18
 msgid "Contact us"
 msgstr "Напишите нам"
 
-#: .\users\templates\_footer.html:20
+#: users/templates/_footer.html:20
 msgid "Feel free to <a href=\"mailto:ctf@kasperksy.com\">write us</a>"
 msgstr "<a href=\"mailto:ctf@kasperksy.com\">Пишите нам</a> по любым вопросам"
 
-#: .\users\templates\_footer.html:24
+#: users/templates/_footer.html:24
 msgid "Time"
 msgstr "Время"
 
-#: .\users\templates\_footer.html:27
+#: users/templates/_footer.html:27
 #, python-format
 msgid "Server timezone is %(TIME_ZONE)s %(TIME_ZONE|utcoffset)s"
 msgstr "Часовой пояс на сервере {{ TIME_ZONE }} {{ TIME_ZONE|utcoffset }}"
 
-#: .\users\templates\users\login.html:15
+#: users/templates/users/login.html:15
 msgid "Registration"
 msgstr "Регистрация"
 
-#: .\users\templates\users\profile.html:12
+#: users/templates/users/profile.html:12
 msgid "Edit your profile"
 msgstr "Редактировать профиль"
 
-#: .\users\templates\users\profile.html:23
+#: users/templates/users/profile.html:23
 msgid "You are"
 msgstr "Вы"
 
-#: .\users\templates\users\profile.html:27
+#: users/templates/users/profile.html:27
 msgid "member of"
 msgstr "Участник"
 
-#: .\users\templates\users\profile.html:30
+#: users/templates/users/profile.html:30
 msgid "team"
 msgstr " "
 
-#: .\users\templates\users\profile.html:36
+#: users/templates/users/profile.html:36
 msgid "and"
 msgstr "и"
 
-#: .\users\templates\users\profile.html:44
+#: users/templates/users/profile.html:44
 msgid "You are not any team's member"
 msgstr "Вы не входите ни в какую команду"
 
-#: .\users\templates\users\profile.html:46
+#: users/templates/users/profile.html:46
 msgid "is not any team's member"
 msgstr "не входит ни в какую команду"
 
-#: .\users\templates\users\register.html:8
+#: users/templates/users/register.html:8
 msgid "Register account"
 msgstr "Создать аккаунт"
 
-#: .\users\templates\users\register.html:12
+#: users/templates/users/register.html:12
 msgid "Join"
 msgstr "Зарегистрироваться"

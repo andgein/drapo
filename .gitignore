@@ -2,6 +2,10 @@
 
 db.sqlite3
 upload/
+docker/volumes/
+
+# virtualenv
+venv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -57,3 +61,6 @@ target/
 
 # PyCharm and other JetBrains products
 .idea/
+
+# macOS
+.DS_Store

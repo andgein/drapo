@@ -1,5 +1,6 @@
 {% extends '_layout.html' %}
 
+{% load bootstrap %}
 {% load dict_filters %}
 
 {% block title %}Scoreboard &bull; {{ contest.name }}{% endblock %}
@@ -10,10 +11,16 @@
 
         <h1 class="page__header">Scoreboard</h1>
 
+        <form action="" method="GET" class="form-inline">
+            {{ form|bootstrap_inline }}
+            <button class="btn btn-success btn-inline ml10">Search</button>
+        </form>
+
         <table class="table table-stripped table-responsive">
             <thead>
                 {% if with_categories %}
                     <tr>
+                        <td></td>
                         <td></td>
                         {% for category in categories %}
                             {% if category.tasks.count > 0 %}
@@ -25,36 +32,24 @@
 
                 <tr>
                     <td><strong>Participant</strong></td>
-                    {% if with_categories %}
-                        {% for category in categories %}
-                            {% for task in category.tasks.all %}
-                                <td>
-                                    <a href="{% url 'contests:task' contest.id task.id %}">
-                                        <small title="{{ category.name }} {{ task.max_score }}: {{ task.name }}">
-                                            <strong>{{ task.max_score }}</strong>
-                                        </small>
-                                    </a>
-                                </td>
-                            {% endfor %}
-                        {% endfor %}
-                    {% else %}
-                        {% for task in tasks %}
+                    <td><strong>Score</strong></td>
+                    {% for category in categories %}
+                        {% for task in category.tasks.all %}
                             <td>
                                 <a href="{% url 'contests:task' contest.id task.id %}">
-                                    <small title="{{ task.max_score }}: {{ task.name }}">
-                                        <strong>
-                                            {{ task.max_score }}
-                                        </strong>
+                                    <small title="{{ category.name }} {{ task.max_score }}: {{ task.name }}">
+                                        <strong>{{ task.max_score }}</strong>
                                     </small>
                                 </a>
+                                <i>Решило: {{task_solved_by|item:task.id|length}}</i>
                             </td>
                         {% endfor %}
-                    {% endif %}
-                    <td><strong>Score</strong></td>
+                    {% endfor %}
                 </tr>
             </thead>
             <tbody>
                 {% for participant in participants %}
+                {% with scores=scores_by_task|item:participant.id plagiarized=plagiarized_tasks|get:participant.id %}
                     <tr>
                         <td>
                             {{ forloop.counter }}. <a href="{{ participant.get_absolute_url }}">{{ participant.name }}</a>
@@ -63,25 +58,30 @@
                                     <small class="text-danger">Disqualified</small>
                                 </div>
                             {% endif %}
+                            {% if user.is_staff and participant.id in plagiarized_from %}
+                                <div class="mt0">
+                                    <small class="text-danger">Давал списывать</small>
+                                </div>
+                            {% endif %}
+                            {% if user.is_staff and plagiarized %}
+                                <div class="mt0">
+                                    <small class="text-danger">Списывал</small>
+                                </div>
+                            {% endif %}
                         </td>
+                        <td>{{ participant_score|get:participant.id|default:0 }}</td>
 
-                        {% if with_categories %}
-                            {% for category in categories %}
-                                {% for task in category.tasks.all %}
-                                    <td>
-                                        {% if max_scored_attempt_by_participant_and_task|has_item:participant.id and max_scored_attempt_by_participant_and_task|item:participant.id|has_item:task.id %}
-                                            <small title="{{ max_scored_attempt_by_participant_and_task|item:participant.id|item:task.id|attr:'created_at' }}">
-                                                {{ max_scored_attempt_by_participant_and_task|item:participant.id|item:task.id|attr:'score' }}
-                                            </small>
-                                        {% endif %}
-                                    </td>
-                                {% endfor %}
+                        {% for category in categories %}
+                            {% for task in category.tasks.all %}
+                                <td>
+                                    <small {% if user.is_staff and task.id in plagiarized %} style="background-color: red" {% endif %}>
+                                        {{ scores|get:task.id|default:0 }}
+                                    </small>
+                                </td>
                             {% endfor %}
-                        {% else %}
-                        {% endif %}
-
-                        <td>{{ scores_by_participant|item:participant.id }}</td>
+                        {% endfor %}
                     </tr>
+                {% endwith %}
                 {% endfor %}
             </tbody>
         </table>

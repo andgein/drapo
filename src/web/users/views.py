@@ -1,18 +1,25 @@
+from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import redirect_to_login
 from django.core import urlresolvers
 from django.db import transaction
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 
 from . import forms
 from . import models
+from contests.models import Contest, IndividualParticipant
 
 
 def profile(request, user_id):
     user = get_object_or_404(models.User, pk=user_id)
     user_teams = list(user.teams.all())
     is_current_user = user.id == request.user.id
+
+    if not (is_current_user or request.user.is_staff):
+        return redirect_to_login(request.build_absolute_uri())
 
     return render(request, 'users/profile.html', {
         'profile_user': user,
@@ -25,8 +32,8 @@ def login(request):
     if request.method == 'POST':
         form = forms.LoginForm(request.POST)
         if form.is_valid():
-            email = form.cleaned_data['email'].lower()
-            user = models.User.objects.filter(email=email).first()
+            email_or_login = form.cleaned_data['email_or_login'].lower()
+            user = models.User.objects.filter(Q(email__iexact=email_or_login) | Q(username__iexact=email_or_login)).first()
             if user is not None and user.check_password(form.cleaned_data['password']):
                 if user.is_email_confirmed:
                     auth.login(request, user)
@@ -35,9 +42,9 @@ def login(request):
                         return redirect(request.GET['next'])
                     return redirect('home')
 
-                form.add_error('email', 'Confirm your email by clicking link in email from your inbox')
+                form.add_error('email_or_login', 'Confirm your email by clicking link in email from your inbox')
             else:
-                form.add_error('email', 'Wrong email of password')
+                form.add_error('email_or_login', 'Wrong email/login or password')
     else:
         form = forms.LoginForm()
 
@@ -53,10 +60,7 @@ def register(request):
             username = form.cleaned_data['username']
             email = form.cleaned_data['email'].lower()
             password = form.cleaned_data['password']
-            first_name = form.cleaned_data['first_name']
-            last_name = form.cleaned_data['last_name']
-
-            confirmation = None
+            team_name = form.cleaned_data['team_name']
 
             with transaction.atomic():
                 if models.User.objects.filter(username=username).exists():
@@ -67,20 +71,19 @@ def register(request):
                     user = models.User.objects.create_user(
                         username=username,
                         email=email,
-                        first_name=first_name,
-                        last_name=last_name,
+                        first_name=team_name,
                         password=password
                     )
 
-                    confirmation = models.EmailConfirmation(user=user)
+                    confirmation = models.EmailConfirmation(user=user, is_confirmed=True)
                     confirmation.save()
 
-            if confirmation is not None:
-                confirmation.send(request)
+                    IndividualParticipant(
+                        contest=Contest.objects.get(id=settings.QCTF_CONTEST_ID),
+                        user=user
+                    ).save()
 
-                return render(request, 'message.html', {
-                    'message': 'We have sent you an email with confirmation link. Please follow it.'
-                })
+                    return redirect_to_login(request.build_absolute_uri())
 
     else:
         form = forms.RegisterForm()

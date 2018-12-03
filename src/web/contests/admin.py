@@ -13,18 +13,25 @@ class ContestAdmin(admin.ModelAdmin):
 admin.site.register(models.TaskBasedContest, ContestAdmin)
 
 
-class IndividualParticipantAdmin(admin.ModelAdmin):
-    list_display = ('id', 'contest', 'user')
-    list_editable = ('contest', )
+class ContestRegionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'contest', 'name', 'start_time', 'finish_time', 'timezone')
     list_filter = ('contest', )
+
+admin.site.register(models.ContestRegion, ContestRegionAdmin)
+
+
+class IndividualParticipantAdmin(admin.ModelAdmin):
+    list_display = ('id', 'contest', 'user', 'region')
+    list_editable = ('contest', 'region')
+    list_filter = ('contest', 'region')
 
 admin.site.register(models.IndividualParticipant, IndividualParticipantAdmin)
 
 
 class TeamParticipantAdmin(admin.ModelAdmin):
-    list_display = ('id', 'contest', 'team')
-    list_editable = ('contest', )
-    list_filter = ('contest',)
+    list_display = ('id', 'contest', 'team', 'region')
+    list_editable = ('contest', 'region')
+    list_filter = ('contest', 'region')
 
 admin.site.register(models.TeamParticipant, TeamParticipantAdmin)
 

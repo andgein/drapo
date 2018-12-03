@@ -19,6 +19,9 @@
                     <li role="presentation">
                         <a href="#regexp_checker" aria-controls="regexp_checker" role="tab" data-toggle="tab" onclick="$('#id_checker_type').val('regexp');">{% trans 'RegExp checker' %}</a>
                     </li>
+                    <li role="presentation">
+                        <a href="#simple_py_checker" aria-controls="simple_py_checker" role="tab" data-toggle="tab" onclick="$('#id_checker_type').val('simple_py');">{% trans 'SimplePy checker' %}</a>
+                    </li>
                 </ul>
 
                 <div class="tab-content tab-default">
@@ -27,6 +30,9 @@
                     </div>
                     <div role="tabpanel" class="tab-pane" id="regexp_checker">
                         {{ create_regexp_checker_form|bootstrap_horizontal }}
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="simple_py_checker">
+                        {{ create_simple_py_checker_form|bootstrap_horizontal }}
                     </div>
                 </div>
             </div>

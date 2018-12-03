@@ -25,6 +25,12 @@ class RegExpCheckerAdmin(admin.ModelAdmin):
 admin.site.register(models.RegExpChecker, RegExpCheckerAdmin)
 
 
+class SimplePyCheckerAdmin(admin.ModelAdmin):
+    list_display = ('id', 'task')
+    list_display_links = ('id', 'task')
+
+admin.site.register(models.SimplePyChecker, SimplePyCheckerAdmin)
+
 class TextStatementGeneratorAdmin(admin.ModelAdmin):
     list_display = ('id', 'task', 'template', 'last_change_time')
 
@@ -39,9 +45,9 @@ admin.site.register(models.ContestTasks, ContestTasksAdmin)
 
 
 class AttemptAdmin(admin.ModelAdmin):
-    list_display = ('id', 'contest', 'task', 'is_checked', 'is_correct')
-    list_editable = ('is_checked', 'is_correct')
-    list_filter = ('contest', 'task')
+    list_display = ('id', 'created_at', 'contest', 'task', 'participant', 'is_checked', 'is_correct', 'is_plagiarized', 'plagiarized_from')
+    list_editable = ('is_checked', 'is_correct', 'is_plagiarized')
+    list_filter = ('contest', 'task', 'is_plagiarized', 'is_checked', 'participant')
 
 admin.site.register(models.Attempt, AttemptAdmin)
 
@@ -52,6 +58,12 @@ class ByCategoriesTasksOpeningPolicyAdmin(admin.ModelAdmin):
     list_filter = ('contest', )
 
 admin.site.register(models.ByCategoriesTasksOpeningPolicy, ByCategoriesTasksOpeningPolicyAdmin)
+
+
+class WelcomeTasksOpeningPolicyAdmin(admin.ModelAdmin):
+    list_display = ('id', 'contest')
+
+admin.site.register(models.WelcomeTasksOpeningPolicy, WelcomeTasksOpeningPolicyAdmin)
 
 
 class ManualTasksOpeningPolicyAdmin(admin.ModelAdmin):

@@ -51,9 +51,10 @@ INSTALLED_APPS = [
     'contests',
     'taskbased.tasks',
     'taskbased.categories',
+    'serialization',
 ]
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -63,6 +64,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
+    'drapo.middleware.log_requests_middleware',
     'drapo.middleware.LocaleMiddleware',
 ]
 
@@ -98,6 +100,32 @@ DATABASES = {
     }
 }
 
+
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'loggers': {
+        'drapo.requests': {
+            'handlers': ['drapo.requests'],
+            'level': 'INFO',
+        },
+    },
+    'handlers': {
+        'drapo.requests': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'drapo.requests',
+        },
+    },
+    'formatters': {
+        'drapo.requests': {
+            '()': 'django.utils.log.ServerFormatter',
+            'format': '[%(server_time)s] %(message)s',
+        }
+    },
+
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
@@ -173,3 +201,33 @@ DRAPO_USER_CAN_BE_ONLY_IN_ONE_TEAM = False
 # If False captain can edit team name
 DRAPO_ONLY_STAFF_CAN_EDIT_TEAM_NAME = False
 
+# For serving files with nginx, disabled by default
+DRAPO_SENDFILE_WITH_NGINX = False
+DRAPO_SENDFILE_ROOT = os.path.abspath(DRAPO_UPLOAD_DIR)
+DRAPO_SENDFILE_URL = '/protected'
+
+LANGUAGES = [
+    ('ru', 'Russian'),
+    ('en', 'English'),
+]
+
+
+QCTF_CONTEST_ID = 1
+
+QCTF_CARD_LAYOUT = [
+    [
+        ('bank', 'http://crlaw.com/news/wp-content/uploads/2017/05/brandon-k-jones-profile-image-180x198.jpg'),
+        ('auth-system', 'http://crlaw.com/news/wp-content/uploads/2017/05/brandon-k-jones-profile-image-180x198.jpg'),
+    ],
+    [('cats-vs-dogs', None), ('make-some-noise', None), ('permanent-302', None)],
+    [('getflagchar', None), ('cipher', None), ('python-vm', None)],
+]
+
+# Place tasks ordered by cost. They will be shown in the QCTF scoreboard in the same order.
+QCTF_TASK_CATEGORIES = {
+    'Forensics': ['bank'],
+    'Web': ['auth-system', 'make-some-noise', 'permanent-302'],
+    'PPC': ['cats-vs-dogs'],
+    'Reverse': ['getflagchar', 'python-vm'],
+    'Crypto': ['cipher'],
+}

@@ -9,6 +9,11 @@ def item(obj, index):
 
 
 @register.filter
+def get(obj, key):
+    return obj.get(key)
+
+
+@register.filter
 def attr(obj, attribute):
     return getattr(obj, attribute, '')
 

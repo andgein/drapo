@@ -1,7 +1,9 @@
 import abc
+import traceback
 import unicodedata
 import re
 import os.path
+import logging
 
 from django.db import models
 import django.db.migrations.writer
@@ -16,6 +18,7 @@ from relativefilepathfield.fields import RelativeFilePathField
 import drapo.models
 import contests.models
 import users.models
+from drapo.uploads import save_bytes
 
 
 class TaskStatement:
@@ -30,6 +33,8 @@ class TaskStatement:
 class CheckResult(abc.ABC):
     is_checked = False
     is_correct = False
+    is_plagiarized = False
+    plagiarized_from = None
     public_comment = ''
     private_comment = ''
     score = 0
@@ -39,9 +44,48 @@ class Checked(CheckResult):
     def __init__(self, is_answer_correct, public_comment='', private_comment='', score=0):
         self.is_checked = True
         self.is_correct = is_answer_correct
+        self.is_plagiarized = False
+        self.plagiarized_from = None
         self.public_comment = public_comment
         self.private_comment = private_comment
         self.score = score
+
+
+class CheckedPlagiarist(CheckResult):
+    def __init__(self, is_answer_correct, plagiarized_from=None, public_comment='', private_comment='', score=0):
+        self.is_checked = True
+        self.is_correct = is_answer_correct
+        self.is_plagiarized = True
+        self.public_comment = public_comment
+        self.private_comment = private_comment
+        self.score = score
+
+        if isinstance(plagiarized_from, contests.models.AbstractParticipant):
+            self.plagiarized_from = plagiarized_from
+        elif isinstance(plagiarized_from, int):
+            try:
+                self.plagiarized_from = contests.models.AbstractParticipant.objects.get(id=plagiarized_from)
+            except contests.models.AbstractParticipant.DoesNotExist:
+                self.plagiarized_from = None
+        else:
+            self.plagiarized_from = None
+
+
+    @staticmethod
+    def get_potential_plagiarists(participant):
+        return contests.models.AbstractParticipant.objects.filter(
+            Q(contest=participant.contest) & ~Q(id=participant.id))
+
+
+class CheckError(CheckResult):
+    def __init__(self, private_comment=''):
+        self.is_checked = False
+        self.is_correct = False
+        self.is_plagiarized = False
+        self.plagiarized_from = None
+        self.public_comment = ''
+        self.private_comment = private_comment
+        self.score = 0
 
 
 class PostponeForManualCheck(CheckResult):
@@ -82,6 +126,28 @@ class TextStatementGenerator(AbstractStatementGenerator):
         return self.template[:50] + '...'
 
 
+class SimplePyStatementGenerator(AbstractStatementGenerator):
+    source = models.TextField(help_text='Python source code. Must contain function generate(context)')
+
+    def get_generator(self):
+        module_globals = {
+            'TaskFile': TaskFile,
+            'TaskStatement': TaskStatement,
+        }
+        exec(self.source, module_globals)
+        return module_globals['generate']
+
+    def generate(self, context):
+        generator = self.get_generator()
+        return generator(context)
+
+    def is_available_for_anonymous(self):
+        return False
+
+    def __str__(self):
+        return self.source[:50] + '...'
+
+
 class AbstractChecker(polymorphic.models.PolymorphicModel):
     def check_attempt(self, attempt, context):
         """ Returns CheckResult or bool """
@@ -97,7 +163,7 @@ class TextChecker(AbstractChecker):
     case_sensitive = models.BooleanField(help_text=_('Is answer case sensitive'), default=False)
 
     def __str__(self):
-        return '== "%s"' % (self.answer, )
+        return '== "%s"' % (self.answer,)
 
     @classmethod
     def _normalize_case_less(cls, text):
@@ -156,13 +222,36 @@ class RegExpChecker(AbstractChecker):
         return self.compiled_regexp.fullmatch(attempt.answer) is not None
 
 
+class SimplePyChecker(AbstractChecker):
+    source = models.TextField(help_text='Python source code. Must contain function check(attempt, context)')
+
+    def __str__(self):
+        return '=~ %s' % repr(self.source)
+
+    def get_checker(self):
+        module_globals = {
+            'Checked': Checked,
+            'CheckedPlagiarist': CheckedPlagiarist,
+        }
+        exec(self.source, module_globals)
+        return module_globals['check']
+
+    def check_attempt(self, attempt, context):
+        try:
+            checker = self.get_checker()
+            return checker(attempt, context)
+        except Exception as e:
+            logging.getLogger(__name__).exception(e)
+            return CheckError(traceback.format_exc())
+
+
 class ManualChecker(AbstractChecker):
     def check_attempt(self, attempt, context):
         return PostponeForManualCheck()
 
 
 class Task(models.Model):
-    name = models.CharField(max_length=100, help_text='Shows on tasks page')
+    name = models.CharField(max_length=100, help_text='Shows on tasks page', unique=True)
 
     statement_generator = models.OneToOneField(AbstractStatementGenerator, related_name='task')
 
@@ -211,6 +300,44 @@ class TaskFile(models.Model):
 
     content_type = models.CharField(max_length=1000, default='application/octet-stream')
 
+    is_private = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = (('task', 'participant', 'name'),)
+
+    @staticmethod
+    def get_private_files(task):
+        return list(task.files.filter(Q(is_private=True)))
+
+    @staticmethod
+    def copy_file_for_participant(task_file, participant, name):
+        TaskFile.objects.get_or_create(
+            task=task_file.task,
+            participant=participant,
+            name=name,
+            path=task_file.path,
+            content_type=task_file.content_type,
+            is_private=False
+        )
+
+    @staticmethod
+    def create_file_for_participant(task, participant, file_bytes, name, content_type=None):
+        task_file, created = TaskFile.objects.get_or_create(task=task, participant=participant, name=name)
+
+        if created:
+            task_file_dir = TaskFile.generate_directory_name(task, participant)
+            task_file_name = save_bytes(file_bytes, task_file_dir)
+            task_file.path = task_file_name
+        else:
+            with open(task_file.path, 'wb') as fd:
+                fd.write(file_bytes)
+
+        if content_type is not None:
+            task_file.content_type = content_type
+        task_file.save()
+
+        return task_file
+
     @staticmethod
     def generate_directory_name(task, participant):
         return os.path.join(
@@ -227,7 +354,7 @@ class ContestTasks(models.Model):
     tasks = sortedm2m.fields.SortedManyToManyField(Task)
 
     def __str__(self):
-        return 'Tasks set for %s' % (self.contest, )
+        return 'Tasks set for %s' % (self.contest,)
 
 
 class Attempt(drapo.models.ModelWithTimestamps):
@@ -245,6 +372,15 @@ class Attempt(drapo.models.ModelWithTimestamps):
 
     is_correct = models.BooleanField(default=False, db_index=True)
 
+    is_plagiarized = models.BooleanField(default=False, db_index=True)
+
+    plagiarized_from = models.ForeignKey(
+        contests.models.AbstractParticipant,
+        related_name='+',
+        default=None,
+        null=True
+    )
+
     score = models.IntegerField(default=0)
 
     public_comment = models.TextField(blank=True)
@@ -257,14 +393,16 @@ class Attempt(drapo.models.ModelWithTimestamps):
     def try_to_check(self):
         context = {}
         check_result = self.task.check_attempt(self, context)
-        if check_result.is_checked:
-            self.is_checked = True
-            self.is_correct = check_result.is_correct
-            self.public_comment = check_result.public_comment
-            self.private_comment = check_result.private_comment
-            self.score = check_result.score
 
-            self.save()
+        self.is_checked = check_result.is_checked
+        self.is_correct = check_result.is_correct
+        self.is_plagiarized = check_result.is_plagiarized
+        self.plagiarized_from = check_result.plagiarized_from
+        self.public_comment = check_result.public_comment
+        self.private_comment = check_result.private_comment
+        self.score = check_result.score
+
+        self.save()
 
 
 class AbstractTasksOpeningPolicy(polymorphic.models.PolymorphicModel):
@@ -277,6 +415,31 @@ class AbstractTasksOpeningPolicy(polymorphic.models.PolymorphicModel):
 
     def get_open_tasks(self, participant):
         raise NotImplementedError()
+
+
+class WelcomeTasksOpeningPolicy(AbstractTasksOpeningPolicy):
+
+    class Meta:
+        verbose_name = 'Task opening policy: welcome'
+        verbose_name_plural = 'Task opening policies: welcome'
+
+    def get_open_tasks(self, participant):
+        correct_attempts = self.contest.attempts.filter(participant=participant, is_correct=True)
+
+        if correct_attempts.count() > 0:
+            return AllTasksOpenedOpeningPolicy.get_open_tasks(self, participant)
+
+        if self.contest.tasks_grouping == contests.models.TasksGroping.ByCategories:
+            if self.contest.categories:
+                category = self.contest.categories[0]
+                return category.tasks.values_list('id', flat=True)
+            else:
+                return []
+        elif self.contest.tasks_grouping == contests.models.TasksGroping.OneByOne:
+            task = self.contest.tasks.first()
+            return [task.id] if task else []
+        else:
+            raise ValueError('Invalid tasks grouping')
 
 
 class ByCategoriesTasksOpeningPolicy(AbstractTasksOpeningPolicy):

@@ -16,9 +16,8 @@ def _ensure_directory_exists(path):
             raise Exception('Drapo: %s is not a directory' % path)
 
 
-def save_uploaded_file(uploaded_file, directory, extension=None):
+def _create_file_name(directory, extension):
     DEFAULT_EXTENSION = ''
-
     if not os.path.isabs(directory):
         directory = os.path.join(settings.DRAPO_UPLOAD_DIR, directory)
     _ensure_directory_exists(directory)
@@ -29,8 +28,23 @@ def save_uploaded_file(uploaded_file, directory, extension=None):
     if extension != '':
         file_name += '.' + extension
 
+    return file_name
+
+
+def save_uploaded_file(uploaded_file, directory, extension=None):
+    file_name = _create_file_name(directory, extension)
+
     with open(file_name, 'wb') as destination:
         for chunk in uploaded_file.chunks():
             destination.write(chunk)
+
+    return file_name
+
+
+def save_bytes(bytes, directory, extension=None):
+    file_name = _create_file_name(directory, extension)
+
+    with open(file_name, 'wb') as destination:
+        destination.write(bytes)
 
     return file_name

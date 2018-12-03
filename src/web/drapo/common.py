@@ -4,9 +4,9 @@ import string
 import urllib.parse
 
 from django.utils import crypto
-from django.http import HttpResponse
-from django.http.response import HttpResponseNotFound
+from django.http import FileResponse, HttpResponse, HttpResponseNotFound
 
+from django.conf import settings
 
 def generate_random_secret_string(length=12, allowed_chars=string.ascii_lowercase):
     return crypto.get_random_string(length, allowed_chars)
@@ -16,8 +16,16 @@ def respond_as_attachment(request, file_path, original_filename, content_type=No
     if not os.path.exists(file_path):
         return HttpResponseNotFound()
 
-    with open(file_path, 'rb') as fp:
-        response = HttpResponse(fp.read())
+    full_file_path = os.path.abspath(file_path)
+
+    sendfile_root = settings.DRAPO_SENDFILE_ROOT
+    if settings.DRAPO_SENDFILE_WITH_NGINX and full_file_path.startswith(sendfile_root):
+        redirect_url = full_file_path.replace(sendfile_root, settings.DRAPO_SENDFILE_URL)
+        response = HttpResponse()
+        response['X-Accel-Redirect'] = redirect_url
+    else:
+        file = open(file_path, 'rb')
+        response = FileResponse(file)
 
     if content_type is None:
         content_type, encoding = mimetypes.guess_type(original_filename)

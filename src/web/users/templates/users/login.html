@@ -1,18 +1,32 @@
-{% extends '_layout.html' %}
+{% extends '_qctf_layout.html' %}
 
 {% load bootstrap %}
-{% load i18n %}
+
+{% block title %}The QCTF Times - Вход в систему{% endblock %}
 
 {% block content %}
-    <div class="page">
-        <h1 class="page__header">
-            {% trans 'Login' %}
-        </h1>
-        <form action="" method="POST" class="form form-horizontal">
+<main class="login-form d-flex justify-content-center">
+    <div class="flex-column">
+        <h2 class="text-center mb-4">Вход в систему</h2>
+
+        <div class="alert alert-info">
+            Если вы участвовали в соревновании очно, но не записали выданные вам логин и пароль,
+            вы можете <a href="{% url 'password_reset' %}">сбросить пароль</a>, указав e-mail капитана команды
+        </div>
+
+        {% for message in messages %}
+            <div class="alert {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+
+        <form action="" method="POST">
             {% csrf_token %}
-            {{ form|bootstrap_horizontal }}
-            <button class="btn btn-success btn-lg  col-sm-offset-2">{% trans 'Login' %}</button>
-            <a href="{% url 'users:register' %}" class="btn btn-link">{% trans 'Registration' %} &rarr;</a>
+            <fieldset>
+                {{ form|bootstrap }}
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary">Войти</button>
+                </div>
+            </fieldset>
         </form>
     </div>
+</main>
 {% endblock %}

@@ -1,0 +1,70 @@
+{% load staticfiles %}
+{% load markdown_deux_tags %}
+{% load dict_filters %}
+{% load cache %}
+
+{% cache 30 tasks request.user.id %}
+
+{% for task_id, stmt in statements.items %}
+{% with task=task_by_id|item:task_id %}
+<div class="modal task flex-column justify-content-center modal-task task-info-container"
+     data-id="{{ task.id }}" style="display: none;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+                <div class="modal-task-content">
+                    <div class="d-inline-block mb-2 text-primary task-info">
+                        <span>{{ category_by_task_name|item:task.name }}</span>
+
+                        <span class="middot mx-2">&middot;</span>
+                        <span title="Вознаграждение за решение">
+                            <img src="{% static 'qctf/img/money-bag.svg' %}" class="price-icon">
+                            {{ task.max_score }}
+                        </span>
+
+                        <span class="middot mx-2">&middot;</span>
+                        <span title="Количество решивших команд">
+                            <img src="{% static 'qctf/img/profile.svg' %}" class="stats-icon">
+                            {{ task_solved_by|item:task.id|length }}
+                        </span>
+
+                        <span class="solved-label"
+                             style="{% if task.id not in solved_tasks_ids %}display: none;{% endif %}">
+                            <span class="middot mx-2">&middot;</span>
+                            <span>Решено</span>
+                        </span>
+                    </div>
+                    <h3>{{ stmt.title }}</h3>
+
+                    <div class="content">{{ stmt.statement|markdown }}</div>
+
+                    <form class="submit-flag-form">
+                        {% csrf_token %}
+                        <div class="card flag-submit-card">
+                            <div class="card-body">
+                                <p class="card-text">
+                                    Узнали какую-то информацию об этом событии? Напишите нам и получите вознаграждение.
+                                </p>
+                                <div class="row">
+                                    <input class="form-control form-control-sm" type="text" placeholder="Информация"
+                                           name="answer">
+                                    <button type="submit" class="btn btn-primary btn-sm">Отправить</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="alert mt-3 mb-0" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endwith %}
+{% endfor %}
+
+{% endcache %}
